@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background-color: #3e3e3e;
+  color: #fff;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+  font-family: 'Silkscreen', sans-serif;
+}
+
+a {
+  color: #83dfb2;
+}
+
+a:hover {
+  color: #83dfb2;
+  filter: brightness(1.33);
+  cursor: pointer;
+}
+
+th, td {
+  padding: 4px 8px;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #83dfb233;
+}
+
+/* Style for even rows */
+tbody tr:nth-child(even) {
+  background-color: #83dfb267;
+}
+
+/*bg colors*/
+.v3-bg {
+  background-color: #83dfb2;
+}
+
+.lite-v3-bg, .sorter option {
+  background-color: #d7fae9;
+}
+
+.philip-bg {
+  background-color: #648596;
+}
+
+.v1-bg {
+  background-color: #a79aff;
+}
+
+.black-bg {
+  background-color: #000;
+}
+
+/*font colors*/
+.v3-txt {
+  color: #83dfb2;
+}
+
+.lite-v3-txt {
+  color: #d7fae9;
+}
+
+.drk-grey-txt, select, option {
+  color: #9e9e9e;
+}
+
+select, option, .black-txt {
+  color: #000;
+}
+
+.white-txt {
+  color: #fff;
+}
+
+.philip-txt {
+  color: #648596;
+}
+
+.v1-txt {
+  color: #a79aff;
+}
+
+/*border*/
+.v3-b {
+  border: 3px solid #83dfb2;
+}
+
+/*page styles*/
+.page {
+  position: relative;
+  min-height: 100vh;
+}
+
+.content {
+  padding-bottom: 150px;
+}
+
+/*start header styling*/
+.h-txt {
+  font-size: 40px;
+}
+
+.h-img {
+  height: 40px;
+}
+
+.h-img-w {
+  width: 35px;
+}
+
+.sans-underline:hover, .sans-underline {
+  text-decoration: none!important;
+}
+
+/*start footer styling*/
+.footer {
+  position: absolute;
+  /*bottom: -75px;*/
+  width: 100%;
+  /*padding: 0.5em;*/
+}
+
+/*homepage*/
+.home-bg {
+  background: linear-gradient(#000000,#00000075), url("../assets/vphree-bg.png");
+  background-size: cover;
+  height: 100vh;
+}
+
+.home-wrapper {
+  width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 10%;
+}
+
+.home-title {
+  font-size: 60px;
+}
+
+.home-body {
+  font-size: 24px;
+}
+
+/*buttons*/
+.cta {
+  /*border-radius: 40px;*/
+  padding: 10px 20px;
+  font-size: 20px;
+  margin: 20px 20px 0 0;
+}
+
+.cta:hover, .brite:hover, .input-group-append:hover {
+  filter: brightness(1.33);
+  cursor: pointer;
+}
+
+/*collection*/
+.col-banner {
+  position: relative;
+  /*z-index: -1;*/
+}
+
+/*.banner-wrapper {
+  background: linear-gradient(#000000,#00000000);
+  margin-bottom: 1.5em;
+}*/
+
+.collection-desc {
+  font-family: "Montserrat", monospace;
+}
+
+#mobile-c-links {
+  display: none;
+}
+
+/*filters*/
+.filter-sort-wrapper {
+  font-family: "Montserrat", monospace;
+}
+
+.input-group-append>button, .select {
+  height: 28px;
+}
+
+.btn-outline {
+  padding: 0 0.25rem;
+  /*border-radius: 0 8px 8px 0;*/
+  border-left: none;
+}
+
+.select {
+  /*border-radius: 8px 0 0 8px;*/
+  width: 200px;
+  border-right: none;
+}
+
+.filter-dropdown {
+  display: inline-flex;
+  margin: 1em 1em 0 0;
+}
+
+#view, #hide, #asc, #desc, .sorter {
+  border: solid 1px #83dfb2;
+  /*border-radius: 8px;*/
+  padding: 2px 6px;
+  margin: 0 0 0 1em;
+  height: 1.75em;
+}
+
+#id {
+  border: solid 1px #d7fae9;
+  /*border-radius: 8px;*/
+  padding: 2px 6px;
+  height: 1.75em;
+  width: 8em;
+}
+
+/*nft card*/
+.card-wrapper {
+  border-style: solid;
+  border-color: #000;
+  border-width: 4px 2px;
+  /*width: 140px;*/
+}
+
+/*phunk page*/
+.metadata, .contract-interactions {
+  font-size: large;
+}
+
+.metadata.col-md-4 {
+  margin-left: 5%;
+}
+
+#img-wrapper {
+  width: 30%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#title {
+  font-size: xx-large;
+}
+
+/*mobile*/
+@media only screen and (max-width: 768px) {
+  /*home*/
+  h1.h-txt {
+    display: none!important;
+  }
+
+  .home-bg {
+    height: 115vh;
+  }
+
+  .home-title {
+    font-size: 50px;
+  }
+
+  /*listing*/
+  #mobile-c-links {
+    display: block;
+  }
+
+  #collection-links {
+    display: none!important;
+  }
+
+  /*nft*/
+  .metadata.col-md-4 {
+    margin-left: 0;
+  }
+
+  #title {
+    font-size: 1.6em;
+    margin: 1em 0;
+  }
+}

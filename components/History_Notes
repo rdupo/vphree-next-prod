@@ -1,0 +1,4 @@
+> get block hash for List, Offer, and Sale events independently
+> for each of those arrrays, loop through each hash to get the full txn using alchemy
+> put each array into a consisten structure
+> combine the arrays into a single array 
