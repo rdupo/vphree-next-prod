@@ -1,16 +1,17 @@
 // pages/index.js - template from chatgpt
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-
-import contractABI from '../path/to/contractABI.json'; // Replace with the actual path
+import v3MarketAbi from '../utils/v3MarketAbi';
+import v3MarketAddy from '../utils/v3MarketAddy';
 
 export default function Home() {
   const [activeListings, setActiveListings] = useState([]);
 
   useEffect(() => {
-    const provider = new ethers.providers.JsonRpcProvider('https://eth-goerli.g.alchemy.com/v2/Xq9-5SRgOVU_UxK6uHdIk-oNvvO_n1iZ',5);
-    const contractAddress = '0x101F2256ba4db70F2659DC9989e0eAFb4Fd53829';
-    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+    const alcKey = process.env.NEXT_PUBLIC_API_KEY
+    const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+    const contractAddress = v3MarketAddy;
+    const contract = new ethers.Contract(contractAddress, v3MarketAbi, provider);
 
     const fetchInitialActiveListings = async () => {
       const phunkOfferedFilter = contract.filters.PhunkOffered();

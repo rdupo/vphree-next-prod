@@ -22,9 +22,7 @@ export default function V3Phunks() {
   const [nfts, setNFTs] = useState([]);
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
-  const provider = new ethers.providers.JsonRpcProvider(
-    `https://eth-goerli.g.alchemy.com/v2/${alcKey}`,
-    5);
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
   const { connectedAddress, walletChanged } = useWallet();

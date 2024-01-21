@@ -36,7 +36,7 @@ export default function V3Phunks() {
   const { transactionHistory } = getTxnHistory(id);
   const [listPrice, setListPrice] = useState('');
   const [bid, setBid] = useState('');
-  const provider = new ethers.providers.AlchemyProvider('goerli', alcKey);
+  const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
   const [signer, setSigner] = useState([]);
   let alt_id
 

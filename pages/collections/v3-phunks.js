@@ -97,9 +97,7 @@ export default function V3Phunks() {
 
   //events approach
   useEffect(() => {
-    const provider = new ethers.providers.JsonRpcProvider(
-      `https://eth-goerli.g.alchemy.com/v2/${alcKey}`,
-      5);
+    const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
     const contractAddress = v3MarketAddy;
     const contractABI = v3MarketAbi;
     const contract = new ethers.Contract(contractAddress, contractABI, provider);

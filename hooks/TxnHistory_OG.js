@@ -10,12 +10,12 @@ const getTxnHistory = (id) => {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const settings = {
     apiKey: alcKey,
-    network: Network.ETH_GOERLI,
+    network: Network.ETH_MAINNET,
   };
   const alchemy = new Alchemy(settings);
   const [txn, setTxn] = useState([]);
   const [transactionHistory, setTransactionHistory] = useState([]);
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-goerli.g.alchemy.com/v2/${alcKey}`, 5);
+  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const v3Abi = v3PhunkAbi
   const mpAbi = v3MarketAbi
 
