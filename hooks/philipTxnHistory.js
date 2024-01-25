@@ -3,10 +3,10 @@ import { ethers } from 'ethers';
 import { Network, Alchemy } from 'alchemy-sdk';
 import v3MarketAddy from '../utils/v3MarketAddy'
 import v3MarketAbi from '../utils/v3MarketAbi'
-import v3PhunkAddy from '../utils/v3PhunkAddy'
-import v3PhunkAbi from '../utils/v3PhunkAbi'
+import philipAddy from '../utils/philipAddy'
+import philipAbi from '../utils/philipAbi'
 
-const getTxnHistory = (id) => {
+const philipTxnHistory = (id) => {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const settings = {
     apiKey: alcKey,
@@ -37,8 +37,8 @@ const getTxnHistory = (id) => {
       for(let i = 0; i < event.length; i++) {        
         combinedEvents.push({
           eventType: event[i].event,
-          from: event[i].args.fromAddress,
-          to: event[i].args.toAddress,
+          from: txn.from,
+          to: txn.to,
           amount: typeof(event[i].args.minValue) != 'undefined' ? ethers.utils.formatUnits(event[i].args.minValue._hex,18):ethers.utils.formatUnits(event[i].args.value._hex,18),
           tokenId: ethers.utils.formatUnits(event[i].args.phunkIndex._hex,0),
           timestamp: event[i].blockNumber,
@@ -129,4 +129,4 @@ const getTxnHistory = (id) => {
   return { transactionHistory };
 };
 
-export default getTxnHistory;
+export default philipTxnHistory;

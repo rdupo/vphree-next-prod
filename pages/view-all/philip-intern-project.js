@@ -9,9 +9,10 @@ import Twitter from '../../assets/twitter.png'
 import Etherscan from '../../assets/etherscan.png'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import philips from '../../utils/philips'
+import philipAddy from '../../utils/philipAddy'
 
 export default function V3Phunks() {
-  const collectionContract = "0x28bE0037712B218D16859AC19C3FA50528244FFC"
+  const collectionContract = philipAddy
   const [f, setF] = useState({})
   const [beard, setBeard] = useState("")
   const [cheeks, setCheeks] = useState("")
