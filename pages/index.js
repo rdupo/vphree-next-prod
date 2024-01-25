@@ -16,12 +16,11 @@ export default function Home() {
 
   return (
     <>
-      {/*<Header onUpdateConnectedWallet={updateConnectedWallet}/>*/}
+      <Header onUpdateConnectedWallet={updateConnectedWallet}/>
       <div className="content home-bg">
         <div className="home-wrapper">
           <h2 className="home-title v3-txt">Welcome to vPhree</h2>
-          <p className="home-body w-75">We&apos;ll be right back 😊</p>
-          {/*<p className="home-body w-75">vPhree is a phee-phree marketplace to buy and sell v3 Phunks</p>
+          <p className="home-body w-75">vPhree is a phee-phree marketplace to buy and sell v3 Phunks</p>
           <div>
             <Link href="/collections/v3-phunks">
               <button className="cta v3-bg v3-b black-txt">v3 Marketplace</button>
@@ -29,15 +28,7 @@ export default function Home() {
             <Link href="/view-all/v3-phunks">
               <button className="cta v3-b black-bg v3-txt">View All v3s</button>
             </Link>
-          </div>*/}
-          {/*<div>
-            <Link href="/collections/philip-intern-project">
-              <button className="cta v3-bg v3-b black-txt">Philip Marketplace</button>
-            </Link>
-            <Link href="/view-all/philip-intern-project">
-              <button className="cta v3-b black-bg v3-txt">View All Philips</button>
-            </Link>
-          </div>*/}
+          </div>
         </div>
       </div>
       <Footer 

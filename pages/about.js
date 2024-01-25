@@ -19,7 +19,7 @@ export default function Home() {
           <br/>
           <a className="text-xl" href="https://github.com/Crypto-Phunks/CryptoPhunksMarket" target="_blank">CryptoPhunks Marketplace Repo</a>
           <br/>
-          <a className="text-xl" href="https://etherscan.io/address/0x2BCfE1369F996Fe6E45dc2FE18E695c89A79d4A9" target="_blank">vPhree Contract</a>
+          <a className="text-xl" href="https://etherscan.io/address/0xAcCDD31413e3aD25AFF71394dFE68E17306580B5" target="_blank">vPhree Contract</a>
           </p>
         </div>
       </div>
