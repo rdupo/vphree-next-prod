@@ -16,11 +16,11 @@ export default function Home() {
 
   return (
     <>
-      <Header onUpdateConnectedWallet={updateConnectedWallet}/>
+      {/*<Header onUpdateConnectedWallet={updateConnectedWallet}/>*/}
       <div className="content home-bg">
         <div className="home-wrapper">
           <h2 className="home-title v3-txt">Welcome to vPhree</h2>
-          <p>We&apos;ll be right back 😊</p>
+          <p className="home-body w-75">We&apos;ll be right back 😊</p>
           {/*<p className="home-body w-75">vPhree is a phee-phree marketplace to buy and sell v3 Phunks</p>
           <div>
             <Link href="/collections/v3-phunks">
