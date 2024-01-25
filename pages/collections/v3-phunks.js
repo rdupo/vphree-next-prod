@@ -30,7 +30,7 @@ export default function V3Phunks() {
   const [fP, setFP] = useState([])
   const [displayedData, setDisplayedData] = useState([]);
   const { connectedAddress } = useWallet();
-  const [mostRecentPhunkOfferedEvent, setMostRecentPhunkOfferedEvent] = useState({ blockNumber: 8616071 });
+  const [mostRecentPhunkOfferedEvent, setMostRecentPhunkOfferedEvent] = useState({ blockNumber: 15422561 });
 
   // trait and id filtering
   //sort listings
