@@ -25,6 +25,6 @@ export async function getNFTs(walletAddy) {
 
 async function getTransferEvents(contract, toAddress, fromAddress) {
   const filter = contract.filters.Transfer(fromAddress, toAddress);
-  const transferEvents = await contract.queryFilter(filter);
+  const transferEvents = await contract.queryFilter(filter, {fromBlock: 15422561});
   return transferEvents;
 }
