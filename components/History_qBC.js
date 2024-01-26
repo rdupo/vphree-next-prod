@@ -61,7 +61,7 @@ const History = ({ transactions }) => {
                 {typeof(transaction.hash) !== 'undefined' ?                
                   <td>
                     {<a
-                      href={`https://goerli.etherscan.io/tx/${transaction.hash}`}
+                      href={`https://etherscan.io/tx/${transaction.hash}`}
                       target='_blank'
                     >
                     {transaction.hash.substr(0,4) +
