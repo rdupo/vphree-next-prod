@@ -59,17 +59,13 @@ export default function V3Phunks() {
     setNFTs(nftIds);
   }
 
- //useEffect(() => {
+  useEffect(() => {
     fetchNFTs(router.query.addy);
-  //},[]);
+  }, []);
 
   // Fetch NFTs whenever the wallet changes
   useEffect(() => {
-    //console.log('Page component re-rendered with connectedAddress:', connectedAddress);
-    //console.log('Page walletChanged:', walletChanged);
-
     if (walletChanged) {
-      //fetchNFTs(connectedAddress);
       Router.push({pathname: `/account/${connectedAddress}`})
     }
   }, [connectedAddress, walletChanged]);
@@ -112,6 +108,10 @@ export default function V3Phunks() {
             />
             {walletAddy.substr(0,4) + "..." + walletAddy.substr(walletAddy.length - 4, walletAddy.length)}
           </h1>
+          <div className="bg-amber-300 p-2 m-4 text-black">
+            <p>The team has been made aware that not all owned v3s are displaying for some users, and is working towards resolving the issue. In the short term, you can view all owned v3s on <a className="text-cyan-600" target="_blank" href={`https://etherscan.io/token/0xb7d405bee01c70a9577316c1b9c2505f146e8842?a=${walletAddy}#inventory`}>Etherscan</a>.
+            </p>
+          </div>
           <p className="white-txt text-xl">
             This wallet owns {nfts.length} V3 Phunks.
           </p>

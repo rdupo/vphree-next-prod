@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import v3PhunkAbi from '../utils/v3PhunkAbi';
 import v3PhunkAddy from '../utils/v3PhunkAddy';
+import { Network, Alchemy } from 'alchemy-sdk'
 
 const v3Addy = v3PhunkAddy
 const v3Abi = v3PhunkAbi
@@ -25,6 +26,10 @@ export async function getNFTs(walletAddy) {
 
 async function getTransferEvents(contract, toAddress, fromAddress) {
   const filter = contract.filters.Transfer(fromAddress, toAddress);
-  const transferEvents = await contract.queryFilter(filter, {fromBlock: 15422561});
+  //const transferEvents = await contract.queryFilter(filter,ethers.utils.hexValue(15422561), "latest");
+  const transferEvents = await contract.queryFilter(filter);
   return transferEvents;
 }
+
+
+
