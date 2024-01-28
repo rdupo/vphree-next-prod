@@ -149,12 +149,13 @@ export default function V3Phunks() {
       const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
       const listPromise = cpmp.offerPhunkForSale(id, lPrice);
       txnToast(listPromise);
-      setListState(false);
+      //setListState(false);
       await listPromise
         .then(result => {
         const rh = result.hash
         mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
+          fetchDataWithRetry();
+          setListState(false); //moved
         })
       });
     } else {
@@ -164,12 +165,13 @@ export default function V3Phunks() {
       const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
       const listPromise = cpmp.offerPhunkForSale(id, lPrice);
       txnToast(listPromise);
-      setListState(false);
+      //setListState(false);
       await listPromise
         .then(result => {
           const rh = result.hash
           mmp.waitForTransaction(rh).then(() => {
-            fetchDataWithRetry()
+            fetchDataWithRetry();
+            setListState(false); //moved
           })
         });
     };
