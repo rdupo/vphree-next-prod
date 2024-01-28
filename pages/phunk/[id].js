@@ -249,12 +249,13 @@ export default function V3Phunks() {
     const ethBid = ethers.utils.parseUnits(bid, 'ether');
     const enterBidPromise = cpmp.enterBidForPhunk(id, {value: ethBid});
     txnToast(enterBidPromise);
-    setBidState(false);
+    //setBidState(false);
     await enterBidPromise
       .then(result => {
         const rh = result.hash
         mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()          
+          fetchDataWithRetry();
+          setBidState(false); //moved          
         })
       });
   }
