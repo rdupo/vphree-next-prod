@@ -61,7 +61,7 @@ export default function V3Phunks() {
 
   useEffect(() => {
     fetchNFTs(router.query.addy);
-  }, []);
+  }, [walletAddy, connectedAddress]);
 
   // Fetch NFTs whenever the wallet changes
   useEffect(() => {

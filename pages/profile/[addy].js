@@ -57,7 +57,7 @@ export default function V3Phunks() {
 
   useEffect(() => {
     fetchNFTs();
-  },[]);
+  },[walletAddy, connectedAddress]);
 
   return (
     <>
