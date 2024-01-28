@@ -9,7 +9,7 @@ import Profile from '../../assets/profile-icon.png'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import { Network, Alchemy } from 'alchemy-sdk'
 import { ethers } from "ethers"
-import { getNFTs } from '../../utils/getNFTs'
+import { getNFTs } from '../../utils/getNFTs2'
 import v3MarketAddy from '../../utils/v3MarketAddy'
 import v3MarketAbi from '../../utils/v3MarketAbi'
 import toast, {Toaster} from 'react-hot-toast'
