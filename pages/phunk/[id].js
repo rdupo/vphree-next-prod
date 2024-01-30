@@ -84,6 +84,7 @@ export default function V3Phunks() {
         try {
           const listing = await market.phunksOfferedForSale(id);
           setListed(listing);
+          console.log('seller: ', listing.seller);
         } catch (error) {  }
 
         try {
@@ -359,7 +360,7 @@ export default function V3Phunks() {
             </div>
             <div className="contract-interactions inline-block pr-0 align-top w-full md:w-4/12">
               <div className="price-and-bid">
-                {!listed.isForSale ?
+                {!listed.isForSale || owner !== listed.seller ?
                   null
                   :
                   <p id="price">Price:&nbsp;
@@ -393,7 +394,7 @@ export default function V3Phunks() {
                 <div> 
                   {connectedAddress.toLowerCase() !== owner.toLowerCase() ?
                     <div className="" id="buy-bid-buttons">
-                      {!listed.isForSale ?
+                      {!listed.isForSale || owner !== listed.seller ?
                         null
                         :
                         <><button 
