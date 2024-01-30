@@ -101,6 +101,8 @@ export default function V3Phunks() {
     const contractAddress = v3MarketAddy;
     const contractABI = v3MarketAbi;
     const contract = new ethers.Contract(contractAddress, contractABI, provider);
+    const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider)
+
     const initialActiveListings = [];
     const phunkIds = [];
     const currentListings = [];
@@ -110,14 +112,17 @@ export default function V3Phunks() {
       const phunkOfferedFilter = contract.filters.PhunkOffered();
       const phunkBoughtFilter = contract.filters.PhunkBought();
       const phunkNoLongerForSaleFilter = contract.filters.PhunkNoLongerForSale();
+      const phunkXferFilter = v3Contract.filters.Transfer();
 
       const initialPhunkOfferedEvents = await contract.queryFilter(phunkOfferedFilter);
       const initialPhunkBoughtEvents = await contract.queryFilter(phunkBoughtFilter);
       const initialphunkNoLongerForSaleEvents = await contract.queryFilter(phunkNoLongerForSaleFilter);
+      const initialPhunkXferEvents = await v3Contract.queryFilter(phunkXferFilter, 19085195);
 
       const allEvents = [...initialPhunkOfferedEvents,
                          ...initialPhunkBoughtEvents, 
-                         ...initialphunkNoLongerForSaleEvents]
+                         ...initialphunkNoLongerForSaleEvents,
+                         ...initialPhunkXferEvents]
 
       // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
       allEvents.sort((a, b) => {
@@ -126,7 +131,7 @@ export default function V3Phunks() {
 
       // Iterate through sorted events and select the first occurrence of each unique phunkIndex
       allEvents.forEach(event => {
-        const phunkIndex = event.args.phunkIndex._hex;
+        const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
         if (phunkIds.indexOf(phunkIndex) === -1) {
           phunkIds.push(phunkIndex);
           initialActiveListings.push(event);
@@ -508,7 +513,6 @@ export default function V3Phunks() {
                     value={f['Neck']||''}
                     onChange={(e) => {
                       setF((prevState) => ({ ...prevState, Neck: e.target.value }));
-                      setNeck(e.target.value)
                     }}
                   >
                     <option value="" disabled hidden>Neck</option>                    
