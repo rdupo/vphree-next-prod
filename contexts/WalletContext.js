@@ -7,14 +7,14 @@ export function WalletProvider({ children }) {
   const [connectedAddress, setConnectedAddress] = useState('');
 
   useEffect(() => {
-    const storedAddress = localStorage.getItem('connectedAddress');
+    const storedAddress = sessionStorage.getItem('connectedAddress');
     if (storedAddress) {
       setConnectedAddress(storedAddress);
     }
 
     const handleAccountsChanged = (accounts) => {
       setConnectedAddress(accounts[0] || '');
-      localStorage.setItem('connectedAddress', accounts[0] || '');
+      sessionStorage.setItem('connectedAddress', accounts[0] || '');
     };
 
     if (window.ethereum) {

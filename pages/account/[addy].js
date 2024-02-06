@@ -27,8 +27,9 @@ export default function V3Phunks() {
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
   const { connectedAddress, walletChanged } = useWallet();
+  const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
 
-  const txnToast = (x) => {
+  const txnToast = (x, y) => {
     if (!(x instanceof Promise)) {
       // If x is not a promise, you can handle it here
       console.error('txnToast error: x is not a promise');
@@ -36,17 +37,27 @@ export default function V3Phunks() {
     }
 
     toast.promise(x, {
-      loading: 'Transaction pending...',
-      success: 'Transaction successful!',
-      error: 'Transaction failed!',
+      loading: y + ' (Awaiting user confirmation)...',
+      success: 'Blockchain confirmation pending...',
+      error: '⚠️ Transaction failed! ⚠️',
       position: 'top-center',
     },
     {
       style: {
         minWidth: '80%',
-        color: '#83dfb2',
-        background: '#000',
+        color: '#000',
+        background: '#ffb900',
       },
+      success: {
+        duration:3600000,
+        icon:hourglass,
+      },
+      loading: {
+        icon:hourglass,
+      },
+      error: {
+        icon:"",
+      }
     });
   };
 
@@ -76,14 +87,33 @@ export default function V3Phunks() {
     const signer = mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const withdrawPromise = cpmp.withdraw();
-    txnToast(withdrawPromise);
+    txnToast(withdrawPromise, `Withdrawing ${pendingWithdrawAmt}Ξ`);
     await withdrawPromise
-    .then(result => {
-          const rh = result.hash
-          mmp.waitForTransaction(rh).then(() => {
-            fetchNFTs()
-          })
-        });
+    .then(async (result) => {
+      const rh = result.hash
+      await mmp.waitForTransaction(rh).then((listReceipt) => {
+        if (listReceipt.status === 1) { // Check if listing transaction was successful
+          toast.dismiss();
+          toast('Transaction confirmed!', {
+            style: {
+              minWidth: '80%',
+              color: '#000',
+              background: '#ffb900',
+            },
+          });
+          fetchDataWithRetry();
+        } else {
+          toast.dismiss();
+          toast('⚠️ Transaction failed! ⚠️', {
+            style: {
+              minWidth: '80%',
+              color: '#000',
+              background: '#ffb900',
+            },
+          });
+        }
+      });
+    });
   }
 
   //withdraw

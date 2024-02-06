@@ -38,6 +38,7 @@ export default function V3Phunks() {
   const [bid, setBid] = useState('');
   const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
   const [signer, setSigner] = useState([]);
+  const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   let alt_id
 
   if(id) {
@@ -112,13 +113,13 @@ export default function V3Phunks() {
 
   useEffect(() => {
     fetchDataWithRetry();
-    const storedAddress = localStorage.getItem('connectedAddress');
+    const storedAddress = sessionStorage.getItem('connectedAddress');
     if (storedAddress && connectedAddress !== storedAddress) {
       setConnectedAddress(storedAddress);
     }
   }, [id,connectedAddress, setConnectedAddress]);
 
-  const txnToast = (x) => {
+  const txnToast = (x, y) => {
     if (!(x instanceof Promise)) {
       // If x is not a promise, you can handle it here
       console.error('txnToast error: x is not a promise');
@@ -126,17 +127,27 @@ export default function V3Phunks() {
     }
 
     toast.promise(x, {
-      loading: 'Transaction pending...',
-      success: 'Transaction successful!',
-      error: 'Transaction failed!',
+      loading: y + ' (Awaiting user confirmation)...',
+      success: 'Blockchain confirmation pending...',
+      error: '⚠️ Transaction failed! ⚠️',
       position: 'top-center',
     },
     {
       style: {
         minWidth: '80%',
-        color: '#83dfb2',
-        background: '#000',
+        color: '#000',
+        background: '#ffb900',
       },
+      success: {
+        duration:3600000,
+        icon:hourglass,
+      },
+      loading: {
+        icon:hourglass,
+      },
+      error: {
+        icon:"",
+      }
     });
   };
 
@@ -149,33 +160,95 @@ export default function V3Phunks() {
     if (ap) {
       const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
       const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-      txnToast(listPromise);
-      //setListState(false);
+      txnToast(listPromise, `Listing v3Phunk for ${ethers.utils.formatEther(lPrice)}Ξ`);      
       await listPromise
-        .then(result => {
+        .then(async (result) => {
         const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry();
-          setListState(false); //moved
-        })
+        await mmp.waitForTransaction(rh).then((listReceipt) => {
+          if (listReceipt.status === 1) { // Check if listing transaction was successful
+            toast.dismiss();
+            toast('Transaction confirmed!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+            fetchDataWithRetry();
+            setListState(false);
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
       });
     } else {
       const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval);
-      await setApproval.wait();
-      const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
-      const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-      txnToast(listPromise);
-      //setListState(false);
-      await listPromise
-        .then(result => {
-          const rh = result.hash
-          mmp.waitForTransaction(rh).then(() => {
-            fetchDataWithRetry();
-            setListState(false); //moved
-          })
+      txnToast(setApproval, `Allowing vphree to access v3phunks`);
+
+      await setApproval.then(async (result) => {
+        const rh = result.hash;
+        await mmp.waitForTransaction(rh).then(async (approvalReceipt) => {
+          if (approvalReceipt.status === 1) { // Check if approval transaction was successful
+            toast.dismiss();
+            toast('Approval set!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+
+            const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
+            const listPromise = cpmp.offerPhunkForSale(id, lPrice);
+            txnToast(listPromise, `Listing v3Phunk for ${ethers.utils.formatEther(lPrice)}Ξ`);
+
+            await listPromise.then(async (result) => {
+              const rh = result.hash;
+              await mmp.waitForTransaction(rh).then((listReceipt) => {
+                if (listReceipt.status === 1) { // Check if listing transaction was successful
+                  toast.dismiss();
+                  toast('Transaction confirmed!', {
+                    style: {
+                      minWidth: '80%',
+                      color: '#000',
+                      background: '#ffb900',
+                    },
+                  });
+                  fetchDataWithRetry();
+                  setListState(false);
+                } else {
+                  toast.dismiss();
+                  toast('⚠️ Transaction failed! ⚠️', {
+                    style: {
+                      minWidth: '80%',
+                      color: '#000',
+                      background: '#ffb900',
+                    },
+                  });
+                }
+              });
+            });
+
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
         });
-    };
+      });
+    }
   }
 
   async function delistPhunk() {
@@ -183,13 +256,32 @@ export default function V3Phunks() {
     const signer = mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const delistPromise = cpmp.phunkNoLongerForSale(id);
-    txnToast(delistPromise); 
+    txnToast(delistPromise, `Delisting v3Phunk`); 
     await delistPromise
-      .then(result => {
+      .then(async (result) => {
         const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
+        await mmp.waitForTransaction(rh).then((listReceipt) => {
+          if (listReceipt.status === 1) { // Check if listing transaction was successful
+            toast.dismiss();
+            toast('Transaction confirmed!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+            fetchDataWithRetry();
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
       });
   }
 
@@ -203,43 +295,125 @@ export default function V3Phunks() {
     const bidPrice = c.value._hex;
     if(ap) {
       const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
-      txnToast(acceptBidPromise);
+      txnToast(acceptBidPromise, `Accepting bid of ${ethers.utils.formatUnits(bidPrice,18)}Ξ`);
       await acceptBidPromise
-        .then(result => {
+        .then(async (result) => {
         const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
+        await mmp.waitForTransaction(rh).then((listReceipt) => {
+          if (listReceipt.status === 1) { // Check if listing transaction was successful
+            toast.dismiss();
+            toast('Transaction confirmed!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+            fetchDataWithRetry();
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
       });
     } else {
       const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval); 
-      await setApproval.wait();
-      const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
-      txnToast(acceptBidPromise);
-      await acceptBidPromise
-        .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
-      });      
+      txnToast(setApproval, `Allowing vphree to access v3phunks`);
+
+      await setApproval.then(async (result) => {
+        const rh = result.hash;
+        await mmp.waitForTransaction(rh).then(async (receipt) => {
+          if (receipt.status === 1) { // Check if transaction was successful
+            toast.dismiss();
+            toast('Approval set!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+
+            const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
+            txnToast(acceptBidPromise, `Accepting bid of ${ethers.utils.formatUnits(bidPrice, 18)}Ξ`);
+            
+            await acceptBidPromise.then(async (result) => {
+              const rh = result.hash;
+              await mmp.waitForTransaction(rh).then((acceptReceipt) => {
+                if (acceptReceipt.status === 1) { // Check if transaction was successful
+                  toast.dismiss();
+                  toast('Transaction confirmed!', {
+                    style: {
+                      minWidth: '80%',
+                      color: '#000',
+                      background: '#ffb900',
+                    },
+                  });
+                  fetchDataWithRetry();
+                } else {
+                  toast.dismiss();
+                  toast('⚠️ Transaction failed! ⚠️', {
+                    style: {
+                      minWidth: '80%',
+                      color: '#000',
+                      background: '#ffb900',
+                    },
+                  });
+                }
+              });
+            });
+
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
+      });
     }
   }
 
   async function buyPhunk() {
     const mmp = new ethers.providers.Web3Provider(window.ethereum);
     const signer = mmp.getSigner(connectedAddress);
-    //console.log("buy signer: ", signer)
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const buyPhunkPromise = cpmp.connect(signer).buyPhunk(id, {value: listed.minValue._hex});
-    txnToast(buyPhunkPromise);
+    txnToast(buyPhunkPromise, `Buying v3Phunk for ${ethers.utils.formatUnits(listed.minValue._hex,18)}Ξ`);
     await buyPhunkPromise
-      .then(result => {
+      .then(async (result) => {
         const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
+        await mmp.waitForTransaction(rh).then((listReceipt) => {
+          if (listReceipt.status === 1) { // Check if listing transaction was successful
+            toast.dismiss();
+            toast('Transaction confirmed!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+            fetchDataWithRetry();
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
       });
   }
 
@@ -249,15 +423,33 @@ export default function V3Phunks() {
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const ethBid = ethers.utils.parseUnits(bid, 'ether');
     const enterBidPromise = cpmp.enterBidForPhunk(id, {value: ethBid});
-    txnToast(enterBidPromise);
-    //setBidState(false);
+    txnToast(enterBidPromise, `Entering bid of ${ethers.utils.formatEther(ethBid)}Ξ`);
     await enterBidPromise
-      .then(result => {
+      .then(async (result) => {
         const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry();
-          setBidState(false); //moved          
-        })
+        await mmp.waitForTransaction(rh).then((listReceipt) => {
+          if (listReceipt.status === 1) { // Check if listing transaction was successful
+            toast.dismiss();
+            toast('Transaction confirmed!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+            fetchDataWithRetry();
+            setBidState(false);
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
       });
   }
 
@@ -266,14 +458,32 @@ export default function V3Phunks() {
     const signer = mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const withdrawBidPromise = cpmp.withdrawBidForPhunk(id);
-    txnToast(withdrawBidPromise);  
+    txnToast(withdrawBidPromise, `Canceling bid for v3Phunk`);  
     await withdrawBidPromise
-      .then(result => {
+      .then(async (result) => {
         const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          //fetchDataWithRetry()
-          Router.reload()
-        })
+        await mmp.waitForTransaction(rh).then((listReceipt) => {
+          if (listReceipt.status === 1) { // Check if listing transaction was successful
+            toast.dismiss();
+            toast('Transaction confirmed!', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+            Router.reload();
+          } else {
+            toast.dismiss();
+            toast('⚠️ Transaction failed! ⚠️', {
+              style: {
+                minWidth: '80%',
+                color: '#000',
+                background: '#ffb900',
+              },
+            });
+          }
+        });
       });
   }
 
