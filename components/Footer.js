@@ -4,7 +4,7 @@ const Footer = ({ bg }) => {
 	let tcBg;
 
 	if (typeof(bg) === 'undefined') {
-		tcBg = 'collection-desc pb-2 px-8'
+		tcBg = 'collection-desc pb-2 px-8 bg-[#3e3e3e]'
 	} else {
 		tcBg = 'collection-desc pb-2 px-8 black-bg'
 	}

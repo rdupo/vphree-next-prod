@@ -535,9 +535,9 @@ export default function V3Phunks() {
     <>
       <Header/>
       <Toaster/>
-      <div className="page">
+      <div className="page bg-[#3e3e3e]">
         <div className="content px-8">
-          <div className="row-wrapper block px-0 my-4">
+          <div className="row-wrapper block px-0 py-4">
             <div className="nft-info inline-block pl-0 align-top v3-bg w-full">
               <div id="img-wrapper">
                 <Image

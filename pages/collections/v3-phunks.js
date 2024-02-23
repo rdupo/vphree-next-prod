@@ -162,7 +162,7 @@ export default function V3Phunks() {
         <div className="banner-wrapper mb-6">
           <Image className="col-banner" src={Banner} width="100%" alt="v3 phunks banner"/>
         </div>
-        <div className="content px-8">
+        <div className="content px-8 z-10">
           <CollectionInfo
             title="V3Phunks"
             desc={desc}
@@ -661,7 +661,10 @@ export default function V3Phunks() {
           </div>
         </div>    
       </div>
-      <Footer/>      
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
+      <Footer
+        bg='black'
+      />      
     </>
   )
 }
