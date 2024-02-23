@@ -62,7 +62,6 @@ const getV3Sales = () => {
       };
     });
 
-    console.log('form: ', formattedEvents);
     setSales(formattedEvents);
   };
 

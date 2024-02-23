@@ -200,6 +200,12 @@ select, option, .black-txt {
   border-right: none;
 }
 
+.select-short {
+  /*border-radius: 8px 0 0 8px;*/
+  width: 130px;
+  border-right: none;
+}
+
 .filter-dropdown {
   display: inline-flex;
   margin: 1em 1em 0 0;
@@ -210,6 +216,14 @@ select, option, .black-txt {
   /*border-radius: 8px;*/
   padding: 2px 6px;
   margin: 0 0 0 1em;
+  height: 1.75em;
+}
+
+#view-mr, #hide-mr {
+  border: solid 1px #83dfb2;
+  /*border-radius: 8px;*/
+  padding: 2px 6px;
+  margin: 0;
   height: 1.75em;
 }
 

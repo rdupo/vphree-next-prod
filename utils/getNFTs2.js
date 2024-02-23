@@ -17,8 +17,8 @@ export async function getNFTs(walletAddy) {
 
   const idsToWallet = transferEventsToWallet.map(event => event.args.tokenId._hex);
   const idsFromWallet = transferEventsFromWallet.map(event => event.args.tokenId._hex);
-  console.log("IDs To Wallet: ", idsToWallet);
-  console.log("IDs From Wallet: ", idsFromWallet);
+  //console.log("IDs To Wallet: ", idsToWallet);
+  //console.log("IDs From Wallet: ", idsFromWallet);
 
   // Count occurrences of each ID in idsFromWallet
   const countMap = idsFromWallet.reduce((map, id) => {
@@ -36,7 +36,7 @@ export async function getNFTs(walletAddy) {
     return true;
   });
 
-  console.log("IDs In Wallet: ", idsInWallet);
+  //console.log("IDs In Wallet: ", idsInWallet);
 
   const idsAsNumbers = idsInWallet.map(hexString => parseInt(hexString, 16));
 

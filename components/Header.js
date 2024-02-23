@@ -83,7 +83,7 @@ const Header = () => {
 						className="inline-flex align-middle my-3 mr-8 h-img brite" 
 						src={Profile}
 						alt="profile icon"
-						onClick={() => {Router.push({pathname: `/account/${connectedAddress}`})}}
+						onClick={() => {Router.push({pathname: `/dashboard/${connectedAddress}`})}}
 					/>
 				}
 			</div>

@@ -1,4 +1,3 @@
-// pages/index.js - template from chatgpt
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import v3MarketAbi from '../utils/v3MarketAbi';
