@@ -1,4 +1,5 @@
 import { React, useState, useEffect, useMemo } from 'react'
+import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
 import Header from  '../../components/Header'
@@ -996,7 +997,7 @@ export default function V3Phunks() {
                   />
                 )))
                 :
-                <p className="text-2xl text-gray-400 my-4">You do not own any v3Phunks. Check out the <a href="/collections/v3-phunks">marketplace</a> to pick one up!</p> 
+                <p className="text-2xl text-gray-400 my-4">You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!</p> 
               )
                 :
               <p className="text-2xl v3-txt my-4">Fetching your v3Phunks...</p>
