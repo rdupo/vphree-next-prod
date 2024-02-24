@@ -562,7 +562,7 @@ export default function V3Phunks() {
                 </div>
               </div>
             </div>
-            <div className="metadata inline-block align-top w-full md:w-5/12">
+            <div className="atts-div metadata inline-block align-top w-full md:w-5/12">
               <p>Attributes</p>
               <div className="metadata" id="md">
                 <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />

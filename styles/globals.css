@@ -295,4 +295,21 @@ select, option, .black-txt {
     font-size: 1.6em;
     margin: 1em 0;
   }
+
+  #view, #hide, #asc, #desc {
+    margin: 1em 0 0 0;
+    width: 100%;
+  }
+
+  .collection-info, #id, .filter-dropdown, #view-mr, .select-short {
+    width: 100%;
+  }
+
+  label, .t-to, .t-from {
+    display: none;
+  }
+
+  .atts-div, .contract-interactions, .filter-dropdown, #view-mr {
+    margin: 1em 0 0 0;
+  }
 }

@@ -10,8 +10,8 @@ const History = ({ transactions }) => {
             <tr className="v3-txt black-bg">
               <th>Event</th>
               <th>Amount</th>
-              <th>From</th>
-              <th>To</th>
+              <th className="t-from">From</th>
+              <th className="t-to">To</th>
               <th>View Txn</th>
             </tr>
           </thead>
@@ -37,24 +37,24 @@ const History = ({ transactions }) => {
                   </td>
                 }
                 {typeof(transaction.from) !== 'undefined' ?                
-                  <td>
+                  <td className="t-from">
                     {transaction.from.substr(0,4) +
                     '...' +
                     transaction.from.substr(transaction.from.length - 4, transaction.from.length)}
                   </td>
                   :
-                  <td>
+                  <td className="t-from">
                     ---
                   </td>
                 }
                 {typeof(transaction.to) !== 'undefined' && transaction.eventType != 'Listed' ?                
-                  <td>
+                  <td className="t-to">
                     {transaction.to.substr(0,4) +
                     '...' +
                     transaction.to.substr(transaction.to.length - 4, transaction.to.length)}
                   </td>
                   :
-                  <td>
+                  <td className="t-to">
                     ---
                   </td>
                 }
