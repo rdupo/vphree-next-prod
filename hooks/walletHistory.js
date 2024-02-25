@@ -143,7 +143,9 @@ const getWalletHistory = (wallet) => {
   };
 
   useEffect(() => {
-    fetchTransactionHistory();
+    if(typeof(wallet) !== 'undefined' && wallet.length > 1) {
+      fetchTransactionHistory();
+    }
   }, [wallet]);
 
   return { transactionHistory };

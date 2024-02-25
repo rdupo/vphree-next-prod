@@ -70,6 +70,10 @@ export default function V3Phunks() {
   const { transactionHistory } = walletHistory(walletAddy);
   //console.log(transactionHistory)
 
+  if(typeof(router.query.addy) !== 'undefined'){
+    sessionStorage.setItem('dashAddy', router.query.addy);
+  }
+
   //NEW VERSION filtering
   useEffect(() => {
     function filterPhunks() {
@@ -142,55 +146,57 @@ export default function V3Phunks() {
 
   //listings
   const fetchListings = async () => {
-    const initialActiveListings = [];
-    const phunkIds = [];
-    const currentListings = [];
+    if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1){      
+      const initialActiveListings = [];
+      const phunkIds = [];
+      const currentListings = [];
 
-    const phunkOfferedFilter = contract.filters.PhunkOffered(null, null, walletAddy, null);
-    const phunkBoughtFilter = contract.filters.PhunkBought(null, null, walletAddy, null);
-    const phunkNoLongerForSaleFilter = contract.filters.PhunkNoLongerForSale();
-    const phunkXferFilter = v3Contract.filters.Transfer(walletAddy, null, null);
+      const phunkOfferedFilter = contract.filters.PhunkOffered(null, null, walletAddy, null);
+      const phunkBoughtFilter = contract.filters.PhunkBought(null, null, walletAddy, null);
+      const phunkNoLongerForSaleFilter = contract.filters.PhunkNoLongerForSale();
+      const phunkXferFilter = v3Contract.filters.Transfer(walletAddy, null, null);
 
-    const initialPhunkOfferedEvents = await contract.queryFilter(phunkOfferedFilter);
-    const initialPhunkBoughtEvents = await contract.queryFilter(phunkBoughtFilter);
-    const initialphunkNoLongerForSaleEvents = await contract.queryFilter(phunkNoLongerForSaleFilter);
-    const initialPhunkXferEvents = await v3Contract.queryFilter(phunkXferFilter, 19085195);
+      const initialPhunkOfferedEvents = await contract.queryFilter(phunkOfferedFilter);
+      const initialPhunkBoughtEvents = await contract.queryFilter(phunkBoughtFilter);
+      const initialphunkNoLongerForSaleEvents = await contract.queryFilter(phunkNoLongerForSaleFilter);
+      const initialPhunkXferEvents = await v3Contract.queryFilter(phunkXferFilter, 19085195);
 
-    const allEvents = [...initialPhunkOfferedEvents,
-                       ...initialPhunkBoughtEvents, 
-                       ...initialphunkNoLongerForSaleEvents,
-                       ...initialPhunkXferEvents]
+      const allEvents = [...initialPhunkOfferedEvents,
+                         ...initialPhunkBoughtEvents, 
+                         ...initialphunkNoLongerForSaleEvents,
+                         ...initialPhunkXferEvents]
 
-    // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
-    allEvents.sort((a, b) => {
-      return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
-    });
+      // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
+      allEvents.sort((a, b) => {
+        return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
+      });
 
-    // Iterate through sorted events and select the first occurrence of each unique phunkIndex
-    allEvents.forEach(event => {
-      const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
-      if (phunkIds.indexOf(phunkIndex) === -1) {
-        phunkIds.push(phunkIndex);
-        initialActiveListings.push(event);
+      // Iterate through sorted events and select the first occurrence of each unique phunkIndex
+      allEvents.forEach(event => {
+        const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
+        if (phunkIds.indexOf(phunkIndex) === -1) {
+          phunkIds.push(phunkIndex);
+          initialActiveListings.push(event);
+        }
+      });
+
+      const updatedListings = initialActiveListings.filter((event) => event.event == 'PhunkOffered')
+
+      updatedListings.map(listing => (
+        currentListings.push({
+          tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
+          minValue: Number(ethers.utils.formatUnits(listing.args.minValue._hex, 18)),
+        })
+      ));
+      
+      let ethSum = 0;
+      for(let i = 0; i < currentListings.length; i++) {
+        ethSum += currentListings[i].minValue;
       }
-    });
 
-    const updatedListings = initialActiveListings.filter((event) => event.event == 'PhunkOffered')
-
-    updatedListings.map(listing => (
-      currentListings.push({
-        tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
-        minValue: Number(ethers.utils.formatUnits(listing.args.minValue._hex, 18)),
-      })
-    ));
-    
-    let ethSum = 0;
-    for(let i = 0; i < currentListings.length; i++) {
-      ethSum += currentListings[i].minValue;
+      setListVal(ethSum);
+      setListed(currentListings);
     }
-
-    setListVal(ethSum);
-    setListed(currentListings);
   };
 
   //bids
@@ -225,13 +231,11 @@ export default function V3Phunks() {
 
     const allBids = initialActiveBids.filter((event) => event.event === 'PhunkBidEntered');
 
-//<--- START ERRONEOUS CODE --->
-    console.log('nfts', nfts); 
+    //console.log('nfts', nfts); 
     const updatedBids = allBids.filter((event) => {
       return nfts.includes(Number(ethers.utils.formatUnits(event.args.phunkIndex._hex,0)));
     });
-    console.log('bids recieved', updatedBids); //0x60 == 96
-//<--- END ERRONEOUS CODE --->
+    //console.log('bids recieved', updatedBids); //0x60 == 96
 
     const myBids = allBids.filter((event) => event.args.fromAddress.toLowerCase() === walletAddy.toLowerCase());
     //console.log('bids placed', myBids);
@@ -324,18 +328,18 @@ export default function V3Phunks() {
 
   useEffect(() => {
     async function fetchData() {
-      await fetchNFTs(router.query.addy);
-      //await fetchListings();
-      //await fetchBids();
-      setLoading(false);
+      if(walletAddy.length > 1 && typeof(walletAddy) !== 'undefined'){
+        await fetchNFTs(walletAddy);
+        setLoading(false);
+      }
     }
     fetchData();
-  }, []);//walletAddy, connectedAddress]);
+  }, [walletAddy]);//walletAddy, connectedAddress]);
 
   useEffect(() => {
     fetchBids();
     fetchListings();
-  },[nfts])
+  },[nfts, walletAddy])
 
   // Route to new page on wallet change
   useEffect(() => {
