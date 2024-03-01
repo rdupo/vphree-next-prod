@@ -4,7 +4,7 @@ import Image  from 'next/image';
 const History = ({ transactions }) => {
   return (
     <div>
-      {transactions.length > 0 ?
+      {transactions.length > 0 && transactions[0].eventType !== 'none' ?
         (<table className="collection-desc w-full text-left mb-20">
           <thead>
             <tr className="v3-txt black-bg">
@@ -57,9 +57,13 @@ const History = ({ transactions }) => {
                 }
                 {typeof(transaction.from) !== 'undefined' ?                
                   <td className="t-from">
-                    {transaction.from.substr(0,4) +
-                    '...' +
-                    transaction.from.substr(transaction.from.length - 4, transaction.from.length)}
+                    {transaction.from.indexOf('.eth') > -1 ?
+                      transaction.from 
+                      :
+                      transaction.from.substr(0,4) +
+                      '...' +
+                      transaction.from.substr(transaction.from.length - 4, transaction.from.length)
+                    }
                   </td>
                   :
                   <td className="t-from">
@@ -68,9 +72,13 @@ const History = ({ transactions }) => {
                 }
                 {typeof(transaction.to) !== 'undefined' && transaction.eventType != 'Listed' ?                
                   <td className="t-to">
-                    {transaction.to.substr(0,4) +
-                    '...' +
-                    transaction.to.substr(transaction.to.length - 4, transaction.to.length)}
+                    {transaction.to.indexOf('.eth') > -1 ? 
+                      transaction.to
+                      :
+                      transaction.to.substr(0,4) +
+                      '...' +
+                      transaction.to.substr(transaction.to.length - 4, transaction.to.length)
+                    }
                   </td>
                   :
                   <td className="t-to">
@@ -98,7 +106,11 @@ const History = ({ transactions }) => {
           </tbody>
         </table>)
         :
-        (<p className="text-2xl text-gray-400 my-4">You do not have any vPhree transactions.</p>)
+        transactions[0] && transactions[0].eventType === 'none' 
+        ?
+        <p className="text-2xl text-gray-400 my-4">You do not have any vPhree transactions.</p>
+        :
+        <p className="text-2xl v3-txt my-4">Loading transaction history...</p>
       }
     </div>
   );

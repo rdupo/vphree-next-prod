@@ -97,9 +97,9 @@ export default function V3Phunks() {
     <>
       <Header/>
       <Toaster/>
-      <div className="page">
+      <div className="page bg-[#3e3e3e]">
         <div className="content px-8">
-        	<h1 className="v3-txt mr-auto text-5xl mt-4">
+        	<h1 className="v3-txt mr-auto text-5xl pt-4">
             <Image
               height={40}
               className="inline-flex align-middle my-3 mr-4 h-img" 

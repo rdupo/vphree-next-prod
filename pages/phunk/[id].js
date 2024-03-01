@@ -28,9 +28,11 @@ export default function V3Phunks() {
   const [listed, setListed] = useState([]);
   const [offers, setOffers] = useState('');
   const [offerer, setOfferer] = useState('');
+  const [offererEns, setOffererEns] = useState('');
   const { connectedAddress, setConnectedAddress } = useWallet();
   //console.log("connected: ", connectedAddress)
   const [owner, setOwner] = useState('');
+  const [ownerEns, setOwnerEns] = useState('');
   const [bidActive, setBidState] = useState(false);
   const [listActive, setListState] = useState(false);
   const { transactionHistory } = getTxnHistory(id);
@@ -40,6 +42,16 @@ export default function V3Phunks() {
   const [signer, setSigner] = useState([]);
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   let alt_id
+
+  const resolveENS = async (address) => {
+    try {
+      const ensName = await provider.lookupAddress(address);
+      return ensName;
+    } catch (error) {
+      console.error('Error resolving ENS name:', error.message);
+      return null;
+    }
+  };
 
   if(id) {
     const s_id = id.toString();
@@ -78,14 +90,15 @@ export default function V3Phunks() {
           const market = new ethers.Contract(marketContract, marketAbi, provider);
         try {
           const o = await v3.ownerOf(id).then(new Response);
+          const oEns = await resolveENS(o)
           setOwner(o);
-          //console.log("owner: ", owner)
+          setOwnerEns(oEns);
         } catch (error) {  }
 
         try {
           const listing = await market.phunksOfferedForSale(id);
           setListed(listing);
-          console.log('seller: ', listing.seller);
+          //console.log('seller: ', listing.seller);
         } catch (error) {  }
 
         try {
@@ -94,7 +107,10 @@ export default function V3Phunks() {
           if (topBid > 0) {
             setOffers(topBid);
             setOfferer(bids.bidder);
+            const bidderEns = await resolveENS(bids.bidder);
+            setOffererEns(bidderEns);
             //console.log("bid from: ", offerer, "; connected: ", connectedAddress);
+            //console.log('offerer ENS', offererEns);
           }
         } catch (error) {  }
 
@@ -558,7 +574,11 @@ export default function V3Phunks() {
                   onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
                                   Router.push({pathname: `/account/${owner}`}) :
                                   Router.push({pathname: `/profile/${owner}`})}}>
-                  {owner.substr(0,4) + `...` + owner.substr(owner.length-4, owner.length)}
+                  {
+                    ownerEns ?
+                    ownerEns :
+                    owner.substr(0,4) + `...` + owner.substr(owner.length-4, owner.length)
+                  }
                 </div>
               </div>
             </div>
@@ -594,7 +614,11 @@ export default function V3Phunks() {
                                         Router.push({pathname: `/account/${offerer}`}) :
                                         Router.push({pathname: `/profile/${offerer}`})}}
                       >
-                          {offerer.substr(0,4) + `...` + offerer.substr(offerer.length-4, offerer.length)}
+                        {
+                          offererEns ?
+                          offererEns :
+                          offerer.substr(0,4) + `...` + offerer.substr(offerer.length-4, offerer.length)
+                        }
                       </span>
                     </p>
                   </>

@@ -19,6 +19,16 @@ const getWalletHistory = (wallet) => {
   const v3Abi = v3PhunkAbi
   const mpAbi = v3MarketAbi
 
+  const resolveENS = async (address) => {
+    try {
+      const ensName = await provider.lookupAddress(address);
+      return ensName;
+    } catch (error) {
+      console.error('Error resolving ENS name:', error.message);
+      return null;
+    }
+  };
+
   const fetchTransactionHistory = async () => {
     const retry = async (fn, maxRetries = 5) => {
       let retries = 0;
@@ -79,6 +89,13 @@ const getWalletHistory = (wallet) => {
     const marketplaceEvents = [...List, ...Offer, ...Withdraw, ...Sold, ...Bought];
     //const nftEvents = await retry(async () => await nftContract.queryFilter(filterV3));
 
+    // Check if any of the event arrays is empty
+    if (List.length === 0 && Offer.length === 0 && Withdraw.length === 0 && Sold.length === 0 && Bought.length === 0) {
+      // Handle the case where no events are returned
+      setTransactionHistory([{eventType:'none'}]);
+      return;
+    }
+
     // Combine all events
     const combinedEvents = [];
     transformMarketplaceEvent(marketplaceEvents);
@@ -93,7 +110,7 @@ const getWalletHistory = (wallet) => {
       return !transactionHistory.some(prevEvent => prevEvent.timestamp === event.timestamp);
     });
   
-    const formattedEvents = refilteredEvents.map(event => {
+    const formattedEvents = refilteredEvents.map(async event => {
       let eventType;
       /*if (event.from == '0x0000000000000000000000000000000000000000') {
         eventType = 'Mint';
@@ -113,6 +130,9 @@ const getWalletHistory = (wallet) => {
         eventType = 'Bought'
       }
 
+      const fromENS = await resolveENS(event.from);
+      const toENS = await resolveENS(event.to);
+
       let alt_id;
       const s_id = event.tokenId.toString();
         if (s_id.length === 1) {
@@ -126,8 +146,8 @@ const getWalletHistory = (wallet) => {
         }
 
       return {
-        from: event.from,
-        to: event.to,
+        from: fromENS || event.from,
+        to: toENS || event.to,
         eventType: eventType,
         amount: event.amount,
         hash: event.hash,
@@ -137,9 +157,17 @@ const getWalletHistory = (wallet) => {
     });
     //console.log('events', formattedEvents);
 
-    if (formattedEvents.length > 0) {
+    /*if (formattedEvents.length > 0) {
       setTransactionHistory(formattedEvents);
-    }
+    }*/
+
+    Promise.all(formattedEvents).then((results) => {
+      if (results.length > 0) {
+        setTransactionHistory(results);
+      }
+
+
+    });
   };
 
   useEffect(() => {

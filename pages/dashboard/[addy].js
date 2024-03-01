@@ -25,6 +25,7 @@ export default function V3Phunks() {
   const router = useRouter()
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const walletAddy = router.query.addy || ''
+  const [ensAddy, setEnsAddy] = useState('')
   const [nfts, setNFTs] = useState([]);
   const [nftsData, setNFTsData] = useState([]);
   const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
@@ -68,7 +69,6 @@ export default function V3Phunks() {
   const [bidPlacedMinVal, setBidPlacedMinVal] = useState([]);
   //history
   const { transactionHistory } = walletHistory(walletAddy);
-  //console.log(transactionHistory)
 
   if(typeof(router.query.addy) !== 'undefined'){
     sessionStorage.setItem('dashAddy', router.query.addy);
@@ -332,6 +332,8 @@ export default function V3Phunks() {
         await fetchNFTs(walletAddy);
         setLoading(false);
       }
+      const name = await provider.lookupAddress(walletAddy);
+      setEnsAddy(name)
     }
     fetchData();
   }, [walletAddy]);//walletAddy, connectedAddress]);
@@ -407,7 +409,10 @@ export default function V3Phunks() {
               href={`https://etherscan.io/address/${walletAddy}`}
               target="_blank"
             >
-              {walletAddy.substr(0,4) + "..." + walletAddy.substr(walletAddy.length - 4, walletAddy.length)}
+              {ensAddy && ensAddy.length > 4 ? 
+               ensAddy :
+               walletAddy.substr(0,4) + "..." + walletAddy.substr(walletAddy.length - 4, walletAddy.length)
+              }
             </a>
           </h1>           
           { connectedAddress === walletAddy && pendingWithdrawAmt > 0 ?
@@ -1035,7 +1040,7 @@ export default function V3Phunks() {
                 transactions={transactionHistory}
               />
               :
-              <p className="text-2xl v3-txt my-4">Fetching vPhree history...</p>
+              <p className="text-2xl v3-txt my-4">Loading transaction history...</p>
             }
           </div>
         </div>

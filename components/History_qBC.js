@@ -38,9 +38,13 @@ const History = ({ transactions }) => {
                 }
                 {typeof(transaction.from) !== 'undefined' ?                
                   <td className="t-from">
-                    {transaction.from.substr(0,4) +
-                    '...' +
-                    transaction.from.substr(transaction.from.length - 4, transaction.from.length)}
+                    {transaction.from.indexOf('.eth') > -1 ?
+                      transaction.from 
+                      :
+                      transaction.from.substr(0,4) +
+                      '...' +
+                      transaction.from.substr(transaction.from.length - 4, transaction.from.length)
+                    }
                   </td>
                   :
                   <td className="t-from">
@@ -49,9 +53,13 @@ const History = ({ transactions }) => {
                 }
                 {typeof(transaction.to) !== 'undefined' && transaction.eventType != 'Listed' ?                
                   <td className="t-to">
-                    {transaction.to.substr(0,4) +
-                    '...' +
-                    transaction.to.substr(transaction.to.length - 4, transaction.to.length)}
+                    {transaction.to.indexOf('.eth') > -1 ? 
+                      transaction.to
+                      :
+                      transaction.to.substr(0,4) +
+                      '...' +
+                      transaction.to.substr(transaction.to.length - 4, transaction.to.length)
+                    }
                   </td>
                   :
                   <td className="t-to">
