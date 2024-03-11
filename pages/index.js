@@ -67,10 +67,13 @@ export default function Home() {
           <p className="home-body w-75">vPhree is a phee-phree marketplace to buy and sell v3 Phunks</p>
           <div>
             <Link href="/collections/v3-phunks">
-              <button className="cta v3-bg v3-b black-txt">v3 Marketplace</button>
+              <button className="mobile-100 cta v3-bg v3-b black-txt">v3 Marketplace</button>
             </Link>
             <Link href="/view-all/v3-phunks">
-              <button className="cta v3-b black-bg v3-txt">View All v3s</button>
+              <button className="mobile-100 cta v3-b black-bg v3-txt">View All v3s</button>
+            </Link>
+            <Link href="/view-all/philip-intern-project">
+              <button className="mobile-100 cta v1-b v1-bg black-txt">Philip Phinder</button>
             </Link>
           </div>
         </div>

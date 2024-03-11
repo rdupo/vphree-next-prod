@@ -32,7 +32,7 @@ export default function V3Phunks() {
   const [appliedFilters, setAppliedFilters] = useState({})
   const [fP, setFP] = useState(philips)
   const phunks = philips
-  const philDesc = ["View all 1,004 Philips. Click on a Philip to view it's attribute(s) or bid on/buy it. A preview of the wrapped Philip is displayed on hover. You can wrap your Philip at ", <a key="philip-wrapper" href="https://www.v1phunks.io/" target="_blank">v1phunks.io</a>]
+  const philDesc = ["View all 1,004 Philips. Click on a Philip to view it's attribute(s) and links to buy/bid on the Philip, v2, and v3. A preview of the wrapped Philip is displayed on hover. You can wrap your Philip at ", <a key="philip-wrapper" href="https://www.v1phunks.io/" target="_blank">v1phunks.io</a>]
 
   // Use the useEffect hook to monitor changes to the 'f' state
   useEffect(() => {
@@ -55,11 +55,11 @@ export default function V3Phunks() {
   return (
     <>
       <Header/>
-      <div className="page">
+      <div className="page bg-t">
         <div className="banner-wrapper mb-6">
-          <Image className="col-banner" src={Banner} width="100%" alt="v3 phunks banner"/>
+          <Image className="col-banner" src={Banner} width="100%" alt="philip banner"/>
         </div>
-        <div className="content px-8">
+        <div className="content px-8 z-10">
           <CollectionInfo
             title="All Philips"
             desc={philDesc}
@@ -588,6 +588,7 @@ export default function V3Phunks() {
           </div>
         </div>    
       </div>
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
       <Footer/>      
     </>
   )

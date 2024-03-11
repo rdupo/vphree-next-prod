@@ -90,6 +90,10 @@ select, option, .black-txt {
   border: 3px solid #83dfb2;
 }
 
+.v1-b {
+  border: 3px solid #a79aff;
+}
+
 /*page styles*/
 .page {
   position: relative;
@@ -301,7 +305,7 @@ select, option, .black-txt {
     width: 100%;
   }
 
-  .collection-info, #id, .filter-dropdown, #view-mr, .select-short {
+  .collection-info, #id, .filter-dropdown, #view-mr, .select-short, .mobile-100  {
     width: 100%;
   }
 

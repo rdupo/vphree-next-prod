@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from 'react'
+import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
 import Header from  '../../components/Header'
@@ -11,8 +12,6 @@ import { ethers } from 'ethers'
 import toast, {Toaster} from 'react-hot-toast'
 import { useWallet } from '../../contexts/WalletContext'
 import phunks from '../../utils/phunkAtts'
-import v3MarketAddy from '../../utils/v3MarketAddy' //update w philip market contract
-import v3MarketAbi from '../../utils/v3MarketAbi' //update w philip market contract
 import philipAddy from '../../utils/philipAddy'
 import philipAbi from '../../utils/philipAbi'
 
@@ -24,28 +23,29 @@ export default function V3Phunks() {
 
   //start updates
   const collectionContract = philipAddy
-  const marketContract = v3MarketAddy
-  const v3Abi = philipAbi
-  const marketAbi = v3MarketAbi
+  const collAbi = philipAbi
   //end updates
 
-  const [listed, setListed] = useState([]);
-  const [offers, setOffers] = useState('');
-  const [offerer, setOfferer] = useState('');
   const { connectedAddress, setConnectedAddress } = useWallet();
-  console.log("connected: ", connectedAddress)
   const [owner, setOwner] = useState('');
-  const [bidActive, setBidState] = useState(false);
-  const [listActive, setListState] = useState(false);
-  //const { transactionHistory } = philipTxnHistory(id);
-  const [listPrice, setListPrice] = useState('');
-  const [bid, setBid] = useState('');
+  const [ownerEns, setOwnerEns] = useState('');
+  const { transactionHistory } = philipTxnHistory(id);
   const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
   const [signer, setSigner] = useState([]);
   const [isHovered, setIsHovered] = useState(false);
   let imageSrc;
   let imageWrapperClassName;
   let alt_id;
+
+  const resolveENS = async (address) => {
+    try {
+      const ensName = await provider.lookupAddress(address);
+      return ensName;
+    } catch (error) {
+      console.error('Error resolving ENS name:', error.message);
+      return null;
+    }
+  };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -80,16 +80,7 @@ export default function V3Phunks() {
     imageWrapperClassName = 'nft-info inline-block pl-0 align-top philip-bg w-full';
   }
 
-  //toggle class
-  const bidToggle = () => {
-    setBidState((current) => !current)
-  }
-
-  const listToggle = () => {
-    setListState((current) => !current)
-  }
-
-  //get listing info and bid info, if they exist
+  //get owner
   const fetchDataWithRetry = async () => {
     const maxRetries = 5;
     let retries = 0;
@@ -97,29 +88,13 @@ export default function V3Phunks() {
 
     while (retries < maxRetries && !success) {
       try {
-          const v3 = new ethers.Contract(collectionContract, v3Abi, provider);
-          const market = new ethers.Contract(marketContract, marketAbi, provider);
+          const cc = new ethers.Contract(collectionContract, collAbi, provider);
         try {
-          const o = await v3.ownerOf(id).then(new Response);
+          const o = await cc.ownerOf(id).then(new Response);
+          const oEns = await resolveENS(o)
           setOwner(o);
-          console.log("owner: ", owner)
+          setOwnerEns(oEns);
         } catch (error) {  }
-
-        try {
-          const listing = await market.phunksOfferedForSale(id);
-          setListed(listing);
-        } catch (error) {  }
-
-        try {
-          const bids = await market.phunkBids(id);
-          const topBid = bids.value;
-          if (topBid > 0) {
-            setOffers(topBid);
-            setOfferer(bids.bidder);
-            console.log("bid from: ", offerer, "; connected: ", connectedAddress);
-          }
-        } catch (error) {  }
-
         success = true; // Data fetched successfully
       } catch (error) {
         retries++;
@@ -140,214 +115,14 @@ export default function V3Phunks() {
       setConnectedAddress(storedAddress);
     }
   }, [id,connectedAddress, setConnectedAddress]);
-
-  const txnToast = (x) => {
-    if (!(x instanceof Promise)) {
-      // If x is not a promise, you can handle it here
-      console.error('txnToast error: x is not a promise');
-      return;
-    }
-
-    toast.promise(x, {
-      loading: 'Transaction pending...',
-      success: 'Transaction successful!',
-      error: 'Transaction failed!',
-      position: 'top-center',
-    },
-    {
-      style: {
-        minWidth: '80%',
-        color: '#83dfb2',
-        background: '#000',
-      },
-    });
-  };
-
-  async function listPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
-    const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const cc = new ethers.Contract(collectionContract, v3Abi, signer);
-    const ap = await cc.isApprovedForAll(connectedAddress, marketContract);
-    if (ap) {
-      const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
-      const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-      txnToast(listPromise);
-      setListState(false);
-      await listPromise
-        .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
-      });
-    } else {
-      const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval);
-      await setApproval.wait();
-      const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
-      const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-      txnToast(listPromise);
-      setListState(false);
-      await listPromise
-        .then(result => {
-          const rh = result.hash
-          mmp.waitForTransaction(rh).then(() => {
-            fetchDataWithRetry()
-          })
-        });
-    };
-  }
-
-  async function delistPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
-    const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const delistPromise = cpmp.phunkNoLongerForSale(id);
-    txnToast(delistPromise); 
-    await delistPromise
-      .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
-      });
-  }
-
-  async function acceptPhunkBid() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
-    const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const cc = new ethers.Contract(collectionContract, v3Abi, signer);
-    const ap = await cc.isApprovedForAll(connectedAddress, marketContract);
-    const c = await cpmp.phunkBids(id).then(new Response);
-    const bidPrice = c.value._hex;
-    if(ap) {
-      const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
-      txnToast(acceptBidPromise);
-      await acceptBidPromise
-        .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
-      });
-    } else {
-      const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval); 
-      await setApproval.wait();
-      const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
-      txnToast(acceptBidPromise);
-      await acceptBidPromise
-        .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
-      });      
-    }
-  }
-
-  async function buyPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
-    console.log("buy signer: ", signer)
-    const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const buyPhunkPromise = cpmp.connect(signer).buyPhunk(id, {value: listed.minValue._hex});
-    txnToast(buyPhunkPromise);
-    await buyPhunkPromise
-      .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()
-        })
-      });
-  }
-
-  async function bidOnPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
-    const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const ethBid = ethers.utils.parseUnits(bid, 'ether');
-    const enterBidPromise = cpmp.enterBidForPhunk(id, {value: ethBid});
-    txnToast(enterBidPromise);
-    setBidState(false);
-    await enterBidPromise
-      .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          fetchDataWithRetry()          
-        })
-      });
-  }
-
-  async function cancelPhunkBid() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
-    const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const withdrawBidPromise = cpmp.withdrawBidForPhunk(id);
-    txnToast(withdrawBidPromise);  
-    await withdrawBidPromise
-      .then(result => {
-        const rh = result.hash
-        mmp.waitForTransaction(rh).then(() => {
-          //fetchDataWithRetry()
-          Router.reload()
-        })
-      });
-  }
-
-  // onClick functions
-  // list
-  async function list() {
-    if(signer) {
-      listPhunk()
-    }
-  }
-
-  // delist
-  async function delist() {
-    if(signer) {
-      delistPhunk()
-    }
-  }
-
-  // accept bid
-  async function acceptBid() {
-    if(signer) {
-      acceptPhunkBid()
-    }
-  }
-
-  // buy
-  async function buy() {
-    console.log('signer: ', signer)
-    if(signer){
-      buyPhunk()
-    }
-  }
-
-  // place bid
-  async function bidOn() {
-    if(signer) {
-      bidOnPhunk()
-    }
-  }
-
-  // cancel bid
-  async function cancelBid() {
-    if(signer) {
-      cancelPhunkBid()
-    }
-  }
   
   return (
     <>
       <Header/>
       <Toaster/>
-      <div className="page">
+      <div className="page bg-[#3e3e3e]">
         <div className="content px-8">
-          <div className="row-wrapper block px-0 my-4">
+          <div className="row-wrapper block px-0 py-4">
             <div 
               className={imageWrapperClassName}
               onMouseEnter={handleMouseEnter}
@@ -363,7 +138,7 @@ export default function V3Phunks() {
               </div>
             </div>
             <h2 id="title" className="v3-txt">Philip #{id}</h2>
-            <p className="v3-txt mb-4 collection-desc">Hover displays a preview of the wrapped Philip</p>
+            <p className="drk-grey-txt mb-4 collection-desc">Hover displays a preview of the wrapped Philip. Wrap your Philips at <Link href="https://www.v1phunks.io/" target="_blank">v1phunks.io</Link></p>
             <div className="metadata inline-block align-top w-full md:w-3/12">
               <div className="id-and-owner">
                 <p>Owner</p>
@@ -373,162 +148,32 @@ export default function V3Phunks() {
                   onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
                                   Router.push({pathname: `/account/${owner}`}) :
                                   Router.push({pathname: `/profile/${owner}`})}}>
-                  {owner.substr(0,4) + `...` + owner.substr(owner.length-4, owner.length)}
+                  {
+                    ownerEns ?
+                    ownerEns :
+                    owner.substr(0,4) + `...` + owner.substr(owner.length-4, owner.length)
+                  }
                 </div>
               </div>
             </div>
-            <div className="metadata inline-block align-top w-full md:w-5/12">
+            <div className="atts-div metadata inline-block align-top w-full md:w-5/12">
               <p>Attributes</p>
               <div className="metadata" id="md">
                 <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
               </div>
             </div>
-            {/*<div className="contract-interactions inline-block pr-0 align-top w-full md:w-4/12">
-              <div className="price-and-bid">
-                {!listed.isForSale ?
-                  null
-                  :
-                  <p id="price">Price:&nbsp;
-                    <span className="collection-desc v3-txt">
-                      {ethers.utils.formatUnits(listed.minValue._hex,18) + 'Ξ'}
-                    </span>
-                  </p>
-                }
-                {offers.length === 0 ?
-                  null
-                  :
-                  <>
-                    <p id="bid" className="">Top Bid:&nbsp;
-                      <span className="collection-desc v3-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
-                    </p>
-                    <p className="">Bidder:&nbsp; 
-                      <span 
-                        id="top-bidder"
-                        className="collection-desc brite v3-txt sans-underline"
-                        onClick={() => {connectedAddress === offerer ?
-                                        Router.push({pathname: `/account/${offerer}`}) :
-                                        Router.push({pathname: `/profile/${offerer}`})}}
-                      >
-                          {offerer.substr(0,4) + `...` + offerer.substr(offerer.length-4, offerer.length)}
-                      </span>
-                    </p>
-                  </>
-                }
-              </div>
-              {connectedAddress.length > 0 ?
-                <div> 
-                  {connectedAddress.toLowerCase() !== owner.toLowerCase() ?
-                    <div className="" id="buy-bid-buttons">
-                      {!listed.isForSale ?
-                        null
-                        :
-                        <><button 
-                          className="v3-bg black-txt w-full p-1 my-2 brite" 
-                          onClick={() => {buy()}}
-                          id="buy-btn">BUY</button><br/></>
-                      }
-                      <button 
-                        className="v3-bg black-txt w-full p-1 my-2 brite" 
-                        onClick={bidToggle}
-                        id="bid-btn-togl">BID
-                      </button>
-                      <br/>
-                      <div className={bidActive ? '' : 'hidden'} id="enter-bid-amount">
-                        <input
-                          className="lite-v3-bg w-full p-1 my-2 black-txt" 
-                          type="number" 
-                          name="bid-amt" 
-                          placeholder="bid amount"
-                          min="0"
-                          id="bid-amt"
-                          onChange={(e) => setBid(e.target.value )}
-                        />
-                        <br/>
-                        <button 
-                          className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
-                          onClick={() => {bidOn()}}
-                          id="place-bid-btn">PLACE BID</button>
-                      </div>
-                      {offerer.toLowerCase() === connectedAddress.toLowerCase() ?
-                        <button 
-                          className="v3-bg black-txt w-full p-1 my-2 brite"
-                          onClick={() => {cancelBid()}}
-                          id="cxl-bid-btn">
-                          CANCEL BID
-                        </button>
-                        :
-                        null
-                      }
-                    </div>
-                    :
-                    <div className="seller-buttons">
-                      {!listed.isForSale ?
-                        <>
-                          <button 
-                            className="v3-bg black-txt w-full p-1 my-2 brite" 
-                            onClick={listToggle}
-                            id="list-btn-togl">LIST</button>
-                          <br id="delist-br"/>
-                          <div id="enter-list-amount" className={listActive ? '' : 'hidden'}>
-                            <input 
-                              className="lite-v3-bg w-full p-1 my-2 black-txt" 
-                              type="number" 
-                              name="sell-amt" 
-                              placeholder="list price"
-                              min="0"
-                              id="sell-amt"
-                              onChange={(e) => setListPrice(e.target.value)}
-                            />
-                            <br/>
-                            <button 
-                              className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
-                              onClick={() => {list()}}
-                              >LIST</button>
-                          </div>
-                        </>
-                        :
-                        <>
-                          <button 
-                            className="v3-bg black-txt w-full p-1 my-2 brite" 
-                            onClick={() => {delist()}}
-                            id="delist-btn">DELIST</button>
-                          <br/>
-                        </>
-                      }
-                      {offers.length === 0 ?
-                        null
-                        :
-                        <button 
-                          className="v3-bg black-txt w-full p-1 my-2 brite" 
-                          onClick={() => {acceptBid()}}
-                          id="accept-bid-btn">
-                          ACCEPT BID
-                        </button>
-                      }
-                    </div>
-                  }
-                </div>
-                :
-                <div 
-                  className="p-3 black-bg v3-txt v3-b w-full"  
-                  id="not-connected">
-                    Please connect your wallet to interact with this Phunk
-                </div>
-              }
-            </div>*/}
             <div className="contract-interactions inline-block pr-0 align-top w-full md:w-4/12">
-              <div 
-                  className="p-3 black-bg v3-txt v3-b w-full"  
-                  id="not-connected">
-                    The Philip Marketplace will be coming soon to a blockchain near you!
-                </div>
+              <p>Triphecta Links</p>
+              <p className="collection-desc"><Link href={`https://opensea.io/assets/ethereum/0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce/${id}`} target="_blank">View Philip</Link></p>
+              <p className="collection-desc"><Link href={`https://notlarvalabs.com/cryptophunks/details/${id}`} target="_blank">View Cryptophunk v2</Link></p>
+              <p className="collection-desc"><Link href={`https://www.vphree.io/phunk/${id}`} target="_blank">View v3Phunk</Link></p>
             </div>
           </div>
-          {/*<div className="row-wrapper mt-5">
+          <div className="row-wrapper mt-5">
             <History 
               transactions={transactionHistory}
             />
-          </div>*/}
+          </div>
         </div>
       </div>
       <Footer/>      
