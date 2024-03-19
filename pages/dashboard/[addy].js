@@ -4,6 +4,7 @@ import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
 import Header from  '../../components/Header'
 import DashCard from '../../components/dashCard'
+import Card from '../../components/Card'
 import History from '../../components/userHistory'
 import Footer from '../../components/Footer'
 import Banner from '../../assets/profile-banner.png'
@@ -11,15 +12,24 @@ import Profile from '../../assets/profile-icon.png'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import { Network, Alchemy } from 'alchemy-sdk'
 import { ethers } from "ethers"
-import { getNFTs } from '../../utils/getNFTs2'
+import { getNFTs } from '../../utils/getNFTsMulti'
 import v3MarketAddy from '../../utils/v3MarketAddy'
 import v3MarketAbi from '../../utils/v3MarketAbi'
+import nllAddy from '../../utils/nllAddy'
+import nllAbi from '../../utils/nllAbi'
+import auctionAddy from '../../utils/auctionAddy'
+import auctionAbi from '../../utils/auctionAbi'
 import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
+import flywheelAddy from '../../utils/flywheelAddy'
+import flywheelAbi from '../../utils/flywheelAbi'
 import toast, {Toaster} from 'react-hot-toast'
 import { useWallet } from '../../contexts/WalletContext'
-import phunks from '../../utils/phunkData' 
+import phunks from '../../utils/phunkData'
+import phunkAtts from '../../utils/phunkAtts' 
 import walletHistory from '../../hooks/walletHistory' 
+import nllHistory from '../../hooks/nllWalletHistory'
+import AuctionTimer from '../../components/auctionTimer'
 
 export default function V3Phunks() {
   const router = useRouter()
@@ -59,6 +69,7 @@ export default function V3Phunks() {
   const [appliedFilters, setAppliedFilters] = useState({})
   const [fP, setFP] = useState([])
   const [loading, setLoading] = useState(true);
+  const [bidLoading, setBidLoading] = useState(true);
   //listing & bid info
   const [listVal, setListVal] = useState("");
   const [listed, setListed] = useState([]);
@@ -69,6 +80,62 @@ export default function V3Phunks() {
   const [bidPlacedMinVal, setBidPlacedMinVal] = useState([]);
   //history
   const { transactionHistory } = walletHistory(walletAddy);
+  const { nllTxnHistory } = nllHistory(walletAddy);
+  //collection displayed
+  const [activeCollection, setActiveCollection] = useState("v3");
+  //auction
+  const aucContract = new ethers.Contract(auctionAddy, auctionAbi, provider);
+  const [aucData, setAucData] = useState([]);
+  const [bidInc, setBidInc] = useState();
+  const [aucBidder, setAucBidder] = useState();
+  const [aucEvent, setAucEvent] = useState([]);
+  //flywheel
+  const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
+
+  const fly = async () => {
+    const flyAppraisal = await flywheelContract.offers(0);
+    console.log('flywheel: ', flyAppraisal);
+  }
+
+  fly();
+
+  const curAuc = async () => {
+    const aucDetails = await aucContract.auction();
+    const name = await provider.lookupAddress(aucDetails.bidder);
+    const aucMinBidPerc = await aucContract.minBidIncrementPercentage();
+    const aucPhunk = (ethers.utils.formatUnits(aucDetails.phunkId._hex,0));
+    console.log('name:', name, 'bidder', aucDetails.bidder)
+    setAucData(aucDetails);
+    setBidInc(1+(Number(aucMinBidPerc)/100));
+    setAucBidder(name ? name : aucDetails.bidder.substr(0,4)+'...'+aucDetails.bidder.substr(aucDetails.bidder.length-4, aucDetails.bidder.length))
+  }
+
+  useEffect(() => {    
+    //events
+    const eventNames = ["AuctionBid", "AuctionExtended", 
+      "AuctionSettled", "AuctionCreated"];
+
+    //event listeners
+    eventNames.forEach(eventName => {
+      aucContract.on(eventName, (event) => {
+        console.log("Auction Event:", event);
+        setAucEvent(event);
+      });
+    });
+
+    //clear event listeners on unmount
+    return () => {
+      eventNames.forEach(eventName => {
+        aucContract.removeAllListeners(eventName);
+      });
+    };
+  }, []);
+
+  const collUpdate = (x) => {
+    setActiveCollection((prevValue) => (x));
+    setLoading(true);
+    setBidLoading(true);
+  }
 
   if(typeof(router.query.addy) !== 'undefined'){
     sessionStorage.setItem('dashAddy', router.query.addy);
@@ -146,7 +213,7 @@ export default function V3Phunks() {
 
   //listings
   const fetchListings = async () => {
-    if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1){      
+    if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v3'){      
       const initialActiveListings = [];
       const phunkIds = [];
       const currentListings = [];
@@ -197,110 +264,149 @@ export default function V3Phunks() {
       setListVal(ethSum);
       setListed(currentListings);
     }
+
+    if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v2'){
+      const currentListings = [];
+
+      //define nll contract
+      const nll = new ethers.Contract(nllAddy, nllAbi, provider);
+      
+      //get listing data and push to empty array
+      for (var i = nfts.length - 1; i >= 0; i--) {
+        const nllList = await nll.phunksOfferedForSale(nfts[i]);
+        if(nllList.isForSale){          
+          currentListings.push({
+            tokenId:Number(nllList.phunkIndex),
+            minValue: Number(nllList.minValue)/1000000000000000000,
+          }) 
+        } 
+      }
+
+      let ethSum = 0;
+      for(let i = 0; i < currentListings.length; i++) {
+        ethSum += currentListings[i].minValue;
+      }
+
+      setListVal(ethSum);
+      setListed(currentListings);
+    }
   };
 
   //bids
   const fetchBids = async () => {
+    let mAddy, mAbi;
     const initialActiveBids = [];
     const phunkIds = [];
     const currentBids = [];
     const myCurrentBids = [];
 
-    const phunkBidFilter = contract.filters.PhunkBidEntered();
-    const phunkBidWithdrawnFilter = contract.filters.PhunkBidWithdrawn();
+    if (activeCollection === 'v2') {
+      mAddy = nllAddy;
+      mAbi = nllAbi;
+    } else if (activeCollection === 'v3') {
+      mAddy = v3MarketAddy;
+      mAbi = v3MarketAbi;
+    }
 
-    const initialBidEvents = await contract.queryFilter(phunkBidFilter);
-    const initialBidWithdrawnEvents = await contract.queryFilter(phunkBidWithdrawnFilter);
+    if(mAddy && mAbi) {
 
-    const allBidEvents = [...initialBidEvents,
-                       ...initialBidWithdrawnEvents]
+      const mContract = new ethers.Contract(mAddy, mAbi, provider);
+      const phunkBidFilter = mContract.filters.PhunkBidEntered();
+      const phunkBidWithdrawnFilter = mContract.filters.PhunkBidWithdrawn();
 
-    // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
-    allBidEvents.sort((a, b) => {
-      return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
-    });
+      const initialBidEvents = await mContract.queryFilter(phunkBidFilter);
+      const initialBidWithdrawnEvents = await mContract.queryFilter(phunkBidWithdrawnFilter);
 
-    // Iterate through sorted events and select the first occurrence of each unique phunkIndex
-    allBidEvents.forEach(event => {
-      const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
-      if (phunkIds.indexOf(phunkIndex) === -1) {
-        phunkIds.push(phunkIndex);
-        initialActiveBids.push(event);
+      const allBidEvents = [...initialBidEvents,
+                         ...initialBidWithdrawnEvents]
+
+      // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
+      allBidEvents.sort((a, b) => {
+        return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
+      });
+
+      // Iterate through sorted events and select the first occurrence of each unique phunkIndex
+      allBidEvents.forEach(event => {
+        const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
+        if (phunkIds.indexOf(phunkIndex) === -1) {
+          phunkIds.push(phunkIndex);
+          initialActiveBids.push(event);
+        }
+      });
+
+      const allBids = initialActiveBids.filter((event) => event.event === 'PhunkBidEntered');
+
+      //console.log('nfts', nfts); 
+      const updatedBids = allBids.filter((event) => {
+        return nfts.includes(Number(ethers.utils.formatUnits(event.args.phunkIndex._hex,0)));
+      });
+      //console.log('bids recieved', updatedBids); //0x60 == 96
+
+      const myBids = allBids.filter((event) => event.args.fromAddress.toLowerCase() === walletAddy.toLowerCase());
+      //console.log('bids placed', myBids);
+
+      updatedBids.map(listing => (
+        currentBids.push({
+          tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
+          bidValue: Number(ethers.utils.formatUnits(listing.args.value._hex, 18)),
+        })
+      ));
+
+      myBids.map(listing => (
+        myCurrentBids.push({ 
+          tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
+          bidValue: Number(ethers.utils.formatUnits(listing.args.value._hex, 18)),
+          atts: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].atts,
+          beard: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].beard,
+          cheeks: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].cheeks,
+          ears: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].ears,
+          emotion: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].emotion,
+          eyes: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].eyes,
+          face: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].face,
+          hair: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].hair,
+          lips: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].lips,
+          mouth: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].mouth,
+          neck: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].neck,
+          nose: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].nose,
+          sex: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].sex,
+          teeth: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].teeth,
+        })
+      ));
+
+      const myBidVals = [];
+      for (let i = 0; i < myBids.length; i++){
+        const myBidListData = await contract.phunksOfferedForSale(myCurrentBids[i].tokenId);
+        //console.log('mbld:', myBidListData);
+        myBidVals.push({
+          tokenId:myCurrentBids[i].tokenId,
+          minValue:myBidListData.isForSale ? Number(ethers.utils.formatUnits(myBidListData.minValue._hex,18)) : ''
+        })
       }
-    });
+      
+      let ethSum = 0;
+      for(let i = 0; i < currentBids.length; i++) {
+        ethSum += currentBids[i].bidValue;
+      }
 
-    const allBids = initialActiveBids.filter((event) => event.event === 'PhunkBidEntered');
+      let bidSum = 0;
+      for(let i = 0; i < myCurrentBids.length; i++) {
+        bidSum += myCurrentBids[i].bidValue;
+      }
 
-    //console.log('nfts', nfts); 
-    const updatedBids = allBids.filter((event) => {
-      return nfts.includes(Number(ethers.utils.formatUnits(event.args.phunkIndex._hex,0)));
-    });
-    //console.log('bids recieved', updatedBids); //0x60 == 96
+      //console.log('bidVals: ', myBidVals);
 
-    const myBids = allBids.filter((event) => event.args.fromAddress.toLowerCase() === walletAddy.toLowerCase());
-    //console.log('bids placed', myBids);
-
-    updatedBids.map(listing => (
-      currentBids.push({
-        tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
-        bidValue: Number(ethers.utils.formatUnits(listing.args.value._hex, 18)),
-      })
-    ));
-
-    myBids.map(listing => (
-      myCurrentBids.push({ 
-        tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
-        bidValue: Number(ethers.utils.formatUnits(listing.args.value._hex, 18)),
-        atts: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].atts,
-        beard: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].beard,
-        cheeks: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].cheeks,
-        ears: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].ears,
-        emotion: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].emotion,
-        eyes: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].eyes,
-        face: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].face,
-        hair: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].hair,
-        lips: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].lips,
-        mouth: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].mouth,
-        neck: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].neck,
-        nose: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].nose,
-        sex: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].sex,
-        teeth: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].teeth,
-      })
-    ));
-
-    const myBidVals = [];
-    for (let i = 0; i < myBids.length; i++){
-      const myBidListData = await contract.phunksOfferedForSale(myCurrentBids[i].tokenId);
-      //console.log('mbld:', myBidListData);
-      myBidVals.push({
-        tokenId:myCurrentBids[i].tokenId,
-        minValue:myBidListData.isForSale ? Number(ethers.utils.formatUnits(myBidListData.minValue._hex,18)) : ''
-      })
+      setBidVal(ethSum);
+      setBidsRecieved(currentBids);
+      setBidPlacedVal(bidSum);
+      setBidsPlaced(myCurrentBids);
+      setBidPlacedMinVal(myBidVals);
     }
-    
-    let ethSum = 0;
-    for(let i = 0; i < currentBids.length; i++) {
-      ethSum += currentBids[i].bidValue;
-    }
-
-    let bidSum = 0;
-    for(let i = 0; i < myCurrentBids.length; i++) {
-      bidSum += myCurrentBids[i].bidValue;
-    }
-
-    //console.log('bidVals: ', myBidVals);
-
-    setBidVal(ethSum);
-    setBidsRecieved(currentBids);
-    setBidPlacedVal(bidSum);
-    setBidsPlaced(myCurrentBids);
-    setBidPlacedMinVal(myBidVals);
   };
 
   //owned nfts
   async function fetchNFTs(x) {
     const thisAddy = x;
-    const nftIds = await getNFTs(thisAddy);
+    const nftIds = await getNFTs(thisAddy, activeCollection);
     const pWith = await contract.pendingWithdrawals(thisAddy);
     const withEth = Number(Number(pWith._hex)/1000000000000000000).toFixed(3);
     setPendingWithdrawAmt(withEth);
@@ -327,6 +433,10 @@ export default function V3Phunks() {
   }
 
   useEffect(() => {
+    curAuc();
+  },[aucEvent])
+
+  useEffect(() => {
     async function fetchData() {
       if(walletAddy.length > 1 && typeof(walletAddy) !== 'undefined'){
         await fetchNFTs(walletAddy);
@@ -336,11 +446,15 @@ export default function V3Phunks() {
       setEnsAddy(name)
     }
     fetchData();
-  }, [walletAddy]);//walletAddy, connectedAddress]);
+  }, [walletAddy, activeCollection]);
 
   useEffect(() => {
-    fetchBids();
-    fetchListings();
+    async function bnl() {
+      await fetchBids();
+      await fetchListings();
+      setBidLoading(false);      
+    }
+    bnl();    
   },[nfts, walletAddy])
 
   // Route to new page on wallet change
@@ -427,19 +541,29 @@ export default function V3Phunks() {
             :
             null
           }
-          <p className="mt-6 text-3xl">v3Phunks</p>
+          <div className="picker-div divide-x-2 divide-black black-txt">
+            <p 
+              className={`picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'v3' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('v3')}>v3Phunks</p>
+            <p 
+              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v2' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('v2')}>CryptoPhunks</p>
+            <p 
+              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v1' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('v1')}>Philips</p>
+          </div>
           <p className="text-xl text-gray-300">
-            {nfts.length} owned
+            {!loading ? nfts.length : '-'} owned
           </p>
-          <p className="text-xl text-gray-300">
-            {listed.length} listed totaling {listVal}Ξ 
-          </p>
-          <p className="text-xl text-gray-300">
-            {bidsRecieved.length} bid(s) recieved totaling {bidVal}Ξ 
-          </p>
-          <p className="text-xl text-gray-300">
-            {bidsPlaced.length} bid(s) placed totaling {bidPlacedVal}Ξ
-          </p>
+          {activeCollection === 'v1' ? null :<p className="text-xl text-gray-300">
+            {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal : '-'}Ξ 
+          </p>}
+          {activeCollection === 'v1' ? null :<p className="text-xl text-gray-300">
+            {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal : '-'}Ξ 
+          </p>}
+          {activeCollection === 'v1' ? null :<p className="text-xl text-gray-300">
+            {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal : '-'}Ξ
+          </p>}
           <h2 className="mt-8 text-2xl">Owned</h2> 
           <div className="filter-sort-wrapper mb-4">
             <div>
@@ -1002,19 +1126,32 @@ export default function V3Phunks() {
                     bid={getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
-                    coll="phunk"
+                    coll={activeCollection}
                   />
                 )))
                 :
-                <p className="text-2xl text-gray-400 my-4">You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!</p> 
+                activeCollection === "v3" ?
+                  <p className="text-2xl text-gray-400 my-4">
+                    You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                  </p> 
+                  :
+                  activeCollection === "v2" ?
+                    <p className="text-2xl text-gray-400 my-4">
+                      You do not own any CryptoPhunks. Check out the <a target="_blank" href="https://notlarvalabs.com/cryptophunks/forsale">Not Larva Labs</a> to pick one up!
+                    </p>
+                    :
+                    <p className="text-2xl text-gray-400 my-4">
+                      You do not own any Philips. You can pick one up <a target="_blank" href="https://pro.opensea.io/collection/philipinternproject">here</a>!
+                    </p>
               )
                 :
-              <p className="text-2xl v3-txt my-4">Fetching your v3Phunks...</p>
+              <p className="text-2xl v3-txt my-4">Fetching your Phunks...</p>
             }
         	</div>
-          <h2 className="mt-8 text-2xl">Your Bids</h2>
+          {activeCollection === 'v1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
+          {activeCollection === 'v1' ? null : 
           <div className="flex flex-wrap justify-left">
-              {loading === false ?
+              {bidLoading === false ?
                 (bidsPlaced.length > 0 ? 
                   (bidsPlaced.map((phunk) => (
                     <DashCard
@@ -1023,7 +1160,7 @@ export default function V3Phunks() {
                       bid={phunk.bidValue} 
                       atts={phunk.atts} 
                       id={phunk.tokenId}
-                      coll="phunk"
+                      coll={activeCollection}
                     />
                   )))
                   :
@@ -1032,17 +1169,50 @@ export default function V3Phunks() {
                 :
               <p className="text-2xl v3-txt my-4">Fetching your bids...</p>
             }
-          </div>
-          <h2 className="mt-8 text-2xl">vPhree Activity</h2>
-          <div className="row-wrapper my-2">
+          </div>}
+          {activeCollection === 'v1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
+          {activeCollection === 'v1' ? null : <div>
+            {activeCollection !== 'v2' ? null : <p><a 
+              href="https://www.phunks.pro/" 
+              target="_blank">Check Flywheel Eligibility
+            </a></p>} 
+            <p><a 
+              href={`https://nftx.io/vault/${activeCollection === 'v2' ? '0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91' : '0x4fae03385dcf5518dd43c03c2f963092c89de33c'}/sell/`} 
+              target="_blank">Sell to NTFX Liquidity Pool
+            </a></p>         
+          </div>}
+          {activeCollection !== 'v2' ? null : <h2 className="mt-8 text-2xl">Current Auction</h2>}
+          {activeCollection !== 'v2' ? null : 
+            <AuctionTimer
+              targetDate={Number(ethers.utils.formatUnits(aucData.endTime._hex,0))*1000}
+              id={ethers.utils.formatUnits(aucData.phunkId._hex,0)}
+              bidder={aucBidder}
+              highBid={ethers.utils.formatUnits(aucData.amount._hex,18)}
+              bidPercent={bidInc}
+            />
+          }
+          {activeCollection !== 'v3' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
+          {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
             {loading === false ?
               <History 
                 transactions={transactionHistory}
+                mp="vPhree"
               />
               :
-              <p className="text-2xl v3-txt my-4">Loading transaction history...</p>
+              <p className="text-2xl v3-txt my-4">Loading vPhree transaction history...</p>
             }
-          </div>
+          </div>}
+          {activeCollection !== 'v2' ? null : <h2 className="mt-8 text-2xl">NLL Activity</h2>}
+          {activeCollection !== 'v2' ? null : <div className="row-wrapper my-2">
+            {loading === false ?
+              <History 
+                transactions={nllTxnHistory}
+                mp="NLL"
+              />
+              :
+              <p className="text-2xl v3-txt my-4">Loading NLL transaction history...</p>
+            }
+          </div>}
         </div>
       </div>
       <Footer/>      

@@ -3,10 +3,20 @@ import Image from 'next/image';
 import Router from 'next/router';
 
 const DashCard = ({ price, bid, atts, id, coll }) => {
-  let alt_id;
+  let alt_id, collName;
   let s_id = id.toString();
   let displayPrice;
   let bidPrice;
+
+  if (coll === "v1") {
+    collName = "philip";
+  } else if (coll === "v2") {
+    collName = "https://notlarvalabs.com/cryptophunks/details/";
+  } else if (coll === "v3") {
+    collName = "phunk";
+  } else {
+    collName = "";
+  }
 
   if (s_id.length === 1) {
     alt_id = "000" + s_id;
@@ -37,16 +47,20 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
   let idClassName;
 
   // Set values based on hover state and coll value
-  if (isHovered && coll === 'philip') {
+  if (isHovered && coll === 'v1') {
     // philip hover state
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v1-bg';
     idClassName = 'phunk-id mb-0 v1-txt';
-  } else if (!isHovered && coll === 'philip') {
+  } else if (!isHovered && coll === 'v1') {
   	// philip default state
 	  imageSrc = '/phunks/philip.png';
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
+  } else if (coll === 'v2') {
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper v2-bg';
+    idClassName = 'phunk-id mb-0 v2-txt';
   } else {
     // Values for v3 phunks; default
     imageSrc = `/phunks/phunk${alt_id}.svg`;
@@ -61,7 +75,12 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
       data-price={price}
       data-atts={atts}
       onClick={() => {
-        Router.push({ pathname: `/${coll}/${id}` });
+        if(coll === 'v2'){
+          const nllLink = `${collName}${id}`;
+          window.open(nllLink, '_blank');
+        } else {
+          Router.push({ pathname: `/${collName}/${id}` });
+        }
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -78,8 +97,8 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
       </div>
       <div className="card-info-wrapper ml-2">
         <p className={idClassName}>#{id}</p>
-        <p className="mb-1 text-xs">{displayPrice}</p>
-        <p className="mb-1 text-xs text-gray-400">{bidPrice}</p>
+        {coll === 'v1' ? null : <p className="mb-1 text-xs">{displayPrice}</p>}
+        {coll === 'v1' ? null : <p className="mb-1 text-xs text-gray-400">{bidPrice}</p>}
       </div>
     </div>
   );

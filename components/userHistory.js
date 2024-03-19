@@ -1,10 +1,11 @@
 import React from 'react';
 import Image  from 'next/image';
 
-const History = ({ transactions }) => {
+const History = ({ transactions, mp }) => {
+  //{console.log(transactions)}
   return (
     <div>
-      {transactions.length > 0 && transactions[0].eventType !== 'none' ?
+      {transactions && transactions.length > 0 && transactions[0].eventType !== 'none' ?
         (<table className="collection-desc w-full text-left mb-20">
           <thead>
             <tr className="v3-txt black-bg">
@@ -106,11 +107,11 @@ const History = ({ transactions }) => {
           </tbody>
         </table>)
         :
-        transactions[0] && transactions[0].eventType === 'none' 
+        transactions && transactions[0] && transactions[0].eventType === 'none' 
         ?
-        <p className="text-2xl text-gray-400 my-4">You do not have any vPhree transactions.</p>
+        <p className="text-2xl text-gray-400 my-4">You do not have any {mp} transactions.</p>
         :
-        <p className="text-2xl v3-txt my-4">Loading transaction history...</p>
+        <p className="text-2xl v3-txt my-4">Loading {mp} transaction history...</p>
       }
     </div>
   );

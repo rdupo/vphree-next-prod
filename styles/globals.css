@@ -56,7 +56,15 @@ tbody tr:nth-child(even) {
   background-color: #000;
 }
 
+.v2-bg {
+  background-color: #648596;
+}
+
 /*font colors*/
+.v2-txt {
+  color: #648596;
+}
+
 .v3-txt {
   color: #83dfb2;
 }
@@ -266,6 +274,11 @@ select, option, .black-txt {
   font-size: xx-large;
 }
 
+/*dashboard*/
+.picker-div {
+    display: inline-flex;
+  }
+
 /*mobile*/
 @media only screen and (max-width: 768px) {
   /*home*/
@@ -311,6 +324,17 @@ select, option, .black-txt {
 
   label, .t-to, .t-from {
     display: none;
+  }
+
+  .picker-div {
+    display: block;
+  }
+
+  .picker {
+    border: none;
+    margin: .25em 0;
+    padding: 0;
+    width: 100%;
   }
 
   .atts-div, .contract-interactions, .filter-dropdown, #view-mr {

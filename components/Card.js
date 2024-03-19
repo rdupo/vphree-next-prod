@@ -42,6 +42,10 @@ const Card = ({ price, atts, id, coll }) => {
 	  imageSrc = '/phunks/philip.png';
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
+  } else if (coll === 'v2') {
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper v2-bg';
+    idClassName = 'phunk-id mb-0 v2-txt';
   } else {
     // Values for v3 phunks; default
     imageSrc = `/phunks/phunk${alt_id}.svg`;
