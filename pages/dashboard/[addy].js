@@ -1213,6 +1213,83 @@ export default function V3Phunks() {
               <p className="text-2xl v3-txt my-4">Loading NLL transaction history...</p>
             }
           </div>}
+          <h2 className="mt-8 text-2xl">Links</h2>
+          {activeCollection === 'v1' ? 
+            <div>
+              <h3 className="mt-4">Marketplace</h3>
+              <p><a target="_blank" href="https://pro.opensea.io/collection/philipinternproject">OpenSea Pro - PhilipInternProject</a></p>
+              <p><a target="_blank" href="https://pro.opensea.io/collection/official-v1-phunks">OpenSea Pro - v1Phunks (Wrapped)</a></p>
+
+              <h3 className="mt-4">Wrapper</h3>
+              <p><a target="_blank" href="https://v1phunks.io/">Philip Wrapper</a></p>
+
+              <h3 className="mt-4">Contract</h3>
+              <p><a target="_blank" href="https://etherscan.io/address/0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce">PhilipInternProject Contract</a></p>
+
+              <h3 className="mt-4">Twitter</h3>
+              <p><a target="_blank" href="https://twitter.com/CryptoPhunksV1">Philips</a></p>
+
+              <h3 className="mt-4">Websites</h3>
+              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks Website</a></p>
+              <p><a target="_blank" href="https://phunks.net/">Phunks.net</a></p>
+
+              <h3 className="mt-4">Resources</h3>
+              <p><a target="_blank" href="https://phunks.gitbook.io/">Phunks GitBook</a></p>
+              <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
+              <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
+            </div>
+            :
+            activeCollection === 'v2' ?
+            <div>
+              <h3 className="mt-4">Vote!</h3>
+              <p><a target="_blank" href="https://phunk.cc/">Treasury Prop Voting</a></p>
+
+              <h3 className="mt-4">Marketplace</h3>
+              <p><a target="_blank" href="https://notlarvalabs.com/cryptophunks/forsale">Not Larva Labs</a></p>
+              <p><a target="_blank" href="https://pro.opensea.io/collection/crypto-phunks">OpenSea Pro</a></p>
+
+              <h3 className="mt-4">Contract</h3>
+              <p><a target="_blank" href="https://etherscan.io/address/0xf07468ead8cf26c752c676e43c814fee9c8cf402">CryptoPhunks Contract</a></p>
+
+              <h3 className="mt-4">Twitter</h3>
+              <p><a target="_blank" href="https://twitter.com/CryptoPhunksV2">CryptoPhunks</a></p>
+              <p><a target="_blank" href="https://twitter.com/PhunksAuction">Phunks Auction House</a></p>
+              <p><a target="_blank" href="https://twitter.com/NotLarvaLabs">Not Larva Labs</a></p>
+              <p><a target="_blank" href="https://twitter.com/PhunkBot">PhunkBot</a></p>
+
+              <h3 className="mt-4">Websites</h3>
+              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks Website</a></p>
+              <p><a target="_blank" href="https://phunks.net/">Phunks.net</a></p>
+
+              <h3 className="mt-4">Resources</h3>
+              <p><a target="_blank" href="https://phunks.gitbook.io/">Phunks GitBook</a></p>
+              <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
+              <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
+            </div> 
+            :
+            <div>
+              <h3 className="mt-4">Marketplaces</h3>
+              <p className="text-gray-400">vPhree (you are here)</p>
+              <p><a target="_blank" href="https://pro.opensea.io/collection/v3phunks">OpenSea Pro</a></p>
+
+              <h3 className="mt-4">Contract</h3>
+              <p><a target="_blank" href="https://etherscan.io/address/0xb7d405bee01c70a9577316c1b9c2505f146e8842">v3Phunks Contract</a></p>
+
+              <h3 className="mt-4">Twitter</h3>
+              <p><a target="_blank" href="https://twitter.com/v3phunks">v3Phunks</a></p>
+              <p><a target="_blank" href="https://twitter.com/vphree_io">vPhree</a></p>
+              <p><a target="_blank" href="https://twitter.com/v3phunksbot">v3Phunks Bot</a></p>
+
+              <h3 className="mt-4">Websites</h3>
+              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks Website</a></p>
+              <p><a target="_blank" href="https://phunks.net/">Phunks.net</a></p>
+
+              <h3 className="mt-4">Resources</h3>
+              <p><a target="_blank" href="https://phunks.gitbook.io/">Phunks GitBook</a></p>
+              <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
+              <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
+            </div>
+          }
         </div>
       </div>
       <Footer/>      
