@@ -15,6 +15,7 @@ import v3MarketAddy from '../../utils/v3MarketAddy'
 import v3MarketAbi from '../../utils/v3MarketAbi'
 import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
+import philips from '../../utils/philips'
 
 export default function V3Phunks() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
@@ -42,6 +43,10 @@ export default function V3Phunks() {
   const [signer, setSigner] = useState([]);
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   let alt_id
+
+  const hasPhilip = (x) => {
+    return philips.some(entry => entry.tokenId === Number(x));
+  }
 
   const resolveENS = async (address) => {
     try {
@@ -582,13 +587,57 @@ export default function V3Phunks() {
                 </div>
               </div>
             </div>
-            <div className="atts-div metadata inline-block align-top w-full md:w-5/12">
+            {!hasPhilip(id) ?
+              <div className="atts-div metadata inline-block align-top w-full md:w-3/12">
+                <p>Get the 🍐</p>
+                <p><a 
+                  className="collection-desc"
+                  target="_blank" 
+                  href={`https://pro.opensea.io/nft/ethereum/0xf07468ead8cf26c752c676e43c814fee9c8cf402/${id}`}
+                >
+                  CryptoPhunk {id}
+                </a></p>
+                <p><a
+                  className="collection-desc" 
+                  target="_blank" 
+                  href={`https://pro.opensea.io/nft/ethereum/0xb7d405bee01c70a9577316c1b9c2505f146e8842/${id}`}
+                >
+                  v3Phunk {id}
+                </a></p>
+              </div>
+              :
+              <div className="atts-div metadata inline-block align-top w-full md:w-3/12">
+                <p>Get the 🟪🟦🟩</p>
+                <p><a 
+                  className="collection-desc"
+                  target="_blank" 
+                  href={`https://pro.opensea.io/nft/ethereum/0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce/${id}`}
+                >
+                  Philip #{id}
+                </a></p>
+                <p><a 
+                  className="collection-desc"
+                  target="_blank" 
+                  href={`https://pro.opensea.io/nft/ethereum/0xf07468ead8cf26c752c676e43c814fee9c8cf402/${id}`}
+                >
+                  CryptoPhunk #{id}
+                </a></p>
+                <p><a 
+                  className="collection-desc"
+                  target="_blank" 
+                  href={`https://pro.opensea.io/nft/ethereum/0xb7d405bee01c70a9577316c1b9c2505f146e8842/${id}`}
+                >
+                  v3Phunk #{id}
+                </a></p>
+              </div>
+            }
+            <div className="atts-div metadata inline-block align-top w-full md:w-3/12">
               <p>Attributes</p>
               <div className="metadata" id="md">
                 <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
               </div>
             </div>
-            <div className="contract-interactions inline-block pr-0 align-top w-full md:w-4/12">
+            <div className="contract-interactions inline-block pr-0 align-top w-full md:w-3/12">
               <div className="price-and-bid">
                 {!listed.isForSale || owner !== listed.seller ?
                   null
