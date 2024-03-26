@@ -53,7 +53,7 @@ export default function V3Phunks() {
   return (
     <>
       <Header/>
-      <div className="page bg-t">
+      <div className="page bg-opacity-30 bg-black">
         <div className="banner-wrapper mb-6">
           <Image className="col-banner" src={Banner} width="100%" alt="v3 phunks banner"/>
         </div>

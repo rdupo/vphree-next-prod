@@ -1,10 +1,13 @@
 import { React, useState, useEffect, useMemo } from 'react'
+import axios from 'axios'; //
+import cheerio from 'cheerio'; //
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
 import Header from  '../../components/Header'
 import DashCard from '../../components/dashCard'
 import Card from '../../components/Card'
+import LatestProp from '../../components/LatestProp'
 import History from '../../components/userHistory'
 import Footer from '../../components/Footer'
 import Banner from '../../assets/profile-banner.png'
@@ -34,6 +37,7 @@ import AuctionTimer from '../../components/auctionTimer'
 export default function V3Phunks() {
   const router = useRouter()
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
+  const nftbKey = process.env.NFTBANK_API_KEY
   const walletAddy = router.query.addy || ''
   const [ensAddy, setEnsAddy] = useState('')
   const [nfts, setNFTs] = useState([]);
@@ -90,21 +94,38 @@ export default function V3Phunks() {
   const [aucBidder, setAucBidder] = useState();
   const [aucEvent, setAucEvent] = useState([]);
   //flywheel
+  // 1) get price estimate from NFTBank API
+  // 2) get pctOfOraclePriceEstimateToPay using contractConfig method from flywheel contract
+  // 3) multiply price by % of estimate to pay
   const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
 
-  const fly = async () => {
-    const flyAppraisal = await flywheelContract.offers(0);
-    console.log('flywheel: ', flyAppraisal);
-  }
+  /*const getValue = async (ac, tid) => {
+    const fetch = require('node-fetch');
+    const url = `https://api.nftbank.run/v1/nft/${ac}/${tid}/estimate?networkId=ethereum`;
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json', 
+        'x-api-key': nftbKey,
+        'Access-Control-Allow-Credentials':'true',
+        'Access-Control-Allow-Origin':'*'
+      }
+    };
 
-  fly();
+    fetch(url, options)
+      .then(res => res.json())
+      .then(json => console.log(json))
+      .catch(err => console.error('error:' + err));
+
+    const percentOfValue = await flywheelContract.contractConfig();
+    console.log(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
+  }*/
 
   const curAuc = async () => {
     const aucDetails = await aucContract.auction();
     const name = await provider.lookupAddress(aucDetails.bidder);
     const aucMinBidPerc = await aucContract.minBidIncrementPercentage();
     const aucPhunk = (ethers.utils.formatUnits(aucDetails.phunkId._hex,0));
-    console.log('name:', name, 'bidder', aucDetails.bidder)
     setAucData(aucDetails);
     setBidInc(1+(Number(aucMinBidPerc)/100));
     setAucBidder(name ? name : aucDetails.bidder.substr(0,4)+'...'+aucDetails.bidder.substr(aucDetails.bidder.length-4, aucDetails.bidder.length))
@@ -454,7 +475,8 @@ export default function V3Phunks() {
       await fetchListings();
       setBidLoading(false);      
     }
-    bnl();    
+    bnl();
+    //getValue(v3PhunkAddy, '0');    
   },[nfts, walletAddy])
 
   // Route to new page on wallet change
@@ -510,8 +532,8 @@ export default function V3Phunks() {
     <>
       <Header/>
       <Toaster/>
-      <div className="page bg-[#3e3e3e]">
-        <div className="content px-8">
+      <div className="page bg-opacity-30 bg-black">
+        <div className="content px-8 z-10">
         	<h1 className="v3-txt mr-auto text-5xl pt-4">
             <Image
               height={40}
@@ -541,7 +563,7 @@ export default function V3Phunks() {
             :
             null
           }
-          <div className="picker-div divide-x-2 divide-black black-txt">
+          <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
             <p 
               className={`picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'v3' ? 'white-txt' : ''}`}
               onClick={() => collUpdate('v3')}>v3Phunks</p>
@@ -1191,6 +1213,7 @@ export default function V3Phunks() {
               bidPercent={bidInc}
             />
           }
+          <LatestProp/>
           {activeCollection !== 'v3' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
           {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
             {loading === false ?
@@ -1292,7 +1315,10 @@ export default function V3Phunks() {
           }
         </div>
       </div>
-      <Footer/>      
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
+      <Footer
+        bg='black'
+      />      
     </>
   )
 }
