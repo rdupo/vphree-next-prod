@@ -29,7 +29,7 @@ function LatestProp() {
         <div className="w-10/12">
           <p className="v3-txt">Poll #{polls.id}</p>
           <p className="collection-desc text-gray-300">{polls.description}</p>
-          {polls.until > Date.now() && polls.results ?
+          {polls.until > Date.now() && typeof(polls.results[0]) !== 'undefined' ?
             <p className="collection-desc text-gray-300">Ends: {polls.until}</p>
             :
             <div>
