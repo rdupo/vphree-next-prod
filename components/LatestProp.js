@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 
 function LatestProp() {
   const [polls, setPolls] = useState([]);
+  const [yay, setYay] = useState();
+  const [nay, setNay] = useState();
   const [nftEstimate, setNftEstimate] = useState(null);
 
   useEffect(() => {
@@ -9,7 +11,8 @@ function LatestProp() {
       const res = await fetch('/api/polls');
       const data = await res.json();
       setPolls(data[0]);
-      //console.log('polls:', polls.results[0].count)
+      setYay(data[0].results[0].count);
+      setNay(data[0].results[1].count)
     };
 
     const fetchNftEstimate = async () => {
@@ -29,12 +32,12 @@ function LatestProp() {
         <div className="w-10/12">
           <p className="v3-txt">Poll #{polls.id}</p>
           <p className="collection-desc text-gray-300">{polls.description}</p>
-          {polls.until > Date.now() && typeof(polls.results[0]) !== 'undefined' ?
+          {polls.until > Date.now() ?
             <p className="collection-desc text-gray-300">Ends: {polls.until}</p>
             :
             <div>
               <p className="collection-desc text-gray-300"><span className="text-white">Ended:</span> {polls.until}</p>
-              <p className="collection-desc text-gray-300"><span className="text-white">Results:</span> 👍 {polls.results[0].count} | 👎 {polls.results[1].count}</p>
+              <p className="collection-desc text-gray-300"><span className="text-white">Results:</span> 👍 {yay} | 👎 {nay}</p>
             </div>
           }
           <p className="collection-desc">Read the full discussion <a target="_blank" href={polls.link}>here</a>.</p>
