@@ -1,35 +1,52 @@
-//LatestProp
-import { React, useEffect, useState } from 'react';
-import axios from 'axios';
-import cheerio from 'cheerio';
+import { useEffect, useState } from 'react';
 
-const fetchData = async () => {
-  try {
-    const response = await axios.get('https://phunk.cc');
-    const $ = cheerio.load(response.data);
-    const firstChildText = $('#result').children().first().text(); // Assuming you want the text content of the first child of #result
-    return firstChildText;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    return null;
-  }
-};
-
-const LatestProp = () => {
-  const [data, setData] = useState(null);
+function LatestProp() {
+  const [polls, setPolls] = useState([]);
+  const [nftEstimate, setNftEstimate] = useState(null);
 
   useEffect(() => {
-    fetchData().then(result => {
-      setData(result);
-    });
+    const fetchPolls = async () => {
+      const res = await fetch('/api/polls');
+      const data = await res.json();
+      setPolls(data[0]);
+      //console.log('polls:', polls.results[0].count)
+    };
+
+    const fetchNftEstimate = async () => {
+      const res = await fetch('/api/nftEstimate');
+      const data = await res.json();
+      setNftEstimate(data);
+    };
+
+    fetchPolls();
+    //fetchNftEstimate();
   }, []);
 
   return (
     <div>
       <h2 className="mt-8 text-2xl">Latest Treasury Prop</h2>
-      {data ? <p>{data}</p> : <p>Loading...</p>}
+      {polls ? 
+        <div className="w-10/12">
+          <p className="v3-txt">Poll #{polls.id}</p>
+          <p className="collection-desc text-gray-300">{polls.description}</p>
+          {polls.until > Date.now() ?
+            <p className="collection-desc text-gray-300">Ends: {polls.until}</p>
+            :
+            <div>
+              <p className="collection-desc text-gray-300"><span className="text-white">Ended:</span> {polls.until}</p>
+              <p className="collection-desc text-gray-300"><span className="text-white">Results:</span> 👍 {polls.results[0].count} | 👎 {polls.results[1].count}</p>
+            </div>
+          }
+          <p className="collection-desc">Read the full discussion <a target="_blank" href={polls.link}>here</a>.</p>
+        </div> 
+        : 
+        <p>Loading...</p>
+      }
+      <p className="mt-2">To view previous props or vote, visit 
+        <a target="_blank" href="https://phunk.cc"> phunk.cc</a>
+      </p>
     </div>
   );
-};
+}
 
 export default LatestProp;

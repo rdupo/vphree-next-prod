@@ -1,6 +1,4 @@
 import { React, useState, useEffect, useMemo } from 'react'
-import axios from 'axios'; //
-import cheerio from 'cheerio'; //
 import Link from 'next/link'
 import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
@@ -99,7 +97,7 @@ export default function V3Phunks() {
   // 3) multiply price by % of estimate to pay
   const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
 
-  /*const getValue = async (ac, tid) => {
+  const getValue = async (ac, tid) => {
     const fetch = require('node-fetch');
     const url = `https://api.nftbank.run/v1/nft/${ac}/${tid}/estimate?networkId=ethereum`;
     const options = {
@@ -119,7 +117,7 @@ export default function V3Phunks() {
 
     const percentOfValue = await flywheelContract.contractConfig();
     console.log(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
-  }*/
+  }
 
   const curAuc = async () => {
     const aucDetails = await aucContract.auction();
