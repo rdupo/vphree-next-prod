@@ -5,7 +5,7 @@ const History = ({ transactions }) => {
     <div>
       <p className="metadata">History</p>
       {transactions.length > 0 ?
-        (<table className="collection-desc w-full text-left mb-20">
+        (<table className="collection-desc w-full text-left mb-20 bg-black">
           <thead>
             <tr className="v3-txt black-bg">
               <th>Event</th>

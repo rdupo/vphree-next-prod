@@ -15,14 +15,7 @@ function LatestProp() {
       setNay(data[0].results[1].count)
     };
 
-    const fetchNftEstimate = async () => {
-      const res = await fetch('/api/nftEstimate');
-      const data = await res.json();
-      setNftEstimate(data);
-    };
-
     fetchPolls();
-    //fetchNftEstimate();
   }, []);
 
   return (

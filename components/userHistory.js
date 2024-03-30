@@ -6,7 +6,7 @@ const History = ({ transactions, mp }) => {
   return (
     <div>
       {transactions && transactions.length > 0 && transactions[0].eventType !== 'none' ?
-        (<table className="collection-desc w-full text-left mb-20">
+        (<table className="collection-desc w-full text-left mb-20 bg-black">
           <thead>
             <tr className="v3-txt black-bg">
               <th>Event</th>

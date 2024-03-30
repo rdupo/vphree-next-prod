@@ -42,7 +42,7 @@ const Card = ({ price, atts, id, coll }) => {
 	  imageSrc = '/phunks/philip.png';
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
-  } else if (coll === 'v2') {
+  } else if (coll === 'v2' || coll === 'auc') {
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v2-bg';
     idClassName = 'phunk-id mb-0 v2-txt';
@@ -59,9 +59,14 @@ const Card = ({ price, atts, id, coll }) => {
       className="brite my-2 black-bg white-txt inline-block sans-underline"
       data-price={price}
       data-atts={atts}
-      onClick={() => {
-        Router.push({ pathname: `/${coll}/${id}` });
-      }}
+      onClick={() => { 
+          if(coll === 'auc'){
+            window.open('https://phunks.auction/', '_blank');
+          } else {
+            Router.push({ pathname: `/${coll}/${id}` });
+          }        
+        }
+      }
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >

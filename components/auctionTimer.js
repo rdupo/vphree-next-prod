@@ -173,7 +173,7 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
           price=""
           atts=""
           id={id}
-          coll="v2"
+          coll="auc"
         />
       </div>
       <div className="auction-txt-wrapper ml-6">

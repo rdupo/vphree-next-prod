@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Header from  '../../components/Header'
 import DashCard from '../../components/dashCard'
 import Card from '../../components/Card'
+import FlywheelCard from '../../components/flywheelCard'
 import LatestProp from '../../components/LatestProp'
 import History from '../../components/userHistory'
 import Footer from '../../components/Footer'
@@ -24,6 +25,7 @@ import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
 import flywheelAddy from '../../utils/flywheelAddy'
 import flywheelAbi from '../../utils/flywheelAbi'
+import phunkAddy from '../../utils/phunkAddy'
 import toast, {Toaster} from 'react-hot-toast'
 import { useWallet } from '../../contexts/WalletContext'
 import phunks from '../../utils/phunkData'
@@ -96,27 +98,32 @@ export default function V3Phunks() {
   // 2) get pctOfOraclePriceEstimateToPay using contractConfig method from flywheel contract
   // 3) multiply price by % of estimate to pay
   const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
+  const [nftEstimate, setNftEstimate] = useState([]);
+  const [minFlywheelPrice, setMinFlywheelPrice] = useState();
+  const [flywheelLoading, setFlywheelLoading] = useState(true);
 
-  const getValue = async (ac, tid) => {
-    const fetch = require('node-fetch');
-    const url = `https://api.nftbank.run/v1/nft/${ac}/${tid}/estimate?networkId=ethereum`;
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json', 
-        'x-api-key': nftbKey,
-        'Access-Control-Allow-Credentials':'true',
-        'Access-Control-Allow-Origin':'*'
-      }
-    };
-
-    fetch(url, options)
-      .then(res => res.json())
-      .then(json => console.log(json))
-      .catch(err => console.error('error:' + err));
-
+  const getValue = async () => {
+    const temp = [];
     const percentOfValue = await flywheelContract.contractConfig();
-    console.log(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
+    const pct = Number(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
+
+    nfts.map(async (phunk) => {
+      const res = await fetch(`/api/priceEstimate/${phunkAddy}/${phunk}`);
+      const data = await res.json();
+      const dispEst = Number(data.data.estimate.eth)*pct;
+      temp.push({
+        tokenId:phunk,
+        nftbEst: dispEst.toFixed(3),
+      })      
+    });
+
+    setNftEstimate(temp);
+
+    const minValue = await flywheelContract.getCurrentMinimumValidPrice();
+    const minValidPrice = Number(ethers.utils.formatUnits(minValue[0]._hex,18));
+    setMinFlywheelPrice(minValidPrice);
+
+    setFlywheelLoading(false);
   }
 
   const curAuc = async () => {
@@ -474,7 +481,7 @@ export default function V3Phunks() {
       setBidLoading(false);      
     }
     bnl();
-    //getValue(v3PhunkAddy, '0');    
+    if(activeCollection === 'v2'){getValue();} 
   },[nfts, walletAddy])
 
   // Route to new page on wallet change
@@ -1171,35 +1178,68 @@ export default function V3Phunks() {
           {activeCollection === 'v1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
           {activeCollection === 'v1' ? null : 
           <div className="flex flex-wrap justify-left">
-              {bidLoading === false ?
-                (bidsPlaced.length > 0 ? 
-                  (bidsPlaced.map((phunk) => (
-                    <DashCard
-                      key={phunk.tokenId}
-                      price={getMinVal(phunk.tokenId, bidPlacedMinVal)}
-                      bid={phunk.bidValue} 
-                      atts={phunk.atts} 
-                      id={phunk.tokenId}
-                      coll={activeCollection}
-                    />
-                  )))
-                  :
-                  <p className="text-2xl text-gray-400 my-4">You do not have any active bids.</p>
-                )
+            {bidLoading === false ?
+              (bidsPlaced.length > 0 ? 
+                (bidsPlaced.map((phunk) => (
+                  <DashCard
+                    key={phunk.tokenId}
+                    price={getMinVal(phunk.tokenId, bidPlacedMinVal)}
+                    bid={phunk.bidValue} 
+                    atts={phunk.atts} 
+                    id={phunk.tokenId}
+                    coll={activeCollection}
+                  />
+                )))
+                :
+                <p className="text-2xl text-gray-400 my-4">You do not have any active bids.</p>
+              )
                 :
               <p className="text-2xl v3-txt my-4">Fetching your bids...</p>
             }
           </div>}
           {activeCollection === 'v1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
           {activeCollection === 'v1' ? null : <div>
-            {activeCollection !== 'v2' ? null : <p><a 
-              href="https://www.phunks.pro/" 
-              target="_blank">Check Flywheel Eligibility
-            </a></p>} 
-            <p><a 
-              href={`https://nftx.io/vault/${activeCollection === 'v2' ? '0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91' : '0x4fae03385dcf5518dd43c03c2f963092c89de33c'}/sell/`} 
-              target="_blank">Sell to NTFX Liquidity Pool
-            </a></p>         
+          {activeCollection === 'v2' ?
+            <>
+            {flywheelLoading === false ?
+              (nftEstimate.length > 0 ? 
+                (nftEstimate.map((phunk) => (
+                  <FlywheelCard
+                    price={phunk.nftbEst}
+                    minPrice={minFlywheelPrice}
+                    atts=""
+                    id={phunk.tokenId}
+                  />
+                )))
+                :
+                (nfts.length > 0 ?
+                 <p className="text-2xl v3-txt my-4">Fetching flywheel estimates...</p>
+                  :
+                 <p className="text-2xl text-gray-400 my-4">Uh oh! No phunks in this wallet. </p>
+                )
+              )
+                :
+              <p className="text-2xl v3-txt my-4">Fetching flywheel estimates...</p>
+            } 
+            </>
+            :
+            null
+          }
+            {activeCollection === "v2" ?
+              <p className="text-gray-400">Any ineligible Phunks can still be sold to the 
+                <a 
+                  href={`https://nftx.io/vault/0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91/sell/`} 
+                  target="_blank"> NTFX Liquidity Pool
+                </a>
+              </p>
+              :
+              <p className="text-gray-400"> Sell to the 
+                <a 
+                  href={`https://nftx.io/vault/0x4fae03385dcf5518dd43c03c2f963092c89de33c/sell/`} 
+                  target="_blank"> NTFX Liquidity Pool
+                </a>
+              </p>
+            }                       
           </div>}
           {activeCollection !== 'v2' ? null : <h2 className="mt-8 text-2xl">Current Auction</h2>}
           {activeCollection !== 'v2' ? null : 
@@ -1211,7 +1251,7 @@ export default function V3Phunks() {
               bidPercent={bidInc}
             />
           }
-          <LatestProp/>
+          {activeCollection === 'v2' ? <LatestProp/> : null}
           {activeCollection !== 'v3' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
           {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
             {loading === false ?
