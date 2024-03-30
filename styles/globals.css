@@ -279,6 +279,11 @@ select, option, .black-txt {
     display: inline-flex;
   }
 
+/*auction module, desktop*/
+.auction-wrapper {
+    display: inline-flex;
+  }
+
 /*mobile*/
 @media only screen and (max-width: 768px) {
   /*home*/
@@ -320,6 +325,14 @@ select, option, .black-txt {
 
   .collection-info, #id, .filter-dropdown, #view-mr, .select-short, .mobile-100  {
     width: 100%;
+  }
+
+  .auction-wrapper {
+    display: block;
+  }
+
+  .auction-btn-wrapper, .auction-info-wrapper, .auction-txt-wrapper  {
+    margin: 1em 0 0 0;
   }
 
   label, .t-to, .t-from {

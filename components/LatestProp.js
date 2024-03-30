@@ -24,7 +24,7 @@ function LatestProp() {
       {polls ? 
         <div className="w-10/12">
           <p className="v3-txt">Poll #{polls.id}</p>
-          <p className="collection-desc text-gray-300">{polls.description}</p>
+          <p className="collection-desc text-gray-300 break-all">{polls.description}</p>
           {polls.until > Date.now() ?
             <p className="collection-desc text-gray-300">Ends: {polls.until}</p>
             :
