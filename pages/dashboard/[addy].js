@@ -1205,6 +1205,7 @@ export default function V3Phunks() {
               (nftEstimate.length > 0 ? 
                 (nftEstimate.map((phunk) => (
                   <FlywheelCard
+                    key={`flywheel${phunk}`}
                     price={phunk.nftbEst}
                     minPrice={minFlywheelPrice}
                     atts=""
