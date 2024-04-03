@@ -20,7 +20,7 @@ function LatestProp() {
 
   return (
     <div>
-      <h2 className="mt-8 text-2xl">Latest Treasury Prop</h2>
+      <h2 className="mt-8 text-2xl">Latest Treasury Prop</h2> 
       {polls ? 
         <div className="w-10/12">
           <p className="v3-txt">Poll #{polls.id}</p>
