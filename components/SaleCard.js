@@ -30,6 +30,7 @@ const SaleCard = ({ price, atts, id, coll }) => {
   let imageSrc;
   let imageClassName;
   let idClassName;
+  let salesClassName;
 
   // Set values based on hover state and coll value
   if (isHovered && coll === 'philip') {
@@ -37,29 +38,37 @@ const SaleCard = ({ price, atts, id, coll }) => {
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v1-bg';
     idClassName = 'phunk-id mb-0 v1-txt';
+    salesClassName = 'cursor-default mx-1 v1-bg black-txt inline-block sans-underline';
+  } else if (coll === 'v2') {
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper v2-bg';
+    idClassName = 'phunk-id mb-0 v2-txt';
+    salesClassName = 'cursor-default mx-1 v2-bg black-txt inline-block sans-underline';
   } else if (!isHovered && coll === 'philip') {
   	// philip default state
 	  imageSrc = '/phunks/philip.png';
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
+    salesClassName = 'cursor-default mx-1 v2-bg black-txt inline-block sans-underline';
   } else {
     // Values for v3 phunks; default
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v3-bg';
     idClassName = 'phunk-id mb-0 v3-txt';
+    salesClassName = 'cursor-default mx-1 v3-bg black-txt inline-block sans-underline';
   }
 
   return (
     <div
       key={id}
-      className="brite mx-1 v3-bg black-txt inline-block sans-underline"
+      className={salesClassName}
       data-price={price}
       data-atts={atts}
-      onClick={() => {
-        Router.push({ pathname: `/${coll}/${id}` });
-      }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      //onClick={() => {
+      //  Router.push({ pathname: `/${coll}/${id}` });
+      //}}
+      //onMouseEnter={handleMouseEnter}
+      //onMouseLeave={handleMouseLeave}
     >
       <div className={imageClassName}>
         <Image

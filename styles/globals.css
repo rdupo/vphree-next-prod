@@ -102,6 +102,10 @@ select, option, .black-txt {
   border: 3px solid #a79aff;
 }
 
+.v2-b {
+  border: 3px solid #648596;
+}
+
 /*page styles*/
 .page {
   position: relative;
@@ -153,10 +157,6 @@ select, option, .black-txt {
 
 .home-title {
   font-size: 60px;
-}
-
-.home-body {
-  font-size: 24px;
 }
 
 /*buttons*/
@@ -318,7 +318,7 @@ select, option, .black-txt {
     margin: 1em 0;
   }
 
-  #view, #hide, #asc, #desc {
+  #view, #hide, #asc, #desc, #not-connected {
     margin: 1em 0 0 0;
     width: 100%;
   }

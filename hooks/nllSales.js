@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { Network, Alchemy } from 'alchemy-sdk';
-import v3MarketAddy from '../utils/v3MarketAddy'
-import v3MarketAbi from '../utils/v3MarketAbi'
+import nllAddy from '../utils/nllAddy'
+import nllAbi from '../utils/nllAbi'
 
-const getV3Sales = () => {
+const getNllSales = () => {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const settings = {
     apiKey: alcKey,
@@ -12,7 +12,7 @@ const getV3Sales = () => {
   };
   const alchemy = new Alchemy(settings);
   const [txn, setTxn] = useState([]);
-  const [sales, setSales] = useState([]);
+  const [nllSales, setSales] = useState([]);
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
 
   const fetchTransactionHistory = async () => {
@@ -39,7 +39,7 @@ const getV3Sales = () => {
       }
     };
 
-    const marketplaceContract = new ethers.Contract(v3MarketAddy, v3MarketAbi, provider);
+    const marketplaceContract = new ethers.Contract(nllAddy, nllAbi, provider);
     const filterSale = marketplaceContract.filters.PhunkBought(null, null, null, null);
     const Sales = await retry(async () => await marketplaceContract.queryFilter(filterSale));
 
@@ -68,7 +68,7 @@ const getV3Sales = () => {
     fetchTransactionHistory();
   }, []);
 
-  return { sales };
+  return { nllSales };
 };
 
-export default getV3Sales;
+export default getNllSales;
