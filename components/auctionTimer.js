@@ -197,7 +197,7 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
       <div 
         className="p-3 black-bg v3-txt v3-b w-1/6 ml-4"  
         id="not-connected">
-          Please connect your wallet to interact with this Phunk
+          Please connect your wallet to bid
       </div> 
       :
       timeLeft.days + timeLeft.hours + timeLeft.minutes + timeLeft.seconds === 0
