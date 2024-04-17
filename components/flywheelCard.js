@@ -29,7 +29,7 @@ const FlywheelCard = ({ price, atts, id, minPrice }) => {
       <div className="img-wrapper v2-bg">
         <Image
           className="w-100"
-          src={`/phunks/phunk${alt_id}.svg`}
+          src={id === "-1" ? `/phunks/philip.png` : `/phunks/phunk${alt_id}.svg`}
           loading="lazy"
           alt={`phunk ${id}`}
           height="100"
@@ -37,9 +37,12 @@ const FlywheelCard = ({ price, atts, id, minPrice }) => {
         />
       </div>
       <div className="card-info-wrapper ml-2">
-        <p className="phunk-id mb-0 v2-txt">#{id}</p>
+        <p className="phunk-id mb-0 v2-txt">{id === "-1" ? "---" : `#${id}`}</p>
         <h4 className="phunk-price">{price}</h4>
-        {Number(price) > Number(minPrice) ? 
+        {id === "-1" ?
+          <p className ="mb-1 text-xs text-white">---</p>
+          :
+          Number(price) >= Number(minPrice) ? 
           <p className="mb-1 text-xs text-emerald-500">Eligible</p>
            : 
           <p className="mb-1 text-xs text-rose-500">Ineligible</p>
