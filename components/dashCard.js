@@ -13,7 +13,7 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
   } else if (coll === "v2") {
     collName = "https://notlarvalabs.com/cryptophunks/details/";
   } else if (coll === "v3") {
-    collName = "phunk";
+    collName = "v3phunk";
   } else {
     collName = "";
   }

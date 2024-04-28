@@ -19,7 +19,7 @@ const FlywheelCard = ({ price, atts, id, minPrice }) => {
   return (
     <div
       key={id}
-      className="brite my-2 black-bg white-txt inline-block sans-underline"
+      className="brite black-bg white-txt inline-block sans-underline"
       data-price={price}
       data-atts={atts}
       onClick={() => {

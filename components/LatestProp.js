@@ -10,9 +10,10 @@ function LatestProp() {
     const fetchPolls = async () => {
       const res = await fetch('/api/polls');
       const data = await res.json();
-      setPolls(data[0]);
-      setYay(data[0].results[0].count);
-      setNay(data[0].results[1].count)
+      setPolls(data.slice(0,3));
+      //setYay(data[0].results[0].count);
+      //setNay(data[0].results[1].count)
+      console.log(polls)
     };
 
     fetchPolls();
@@ -20,21 +21,35 @@ function LatestProp() {
 
   return (
     <div>
-      <h2 className="mt-8 text-2xl">Latest Treasury Prop</h2> 
-      {polls ? 
-        <div className="w-10/12">
-          <p className="v3-txt">Poll #{polls.id}</p>
-          <p className="collection-desc text-gray-300 break-all">{polls.description}</p>
-          {polls.until > Date.now() ?
-            <p className="collection-desc text-gray-300">Ends: {polls.until}</p>
-            :
-            <div>
-              <p className="collection-desc text-gray-300"><span className="text-white">Ended:</span> {polls.until}</p>
-              <p className="collection-desc text-gray-300"><span className="text-white">Results:</span> 👍 {yay} | 👎 {nay}</p>
+      <h2 className="mt-16 mb-4 text-2xl">Latest Treasury Props</h2> 
+      {polls.length > 0 ? 
+      (
+        polls.map((poll) => {
+          return(
+            <div className="w-10/12 mb-4">
+              <p className="v3-txt">Poll #{poll.id}</p>
+              <p className="collection-desc text-gray-300 break-all">{poll.description}</p>
+              {poll.until > Date.now() ?
+                <p className="collection-desc text-gray-300">Ends: {poll.until}</p>
+                :
+                <div>
+                  <p className="collection-desc text-gray-300"><span className="text-white">Ended:</span> {poll.until}</p>
+                  {poll.results ? 
+                    <p className="collection-desc text-gray-300 inline">
+                      <span className="text-white">Results:</span>
+                      {poll.results[0] ? <p className="inline">{poll.results[0].vote_value} {poll.results[0].count}</p> : null}
+                      {poll.results[1] ? <p className="inline"> | {poll.results[1].vote_value} {poll.results[1].count}</p> : null}
+                    </p>
+                    :
+                    <p className="collection-desc text-gray-300">Results loading...</p>
+                  }
+                </div>
+              }
+              <p className="collection-desc">Read the full discussion <a target="_blank" href={poll.link}>here</a>.</p>
             </div>
-          }
-          <p className="collection-desc">Read the full discussion <a target="_blank" href={polls.link}>here</a>.</p>
-        </div> 
+          )
+        })
+      )
         : 
         <p>Loading...</p>
       }

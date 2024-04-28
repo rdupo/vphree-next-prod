@@ -4,6 +4,7 @@ import Router from 'next/router';
 
 const SaleCard = ({ price, atts, id, coll }) => {
   let alt_id;
+  let priceAlt;
   let s_id = id.toString();
 
   if (s_id.length === 1) {
@@ -15,6 +16,10 @@ const SaleCard = ({ price, atts, id, coll }) => {
   } else {
     alt_id = s_id;
   }
+
+  if (price.length === 7) {
+    priceAlt = price.substr(0,5) + price.substr(6)
+  } else {priceAlt = price}
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -62,7 +67,7 @@ const SaleCard = ({ price, atts, id, coll }) => {
     <div
       key={id}
       className={salesClassName}
-      data-price={price}
+      data-price={priceAlt}
       data-atts={atts}
       //onClick={() => {
       //  Router.push({ pathname: `/${coll}/${id}` });
@@ -81,7 +86,7 @@ const SaleCard = ({ price, atts, id, coll }) => {
         />
       </div>
       <div className="card-info-wrapper mx-2">
-        <h4 className="phunk-price text-xs">{price}</h4>
+        <h4 className="phunk-price text-xs">{priceAlt}</h4>
       </div>
     </div>
   );

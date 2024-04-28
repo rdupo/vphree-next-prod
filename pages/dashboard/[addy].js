@@ -537,12 +537,12 @@ export default function V3Phunks() {
     <>
       <Header/>
       <Toaster/>
-      <div className="page bg-opacity-30 bg-black">
+      <div className="page bg-opacity-60 bg-black">
         <div className="content px-8 z-10">
         	<h1 className="v3-txt mr-auto text-5xl pt-4">
             <Image
               height={40}
-              className="inline-flex align-middle my-3 mr-4 h-img" 
+              className="inline-flex align-middle my-3 mr-4 h-img to-yellow" 
               src={Profile}
               alt="profile icon"
             />
@@ -619,7 +619,7 @@ export default function V3Phunks() {
                 </select>
                 <div className="input-group-append">
                   <button 
-                    className="btn-outline v3-bg" 
+                    className="btn-outline bg-[#ffba00]" 
                     onClick={() => {
                       setIsListed("");
                     }} 
@@ -640,7 +640,7 @@ export default function V3Phunks() {
                 </select>
                 <div className="input-group-append">
                   <button 
-                    className="btn-outline v3-bg" 
+                    className="btn-outline bg-[#ffba00]" 
                     onClick={() => {
                       setHasBid("");
                     }} 
@@ -649,7 +649,7 @@ export default function V3Phunks() {
               </div>
               <button 
                 id="view-mr" 
-                className={`v3-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
+                className={`bg-[#ffba00] black-txt brite ${filtersActive ? 'hidden' : ''}`} 
                 onClick={filterToggle}>
                 View Trait Filters
               </button>
@@ -1242,6 +1242,7 @@ export default function V3Phunks() {
               </p>
             }                       
           </div>}
+          {/*
           {activeCollection !== 'v2' ? null : <h2 className="mt-8 text-2xl">Current Auction</h2>}
           {activeCollection !== 'v2' ? null : 
             <AuctionTimer
@@ -1253,6 +1254,7 @@ export default function V3Phunks() {
             />
           }
           {activeCollection === 'v2' ? <LatestProp/> : null}
+          */}
           {activeCollection !== 'v3' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
           {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
             {loading === false ?
@@ -1275,7 +1277,7 @@ export default function V3Phunks() {
               <p className="text-2xl v3-txt my-4">Loading NLL transaction history...</p>
             }
           </div>}
-          <h2 className="mt-8 text-2xl">Links</h2>
+          {/*<h2 className="mt-8 text-2xl">Links</h2>
           {activeCollection === 'v1' ? 
             <div>
               <h3 className="mt-4">Marketplace</h3>
@@ -1351,7 +1353,7 @@ export default function V3Phunks() {
               <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
               <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
             </div>
-          }
+          }*/}
         </div>
       </div>
       <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>

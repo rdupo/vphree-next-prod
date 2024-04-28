@@ -27,9 +27,7 @@ const Card = ({ price, atts, id, coll }) => {
   };
 
   // Define variables for dynamic values
-  let imageSrc;
-  let imageClassName;
-  let idClassName;
+  let imageSrc, imageClassName, idClassName, collSrc;
 
   // Set values based on hover state and coll value
   if (isHovered && coll === 'philip') {
@@ -37,33 +35,37 @@ const Card = ({ price, atts, id, coll }) => {
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v1-bg';
     idClassName = 'phunk-id mb-0 v1-txt';
+    collSrc = 'philip';
   } else if (!isHovered && coll === 'philip') {
   	// philip default state
 	  imageSrc = '/phunks/philip.png';
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
+    collSrc = 'philip';
   } else if (coll === 'v2' || coll === 'auc') {
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v2-bg';
     idClassName = 'phunk-id mb-0 v2-txt';
+    collSrc = 'cryptophunk';
   } else {
     // Values for v3 phunks; default
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v3-bg';
     idClassName = 'phunk-id mb-0 v3-txt';
+    collSrc = 'v3phunk'
   }
 
   return (
     <div
       key={id}
-      className="brite my-2 black-bg white-txt inline-block sans-underline"
+      className="brite black-bg white-txt inline-block sans-underline"
       data-price={price}
       data-atts={atts}
       onClick={() => { 
           if(coll === 'auc'){
             window.open('https://phunks.auction/', '_blank');
           } else {
-            Router.push({ pathname: `/${coll}/${id}` });
+            Router.push({ pathname: `/${collSrc}/${id}` });
           }        
         }
       }

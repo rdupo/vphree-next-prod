@@ -11,9 +11,8 @@ import { useWallet } from '../contexts/WalletContext'
 import getV3Sales from '../hooks/v3Sales'
 import getNllSales from '../hooks/nllSales'
 import { Network, Alchemy } from 'alchemy-sdk'
-import flywheelAddy from '../utils/flywheelAddy'
-import flywheelAbi from '../utils/flywheelAbi'
 import phunkAddy from '../utils/phunkAddy'
+
 
 export default function Home() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
@@ -25,14 +24,6 @@ export default function Home() {
   const [mp, setMp] = useState("vphree");
   const [searchAddy, setSearchAddy] = useState("");
   const [showWarning, setShowWarning] = useState(false);
-  //start flywheel consts -----------------------
-  const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
-  const [nftEstimate, setNftEstimate] = useState([]);
-  const [minFlywheelPrice, setMinFlywheelPrice] = useState();
-  const [flywheelLoading, setFlywheelLoading] = useState(true);
-  const [flywheelId, setFlywheelId] = useState("0");
-  const [flywheelBalance, setFlywheelBalance] = useState("---")
-  //end flywheel consts -------------------------
   let salesBand, vphreeText, nllText;
 
   if(mp === "vphree") {
@@ -44,36 +35,6 @@ export default function Home() {
     vphreeText = "cursor-pointer text-orange-500"
     nllText = "cursor-pointer text-black"
   }
-
-  const getBalance = async () => {
-    const bal = await provider.getBalance(flywheelAddy);
-    const ethBal = Number(ethers.utils.formatUnits(bal._hex,18)).toFixed(2);
-    setFlywheelBalance(ethBal);
-  }
-
-  //start flywheel js ---------
-  const getValue = async (phunk) => {
-    const temp = [];
-    const percentOfValue = await flywheelContract.contractConfig();
-    const pct = Number(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
-
-    const res = await fetch(`/api/priceEstimate/${phunkAddy}/${phunk}`);
-    const data = await res.json();
-    const dispEst = Number(data.data.estimate.eth)*pct;
-    temp.push({
-      tokenId:phunk,
-      nftbEst: dispEst.toFixed(3),
-    });
-
-    setNftEstimate(temp);
-
-    const minValue = await flywheelContract.getCurrentMinimumValidPrice();
-    const minValidPrice = Number(ethers.utils.formatUnits(minValue[0]._hex,18));
-    setMinFlywheelPrice(minValidPrice);
-
-    setFlywheelLoading(false);
-  }
-  //end flywheel js -----------
 
   useEffect(() => {
     // Update iWidth on window resize
@@ -88,10 +49,6 @@ export default function Home() {
       window.removeEventListener('resize', handleResize);
     };
   }, []); // Empty dependency array ensures that the effect runs only on mount and unmount
-
-  useEffect(() => {
-    getBalance();
-  }, [mp]);
 
   function getInitialWidth() {
     if(typeof(window) !== 'undefined') {
@@ -125,7 +82,7 @@ export default function Home() {
   return (
     <>
       <Header onUpdateConnectedWallet={updateConnectedWallet} />
-      <div className="content bg-opacity-30 bg-black">
+      <div className="content bg-opacity-60 bg-black">
         <div className="bg-[#ffba00] black-txt">
           <div className="pl-8 text-orange-400">
             <p>
@@ -165,7 +122,7 @@ export default function Home() {
           </div>
         </div>
         <div className="home-wrapper">
-          <h2 className="home-title v3-txt">Welcome to vPhree</h2>
+          <h2 className="home-title v3-txt leading-none mb-4">Welcome to vPhree</h2>
           <p className="text-xl w-75">vPhree is the front door to all things Phunky. View your Phunks across all 3 collections, check out the latest Treasury Proposal, place a bid on the current auction, get Flywheel estimates, and more--all in one place.</p>
           <div id="search-wallet" className="inline-flex w-full my-4">
             <input
@@ -184,59 +141,13 @@ export default function Home() {
           <p className={!showWarning ? "hidden" : "text-red-500 text-base"}>
               Please enter a valid wallet address or ENS domain
           </p>
-          <div>
-            <Link href="/collections/v3-phunks">
-              <button className="mobile-100 cta v3-bg v3-b black-txt">v3 Marketplace</button>
+          <div>          
+            <Link href="/hub/philip-intern-project">
+              <button className="w-60 mobile-100 cta border-[#ffba00] border-[3px] bg-[#ffba00] black-txt">Phunky Hub</button>
             </Link>
-            <Link href="/view-all/v3-phunks">
-              <button className="mobile-100 cta v3-b black-bg v3-txt">View All v3s</button>
+            <Link href="/dose-of-phunks">
+              <button className="w-60 mobile-100 cta border-[#ffba00] border-[3px] text-[#ffba00] black-bg">Dose of Phunks</button>
             </Link>
-            <Link href="/view-all/philip-intern-project">
-              <button className="mobile-100 cta v1-b v1-bg black-txt">Philip Phinder</button>
-            </Link>
-            {/*<Link href="/dose-of-phunks">
-              <button className="mobile-100 cta v2-b v2-bg black-txt">Dose of Phunks</button>
-            </Link>*/}
-          </div>
-          <h2 className="mt-8 text-2xl">Flywheel Payout Phinder</h2>
-          <div className="inline-flex my-2"> 
-            {nftEstimate.length > 0 ?
-              nftEstimate.map((phunk) => (
-                <FlywheelCard
-                  key={`flywheel${phunk}`}
-                  price={phunk.nftbEst}
-                  minPrice={minFlywheelPrice}
-                  atts=""
-                  id={phunk.tokenId}
-                />
-              ))
-              :
-              <FlywheelCard
-                key={`flywheel-1`}
-                price=""
-                minPrice=""
-                atts=""
-                id="-1"
-              />
-            }
-            <div className="w-3/6 ml-8 h-12">
-              <input
-                className="lite-v3-bg w-full p-1 my-2 black-txt" 
-                type="number" 
-                name="lookup-id" 
-                placeholder="PHUNK ID"
-                id="lookup-id-value"
-                minLength="1" 
-                maxLength="4" 
-                onChange={(e) => setFlywheelId(e.target.value)}
-              />
-              <button 
-                className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
-                onClick={() => {getValue(flywheelId)}}
-                id="search-btn">GET PAYOUT AMOUNT
-              </button>
-              <p> Flywheel Funds: {flywheelBalance}Ξ</p>
-            </div>
           </div>
         </div>
       </div>

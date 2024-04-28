@@ -120,8 +120,8 @@ export default function V3Phunks() {
     <>
       <Header/>
       <Toaster/>
-      <div className="page bg-[#3e3e3e]">
-        <div className="content px-8">
+      <div className="page bg-opacity-60 bg-black">
+        <div className="content px-8 z-10">
           <div className="row-wrapper block px-0 py-4">
             <div 
               className={imageWrapperClassName}
@@ -176,7 +176,10 @@ export default function V3Phunks() {
           </div>
         </div>
       </div>
-      <Footer/>      
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
+      <Footer
+        bg='black'
+      />     
     </>
   )
 }

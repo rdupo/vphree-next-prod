@@ -1,18 +1,18 @@
- import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect } from 'react'
 import Image from 'next/image'
 import Header from  '../../components/Header'
 import CollectionInfo from '../../components/CollectionInfo'
 import Card from '../../components/Card'
 import Footer from '../../components/Footer'
-import Banner from '../../assets/v3banner.png'
+import Banner from '../../assets/cryptophunks-banner.png'
 import Twitter from '../../assets/twitter.png'
 import Etherscan from '../../assets/etherscan.png'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import phunks from '../../utils/phunkData'
-import v3PhunkAddy from '../../utils/v3PhunkAddy'
+import phunkAddy from '../../utils/phunkAddy'
 
 export default function V3Phunks() {
-  const collectionContract = v3PhunkAddy
+  const collectionContract = phunkAddy
   const [f, setF] = useState({})
   const [beard, setBeard] = useState("")
   const [cheeks, setCheeks] = useState("")
@@ -59,9 +59,9 @@ export default function V3Phunks() {
         </div>
         <div className="content px-8 z-10">
           <CollectionInfo
-            title="All V3 Phunks"
-            desc="View all 10,000 v3Phunks. Click on a Phunk to view it&#39;s attribute(s) or bid on/buy it."
-            twitter="https://twitter.com/v3phunks"
+            title="All CryptoPhunks"
+            desc="View all 10,000 CryptoPhunks. Click on a Phunk to view it&#39;s attribute(s), history, and NotLarvaLabs listing/bid info."
+            twitter="https://twitter.com/CryptoPhunksV2"
             contract={collectionContract}
           />
           <div className="filter-sort-wrapper mb-8">
@@ -579,7 +579,7 @@ export default function V3Phunks() {
                   price=""
                   atts={phunk.atts}
                   id={phunk.tokenId}
-                  coll="phunk"
+                  coll="v2"
                 />
               : null )  
             ))}

@@ -166,19 +166,21 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
   });
 
   return (
-    <div className="auction-wrapper inline-flex">
-      <div className="auction-img-wrapper">
-        <Card
-          key={id}
-          price=""
-          atts=""
-          id={id}
-          coll="auc"
-        />
-      </div>
-      <div className="auction-txt-wrapper ml-6">
-        <p className="text-gray-400">Traits</p>
-        <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: aucAtts}} />
+    <div className="auction-wrapper inline-block">
+      <div>
+        <div className="auction-img-wrapper inline-block">
+          <Card
+            key={id}
+            price=""
+            atts=""
+            id={id}
+            coll="auc"
+          />
+        </div>
+        <div className="auction-txt-wrapper ml-6 inline-block">
+          <p className="text-gray-400">Traits</p>
+          <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: aucAtts}} />
+        </div>
       </div>
       <div className="auction-info-wrapper ml-6">
         <div className="text-gray-400">

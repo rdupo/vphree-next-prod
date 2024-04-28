@@ -19,9 +19,9 @@ export default function Home() {
   return (
     <>
       <Header onUpdateConnectedWallet={updateConnectedWallet} />
-      <div className="content bg-opacity-30 bg-black">
+      <div className="content bg-opacity-60 bg-black">
         <div className="home-wrapper">
-          <h2 className="home-title v3-txt">DOPE | S2 E10</h2>
+          <h2 className="home-title v3-txt">DOPE | S3 E1</h2>
           <p>by&nbsp; 
             <a 
               target="_blank"
@@ -30,16 +30,32 @@ export default function Home() {
             @NFTenchi
             </a>
           </p>
-          <p className="home-body w-75">Phunks never shy away from being innovative creative ,disruptors, and trendsetters. Here’s a monthly DOSE of that ethos.</p>
+          <p className="home-body w-75">Phunks never shy away from being innovative creative, disruptors, and trendsetters. Here’s a monthly DOSE of that ethos.</p>
           <div>
-            <p>Image goes here...</p>
+            {/*<p>Image goes here...</p>
             <Link href="/collections/v3-phunks">
               <button className="mobile-100 cta v3-bg v3-b black-txt">Claim</button>
-            </Link>
+            </Link>*/}
+            <div dangerouslySetInnerHTML={{ 
+              __html:
+              `<div
+              data-widget="m-claim-complete"
+              data-id="83112176"
+              ></div>`
+            }}/>
           </div>
-          <p className="home-body w-75 mt-28">Previous DOPE Editions</p>
-          <div className="inline-flex">
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition1">
+          <div className="ManifoldConnect" className="hidden">
+            <div  
+              data-widget="m-connect"  
+              data-app-name="doseofphunks"  
+              data-network="1"
+              data-id="83112176"
+            >
+            </div>
+          </div>
+          <p className="home-body w-75 mt-28">Dose of Phunks Editions | Season 2</p>
+          <div className="inline-block">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition1">
             <div className="mr-4">
               <p>S2 E1</p>
               <Image 
@@ -51,7 +67,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition2">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition2">
             <div className="mr-4">
               <p>S2 E2</p>
               <Image 
@@ -63,7 +79,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition3">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition3">
             <div className="mr-4">
               <p>S2 E3</p>
               <Image 
@@ -75,7 +91,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition4">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition4">
             <div className="mr-4">
               <p>S2 E4</p>
               <Image 
@@ -87,7 +103,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition5">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition5">
             <div className="mr-4">
               <p>S2 E5</p>
               <Image 
@@ -99,7 +115,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunksedition-6">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunksedition-6">
             <div className="mr-4">
               <p>S2 E6</p>
               <Image 
@@ -111,7 +127,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunksedition-7">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunksedition-7">
             <div className="mr-4">
               <p>S2 E7</p>
               <Image 
@@ -123,7 +139,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition8">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition8">
             <div className="mr-4">
               <p>S2 E8</p>
               <Image 
@@ -135,7 +151,7 @@ export default function Home() {
                 width="100"
               /> 
             </div></a>
-            <a target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition9">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition9">
             <div className="mr-4">
               <p>S2 E9</p>
               <Image 
