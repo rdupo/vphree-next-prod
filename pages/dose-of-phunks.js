@@ -44,7 +44,7 @@ export default function Home() {
               ></div>`
             }}/>
           </div>
-          <div className="ManifoldConnect" className="hidden">
+          <div className="hidden">
             <div  
               data-widget="m-connect"  
               data-app-name="doseofphunks"  

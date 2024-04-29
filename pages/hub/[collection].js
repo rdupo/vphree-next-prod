@@ -268,7 +268,7 @@ export default function PhunkyHub() {
           <h2 className="mt-16 mb-4 text-2xl">About</h2>
           {activeCollection === 'philip-intern-project' ?
             <div className="text-gray-300 w-11/12 filter-sort-wrapper">
-              <p>Philips are from the original CryptoPhunks contract, deployed June 14, 2021. A week later, the team deployed the v2 contract to remove the bonding curve pricing built into the original contract. It was at this time that the metadata was wiped and the images were updated to “Philip the Intern” for all 1,004 NFTs minted before the migration to the new contract.</p>
+              <p>Philips are from the original CryptoPhunks contract, deployed June 14, 2021. A week later, the team deployed the v2 contract to remove the bonding curve pricing built into the original contract. It was at this time that the metadata was wiped and the images were updated to &#34;Philip the Intern&#34; for all 1,004 NFTs minted before the migration to the new contract.</p>
               <br/>
               <p>In February 2022 a wrapper for Philips was deployed, which restores the metadata and updates the image to the corresponding Phunk on a purple background. Once your Philip is wrapped, you will receive your v1 Phunks (Wrapped) NFT and the Philip will be sent to the V1 Cryptopunks (Wrapped) contract.</p>
             </div>
@@ -406,7 +406,7 @@ export default function PhunkyHub() {
                 {flywheelSales.length > 0 ?
                   flywheelSales.map((sale) => {
                     return(              
-                      <div className='img-wrapper v2-bg inline-block'>
+                      <div className='img-wrapper v2-bg inline-block' key={`flywheel-${sale.id}`}>
                         <Image
                           className="w-100 inline-block"
                           src={`/phunks/phunk${sale.id}.svg`}
