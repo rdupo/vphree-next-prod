@@ -8,7 +8,7 @@ const History = ({ transactions, mp }) => {
       {transactions && transactions.length > 0 && transactions[0].eventType !== 'none' ?
         (<table className="collection-desc w-full text-left mb-20 bg-black">
           <thead>
-            <tr className="v3-txt black-bg">
+            <tr className="g-txt black-bg">
               <th>Event</th>
               <th>Phunk</th>
               <th>Amount</th>
@@ -111,7 +111,7 @@ const History = ({ transactions, mp }) => {
         ?
         <p className="text-2xl text-gray-400 my-4">You do not have any {mp} transactions.</p>
         :
-        <p className="text-2xl v3-txt my-4">Loading {mp} transaction history...</p>
+        <p className="text-2xl g-txt my-4">Loading {mp} transaction history...</p>
       }
     </div>
   );

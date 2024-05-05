@@ -149,13 +149,13 @@ export default function V3Phunks() {
                 />
               </div>
             </div>
-            <h2 id="title" className="v3-txt mb-3">CryptoPhunk #{id}</h2>
+            <h2 id="title" className="g-txt mb-3">CryptoPhunk #{id}</h2>
             <div className="metadata inline-block align-top w-full md:w-3/12">
               <div className="id-and-owner">
                 <p>Owner</p>
                 <div 
                   id="owner" 
-                  className="collection-desc brite v3-txt sans-underline"
+                  className="collection-desc brite g-txt sans-underline"
                   onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
                                   Router.push({pathname: `/account/${owner}`}) :
                                   Router.push({pathname: `/profile/${owner}`})}}>
@@ -214,7 +214,7 @@ export default function V3Phunks() {
             <div className="atts-div metadata inline-block align-top w-full md:w-3/12">
               <p>Attributes</p>
               <div className="metadata" id="md">
-                <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
+                <div className="collection-desc g-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
               </div>
             </div>
             <div className="contract-interactions inline-block pr-0 align-top w-full md:w-3/12">
@@ -223,7 +223,7 @@ export default function V3Phunks() {
                   <p>Phunk not listed</p>
                   :
                   <p id="price">Price:&nbsp;
-                    <span className="collection-desc v3-txt">
+                    <span className="collection-desc g-txt">
                       {ethers.utils.formatUnits(listed.minValue._hex,18) + 'Ξ'}
                     </span>
                   </p>
@@ -233,12 +233,12 @@ export default function V3Phunks() {
                   :
                   <>
                     <p id="bid" className="">Top Bid:&nbsp;
-                      <span className="collection-desc v3-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
+                      <span className="collection-desc g-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
                     </p>
                     <p className="">Bidder:&nbsp; 
                       <span 
                         id="top-bidder"
-                        className="collection-desc brite v3-txt sans-underline"
+                        className="collection-desc brite g-txt sans-underline"
                         onClick={() => {connectedAddress === offerer ?
                                         Router.push({pathname: `/account/${offerer}`}) :
                                         Router.push({pathname: `/profile/${offerer}`})}}

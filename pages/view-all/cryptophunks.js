@@ -79,13 +79,13 @@ export default function V3Phunks() {
               />
               <button 
                 id="view" 
-                className={`v3-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
+                className={`g-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
                 onClick={filterToggle}>
                 View Filters
               </button>
               <button 
                 id="hide" 
-                className={`v3-bg black-txt brite ${filtersActive ? '' : 'hidden'}`} 
+                className={`g-bg black-txt brite ${filtersActive ? '' : 'hidden'}`} 
                 onClick={filterToggle}>
                 Hide Filters
               </button>
@@ -118,7 +118,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg"
+                      className="btn-outline g-bg black-txt"
                       onClick={() => {
                         setF((prevState) => {
                           // Create a copy of the state to avoid modifying it directly
@@ -149,7 +149,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -177,7 +177,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -206,7 +206,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -248,7 +248,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -277,7 +277,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -345,7 +345,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -375,7 +375,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -406,7 +406,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -436,7 +436,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -464,7 +464,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -495,7 +495,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -523,7 +523,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -557,7 +557,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };

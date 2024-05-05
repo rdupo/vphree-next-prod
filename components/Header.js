@@ -41,11 +41,11 @@ const Header = () => {
 
 	return 	(
 		<div className="v3-txt black-bg flex">
-			<div className={"mr-auto brite"}>
+			<div className="mr-auto">
 				<Link href="/" className="sans-underline">
 					<Image
 						height={40} 
-						className="inline-flex align-middle my-3 ml-8 h-img to-yellow" 
+						className="inline-flex align-middle my-3 ml-8 h-img" 
 						src={Logo}
 						alt="vphree logo"
 					/>
@@ -56,7 +56,7 @@ const Header = () => {
 				<Link href="/about" className="sans-underline">
 					<Image 
 						height={30}
-						className="inline-flex align-middle my-3 mr-5 h-img-w brite to-yellow" 
+						className="inline-flex align-middle my-3 mr-5 h-img-w" 
 						src={Info}
 						alt="site info icon"
 					/>
@@ -64,14 +64,14 @@ const Header = () => {
 				<a href="https://discord.gg/hMC6cxBg3u" target="_blank" className="sans-underline">
 					<Image
 						height={30} 
-						className="inline-flex align-middle my-3 mr-5 h-img-w brite to-yellow" 
+						className="inline-flex align-middle my-3 mr-5 h-img-w" 
 						src={Discord}
 						alt="discord link icon"
 					/>
 				</a>
 				<Image 
 					height={30}
-					className="inline-flex align-middle my-3 mr-5 h-img-w brite to-yellow" 
+					className="inline-flex align-middle my-3 mr-5 h-img-w brite" 
 					src={Wallet}
 					alt="connect wallet icon"
 					onClick={connectWallet}
@@ -80,7 +80,7 @@ const Header = () => {
 					null : 
 					<Image
 						height={40}
-						className="inline-flex align-middle my-3 mr-8 h-img brite to-yellow" 
+						className="inline-flex align-middle my-3 mr-8 h-img brite" 
 						src={Profile}
 						alt="profile icon"
 						onClick={() => {Router.push({pathname: `/dashboard/${connectedAddress}`})}}

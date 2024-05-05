@@ -19,7 +19,7 @@ a {
 
 a:hover {
   /*color: #83dfb2;*/
-  color: #89ff81;
+  /*color: #89ff81;*/
   filter: brightness(1.33);
   cursor: pointer;
 }
@@ -59,8 +59,7 @@ tbody tr:nth-child(even) {
 }
 
 .lite-v3-bg, .sorter option {
-  /*background-color: #d7fae9;*/
-  background-color: #fff2ce;
+  background-color: #d7fae9;
 }
 
 .philip-bg {
@@ -85,8 +84,7 @@ tbody tr:nth-child(even) {
 }
 
 .v3-txt {
-  /*color: #83dfb2;*/
-  color: #ffba00;
+  color: #83dfb2;
 }
 
 .lite-v3-txt {
@@ -115,8 +113,7 @@ select, option, .black-txt {
 
 /*border*/
 .v3-b {
-  /*border: 3px solid #83dfb2;*/
-  border: 3px solid #ffba00;
+  border: 3px solid #83dfb2;
 }
 
 .v1-b {
@@ -320,10 +317,6 @@ select, option, .black-txt {
   }
 }
 /*end manifold css*/
-
-.to-yellow {
-  filter: brightness(0) saturate(100%) invert(84%) sepia(31%) saturate(7189%) hue-rotate(1deg) brightness(108%) contrast(101%);
-}
 
 /*mobile*/
 @media only screen and (max-width: 768px) {

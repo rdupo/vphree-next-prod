@@ -569,13 +569,13 @@ export default function V3Phunks() {
                 />
               </div>
             </div>
-            <h2 id="title" className="v3-txt mb-3">v3phunk #{id}</h2>
+            <h2 id="title" className="g-txt mb-3">v3phunk #{id}</h2>
             <div className="metadata inline-block align-top w-full md:w-3/12">
               <div className="id-and-owner">
                 <p>Owner</p>
                 <div 
                   id="owner" 
-                  className="collection-desc brite v3-txt sans-underline"
+                  className="collection-desc brite g-txt sans-underline"
                   onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
                                   Router.push({pathname: `/account/${owner}`}) :
                                   Router.push({pathname: `/profile/${owner}`})}}>
@@ -634,7 +634,7 @@ export default function V3Phunks() {
             <div className="atts-div metadata inline-block align-top w-full md:w-3/12">
               <p>Attributes</p>
               <div className="metadata" id="md">
-                <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
+                <div className="collection-desc g-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
               </div>
             </div>
             <div className="contract-interactions inline-block pr-0 align-top w-full md:w-3/12">
@@ -643,7 +643,7 @@ export default function V3Phunks() {
                   null
                   :
                   <p id="price">Price:&nbsp;
-                    <span className="collection-desc v3-txt">
+                    <span className="collection-desc g-txt">
                       {ethers.utils.formatUnits(listed.minValue._hex,18) + 'Ξ'}
                     </span>
                   </p>
@@ -653,12 +653,12 @@ export default function V3Phunks() {
                   :
                   <>
                     <p id="bid" className="">Top Bid:&nbsp;
-                      <span className="collection-desc v3-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
+                      <span className="collection-desc g-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
                     </p>
                     <p className="">Bidder:&nbsp; 
                       <span 
                         id="top-bidder"
-                        className="collection-desc brite v3-txt sans-underline"
+                        className="collection-desc brite g-txt sans-underline"
                         onClick={() => {connectedAddress === offerer ?
                                         Router.push({pathname: `/account/${offerer}`}) :
                                         Router.push({pathname: `/profile/${offerer}`})}}
@@ -681,19 +681,19 @@ export default function V3Phunks() {
                         null
                         :
                         <><button 
-                          className="v3-bg black-txt w-full p-1 my-2 brite" 
+                          className="g-bg black-txt w-full p-1 my-2 brite" 
                           onClick={() => {buy()}}
                           id="buy-btn">BUY</button><br/></>
                       }
                       <button 
-                        className="v3-bg black-txt w-full p-1 my-2 brite" 
+                        className="g-bg black-txt w-full p-1 my-2 brite" 
                         onClick={bidToggle}
                         id="bid-btn-togl">BID
                       </button>
                       <br/>
                       <div className={bidActive ? '' : 'hidden'} id="enter-bid-amount">
                         <input
-                          className="lite-v3-bg w-full p-1 my-2 black-txt" 
+                          className="bg-green-100 w-full p-1 my-2 black-txt" 
                           type="number" 
                           name="bid-amt" 
                           placeholder="bid amount"
@@ -703,13 +703,13 @@ export default function V3Phunks() {
                         />
                         <br/>
                         <button 
-                          className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
+                          className="black-bg g-txt g-b w-full p-1 my-2 brite" 
                           onClick={() => {bidOn()}}
                           id="place-bid-btn">PLACE BID</button>
                       </div>
                       {offerer.toLowerCase() === connectedAddress.toLowerCase() ?
                         <button 
-                          className="v3-bg black-txt w-full p-1 my-2 brite"
+                          className="g-bg black-txt w-full p-1 my-2 brite"
                           onClick={() => {cancelBid()}}
                           id="cxl-bid-btn">
                           CANCEL BID
@@ -723,13 +723,13 @@ export default function V3Phunks() {
                       {!listed.isForSale ?
                         <>
                           <button 
-                            className="v3-bg black-txt w-full p-1 my-2 brite" 
+                            className="g-bg black-txt w-full p-1 my-2 brite" 
                             onClick={listToggle}
                             id="list-btn-togl">LIST</button>
                           <br id="delist-br"/>
                           <div id="enter-list-amount" className={listActive ? '' : 'hidden'}>
                             <input 
-                              className="lite-v3-bg w-full p-1 my-2 black-txt" 
+                              className="bg-green-100 w-full p-1 my-2 black-txt" 
                               type="number" 
                               name="sell-amt" 
                               placeholder="list price"
@@ -739,7 +739,7 @@ export default function V3Phunks() {
                             />
                             <br/>
                             <button 
-                              className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
+                              className="black-bg g-txt g-b w-full p-1 my-2 brite" 
                               onClick={() => {list()}}
                               >LIST</button>
                           </div>
@@ -747,7 +747,7 @@ export default function V3Phunks() {
                         :
                         <>
                           <button 
-                            className="v3-bg black-txt w-full p-1 my-2 brite" 
+                            className="g-bg black-txt w-full p-1 my-2 brite" 
                             onClick={() => {delist()}}
                             id="delist-btn">DELIST</button>
                           <br/>
@@ -757,7 +757,7 @@ export default function V3Phunks() {
                         null
                         :
                         <button 
-                          className="v3-bg black-txt w-full p-1 my-2 brite" 
+                          className="g-bg black-txt w-full p-1 my-2 brite" 
                           onClick={() => {acceptBid()}}
                           id="accept-bid-btn">
                           ACCEPT BID
@@ -768,7 +768,7 @@ export default function V3Phunks() {
                 </div>
                 :
                 <div 
-                  className="p-3 black-bg v3-txt v3-b w-full"  
+                  className="p-3 black-bg g-txt g-b w-full"  
                   id="not-connected">
                     Please connect your wallet to interact with this Phunk
                 </div>
