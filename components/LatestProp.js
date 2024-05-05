@@ -27,7 +27,7 @@ function LatestProp() {
         polls.map((poll) => {
           return(
             <div className="w-10/12 mb-4" key={poll.id}>
-              <p className="v3-txt">Poll #{poll.id}</p>
+              <p className="g-txt">Poll #{poll.id}</p>
               <p className="collection-desc text-gray-300 break-all">{poll.description}</p>
               {poll.until > Date.now() ?
                 <p className="collection-desc text-gray-300">Ends: {poll.until}</p>

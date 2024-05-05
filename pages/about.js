@@ -9,9 +9,9 @@ export default function Home() {
   return (
     <>
       <Header/>
-      <div className="content bg-[#3e3e3e]">
+      <div className="content bg-opacity-60 bg-black">
         <div className="home-wrapper">
-          <h2 className="home-title v3-txt">About vPhree</h2>
+          <h2 className="home-title g-txt">About vPhree</h2>
           <p className="collection-desc text-l w-75">vPhree started as a phee-less marketplace currently supporting v3 Phunk NFTs, which builds off the foundation created by the <a href="https://notlarvalabs.com/" target="_blank">NotLarvaLabs</a> team. Since its launch, vPhree has evolved into a Phunky Hub showcasing community-built solutions including: Treasury Propositions, Flywheel, Auction House, and Not Larva Labs. In addition, our updated Dashboard allows users to view the Philips, CryptoPhunks, and v3Phunks owned along with Not Larva Labs and vPhree activity. 
             <br/>
             <br/>
@@ -29,7 +29,10 @@ export default function Home() {
           </p>
         </div>
       </div>
-      <Footer/>      
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
+      <Footer
+        bg='black'
+      />     
     </>
   )
 }

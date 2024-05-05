@@ -137,14 +137,14 @@ export default function V3Phunks() {
                 />
               </div>
             </div>
-            <h2 id="title" className="v3-txt">Philip #{id}</h2>
+            <h2 id="title" className="g-txt">Philip #{id}</h2>
             <p className="drk-grey-txt mb-4 collection-desc">Hover displays a preview of the wrapped Philip. Wrap your Philips at <Link href="https://www.v1phunks.io/" target="_blank">v1phunks.io</Link></p>
             <div className="metadata inline-block align-top w-full md:w-3/12">
               <div className="id-and-owner">
                 <p>Owner</p>
                 <div 
                   id="owner" 
-                  className="collection-desc brite v3-txt sans-underline"
+                  className="collection-desc brite g-txt sans-underline"
                   onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
                                   Router.push({pathname: `/account/${owner}`}) :
                                   Router.push({pathname: `/profile/${owner}`})}}>
@@ -159,7 +159,7 @@ export default function V3Phunks() {
             <div className="atts-div metadata inline-block align-top w-full md:w-5/12">
               <p>Attributes</p>
               <div className="metadata" id="md">
-                <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
+                <div className="collection-desc g-txt my-1" dangerouslySetInnerHTML={{ __html: atts}} />
               </div>
             </div>
             <div className="contract-interactions inline-block pr-0 align-top w-full md:w-4/12">

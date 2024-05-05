@@ -14,12 +14,12 @@ body {
 
 a {
   /*color: #83dfb2;*/
-  color: #ffba00;
+  color: #13df05;
 }
 
 a:hover {
   /*color: #83dfb2;*/
-  color: #ffba00;
+  color: #89ff81;
   filter: brightness(1.33);
   cursor: pointer;
 }
@@ -29,12 +29,28 @@ th, td {
 }
 
 tbody tr:nth-child(odd) {
-  background-color: #ffba0033;
+  background-color: #13df0533;
 }
 
 /* Style for even rows */
 tbody tr:nth-child(even) {
-  background-color: #ffba0025;
+  background-color: #13df0525;
+}
+/*updating branding*/
+.g-bg {
+  background-color: #13df05;
+}
+
+.g-txt {
+  color: #13df05;
+}
+
+.g-b {
+    border: 3px solid #13df05;
+}
+
+.g-b-c {
+    border-color: #13df05;
 }
 
 /*bg colors*/

@@ -72,7 +72,7 @@ export default function V3Phunks() {
               <input 
                 type="text" 
                 id="id" 
-                className="lite-v3-bg black-txt" 
+                className="bg-green-100 black-txt" 
                 name="id" 
                 minLength="1" 
                 maxLength="4" 
@@ -81,13 +81,13 @@ export default function V3Phunks() {
               />
               <button 
                 id="view" 
-                className={`v3-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
+                className={`g-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
                 onClick={filterToggle}>
                 View Filters
               </button>
               <button 
                 id="hide" 
-                className={`v3-bg black-txt brite ${filtersActive ? '' : 'hidden'}`} 
+                className={`g-bg black-txt brite ${filtersActive ? '' : 'hidden'}`} 
                 onClick={filterToggle}>
                 Hide Filters
               </button>
@@ -95,7 +95,7 @@ export default function V3Phunks() {
             <div id="filters" className={`${filtersActive ? '' : 'hidden'}`}>
                 <div className="p-0 filter-dropdown" data-type="beard ">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={beard}
                     onChange={(e) => {
@@ -120,7 +120,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg"
+                      className="btn-outline g-bg black-txt"
                       onClick={() => {
                         setF((prevState) => {
                           // Create a copy of the state to avoid modifying it directly
@@ -137,7 +137,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="cheeks">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={cheeks}
                     onChange={(e) => {
@@ -151,7 +151,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -165,7 +165,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="ears">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={ears}
                     onChange={(e) => {
@@ -179,7 +179,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -193,7 +193,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="emotion">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={emotion}
                     onChange={(e) => {
@@ -208,7 +208,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -222,7 +222,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="eyes">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text"
                     value={eyes}
                     onChange={(e) => {
@@ -250,7 +250,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -264,7 +264,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="face">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={face}
                     onChange={(e) => {
@@ -279,7 +279,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -293,7 +293,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="hair">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={hair}
                     onChange={(e) => {
@@ -347,7 +347,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -361,7 +361,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="lips">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={lips}
                     onChange={(e) => {
@@ -377,7 +377,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -391,7 +391,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="mouth">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={mouth}
                     onChange={(e) => {
@@ -408,7 +408,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -422,7 +422,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="neck">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={neck}
                     onChange={(e) => {
@@ -438,7 +438,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -452,7 +452,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="nose">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={nose}
                     onChange={(e) => {
@@ -466,7 +466,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -480,7 +480,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="sex">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={sex}
                     onChange={(e) => {
@@ -497,7 +497,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -511,7 +511,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="teeth">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={teeth}
                     onChange={(e) => {
@@ -525,7 +525,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -539,7 +539,7 @@ export default function V3Phunks() {
                 </div>
                 <div className="p-0 filter-dropdown" data-type="traits">
                   <select 
-                    className="select lite-v3-bg" 
+                    className="select bg-green-100" 
                     type="text" 
                     value={atts}
                     onChange={(e) => {
@@ -559,7 +559,7 @@ export default function V3Phunks() {
                   </select>
                   <div className="input-group-append">
                     <button 
-                      className="btn-outline v3-bg" 
+                      className="btn-outline g-bg black-txt" 
                       onClick={() => {
                         setF((prevState) => {
                           const updatedState = { ...prevState };
@@ -589,7 +589,9 @@ export default function V3Phunks() {
         </div>    
       </div>
       <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
-      <Footer/>      
+      <Footer
+        bg='black'
+      />  
     </>
   )
 }

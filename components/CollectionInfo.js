@@ -9,7 +9,7 @@ const CollectionInfo = ({title, desc, twitter, contract}) => {
 	return (
 		<div className="collection-info mb-10 w-9/12 px-0">
 			<div className="flex">
-				<h1 className="v3-txt mr-auto text-5xl">{title}</h1>
+				<h1 className="g-txt mr-auto text-5xl">{title}</h1>
 				<div id="collection-links" className="justify-content-end">
 					<a href={twitter} target="_blank" className="sans-underline">
 						<Image 

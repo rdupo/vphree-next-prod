@@ -177,27 +177,27 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
             coll="auc"
           />
         </div>
-        <div className="auction-txt-wrapper ml-6 inline-block">
+        <div className="auction-txt-wrapper ml-6 inline-block align-top">
           <p className="text-gray-400">Traits</p>
-          <div className="collection-desc v3-txt my-1" dangerouslySetInnerHTML={{ __html: aucAtts}} />
+          <div className="collection-desc g-txt my-1" dangerouslySetInnerHTML={{ __html: aucAtts}} />
         </div>
       </div>
       <div className="auction-info-wrapper ml-6">
         <div className="text-gray-400">
             Time Remaining:{' '} 
-            <span className="v3-txt">
+            <span className="g-txt">
               {timeLeft.days}:
               {timeLeft.hours < 10 ? `0${timeLeft.hours}` : timeLeft.hours}:
               {timeLeft.minutes < 10 ? `0${timeLeft.minutes}` : timeLeft.minutes}:
               {timeLeft.seconds < 10 ? `0${timeLeft.seconds}` : timeLeft.seconds}
             </span>
         </div>
-        <p className="text-gray-400">Current Bid: <span className="v3-txt">{`${highBid}Ξ`}</span></p>
-        <p className="text-gray-400">Bidder: <span className="v3-txt">{bidder}</span></p>
+        <p className="text-gray-400">Current Bid: <span className="g-txt">{`${highBid}Ξ`}</span></p>
+        <p className="text-gray-400">Bidder: <span className="g-txt">{bidder}</span></p>
       </div>
       {!connectedAddress ?
       <div 
-        className="p-3 black-bg v3-txt v3-b w-1/6 ml-4"  
+        className="p-3 black-bg g-txt g-b w-1/6 ml-4"  
         id="not-connected">
           Please connect your wallet to bid
       </div> 
@@ -207,7 +207,7 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
         <div className="auction-btn-wrapper ml-6">
           <p>Auction Ended. Help out by starting the next auction.</p>
           <button 
-            className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
+            className="black-bg g-txt g-b w-full p-1 my-2 brite" 
             onClick={() => {startNew()}}
             id="start-new-btn">
             START NEXT AUCTION
@@ -217,7 +217,7 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
         <div className="auction-btn-wrapper ml-6">
         <div id="enter-bid-amount">
           <input
-            className="lite-v3-bg w-full p-1 my-2 black-txt" 
+            className="bg-green-100 w-full p-1 my-2 black-txt" 
             type="number" 
             name="bid-amt" 
             placeholder={`Minimum bid: ${Number(highBid)*(bidPercent)}Ξ`}
@@ -227,7 +227,7 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
           />
           <br/>
           <button 
-            className="black-bg v3-txt v3-b w-full p-1 my-2 brite" 
+            className="black-bg g-txt g-b w-full p-1 my-2 brite" 
             onClick={() => {bidOn()}}
             id="place-bid-btn">PLACE BID
           </button>

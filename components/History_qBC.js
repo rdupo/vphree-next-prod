@@ -7,7 +7,7 @@ const History = ({ transactions }) => {
       {transactions.length > 0 ?
         (<table className="collection-desc w-full text-left mb-20 bg-black">
           <thead>
-            <tr className="v3-txt black-bg">
+            <tr className="g-txt black-bg">
               <th>Event</th>
               <th>Amount</th>
               <th className="t-from">From</th>
@@ -87,7 +87,7 @@ const History = ({ transactions }) => {
           </tbody>
         </table>)
         :
-        (<p className="v3-txt">Loading transaction history...</p>)
+        (<p className="g-txt">Loading transaction history...</p>)
       }
     </div>
   );

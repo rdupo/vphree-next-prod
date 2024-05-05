@@ -341,7 +341,7 @@ export default function PhunkyHub() {
                 bidPercent={bidInc}
               />
               :
-              <p className="text-2xl v3-txt my-4">Loading current auction...</p>
+              <p className="text-2xl g-txt my-4">Loading current auction...</p>
             :
             null
           }
@@ -384,7 +384,7 @@ export default function PhunkyHub() {
                   }
                 <div className="w-1/2 ml-8 h-12 inline-block align-top">
                   <input
-                    className="lite-v3-bg w-full p-1 black-txt" 
+                    className="bg-green-100 w-full p-1 black-txt" 
                     type="number" 
                     name="lookup-id" 
                     placeholder="PHUNK ID"
@@ -394,7 +394,7 @@ export default function PhunkyHub() {
                     onChange={(e) => setFlywheelId(e.target.value)}
                   />
                   <button 
-                    className="black-bg v3-txt v3-b w-full p-1 brite my-2" 
+                    className="black-bg g-txt g-b w-full p-1 brite my-2" 
                     onClick={() => {getValue(flywheelId)}}
                     id="search-btn">CHECK PAYOUT
                   </button>
@@ -419,7 +419,7 @@ export default function PhunkyHub() {
                     )
                   })
                   :
-                  <p className="text-2xl v3-txt my-4">Loading recent Flywheel buys...</p>
+                  <p className="text-2xl g-txt my-4">Loading recent Flywheel buys...</p>
                 }
               </div>
               <p className="text-gray-400 mt-2">Any ineligible Phunks can still be sold to the 

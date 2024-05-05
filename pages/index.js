@@ -29,10 +29,10 @@ export default function Home() {
   if(mp === "vphree") {
     salesBand = "v3-bg"
     vphreeText = "cursor-pointer text-black"
-    nllText = "cursor-pointer text-orange-500"
+    nllText = "cursor-pointer text-green-600"
   } else {
     salesBand = "v2-bg"
-    vphreeText = "cursor-pointer text-orange-500"
+    vphreeText = "cursor-pointer text-green-600"
     nllText = "cursor-pointer text-black"
   }
 
@@ -83,8 +83,8 @@ export default function Home() {
     <>
       <Header onUpdateConnectedWallet={updateConnectedWallet} />
       <div className="content bg-opacity-60 bg-black">
-        <div className="bg-[#ffba00] black-txt">
-          <div className="pl-8 text-orange-400">
+        <div className="g-bg black-txt">
+          <div className="pl-8 text-green-500">
             <p>
               <span 
                 className={vphreeText}
@@ -96,7 +96,7 @@ export default function Home() {
                 onClick={() => {setMp("nll")}}
               >Recent NLL Sales</span></p>
           </div>
-          <div className={`${salesBand} flex flex-wrap justify-center border-b-4 border-[#ffba00]`}>
+          <div className={`${salesBand} flex flex-wrap justify-center border-b-4 g-b-c`}>
             {mp === "vphree" ?
               (sales.slice(0, iWidth).map((sale) => (
               sales.length > 0 ? (
@@ -122,11 +122,11 @@ export default function Home() {
           </div>
         </div>
         <div className="home-wrapper">
-          <h2 className="home-title v3-txt leading-none mb-4">Welcome to vPhree</h2>
+          <h2 className="home-title g-txt leading-none mb-4">Welcome to vPhree</h2>
           <p className="text-xl w-75">vPhree is the front door to all things Phunky. View your Phunks across all 3 collections, check out the latest Treasury Proposal, place a bid on the current auction, get Flywheel estimates, and more--all in one place.</p>
           <div id="search-wallet" className="inline-flex w-full my-4">
             <input
-              className="lite-v3-bg w-5/6 p-1 my-2 black-txt" 
+              className="bg-green-100 w-5/6 p-1 my-2 black-txt" 
               type="text" 
               name="address" 
               placeholder="WALLET ADDRESS OR ENS"
@@ -134,7 +134,7 @@ export default function Home() {
               onChange={(e) => setSearchAddy(e.target.value)}
             />
             <button 
-              className="black-bg v3-txt v3-b w-1/6 p-1 my-2 brite" 
+              className="black-bg g-txt g-b w-1/6 p-1 my-2 brite" 
               onClick={() => {search()}}
               id="search-btn">GO</button>
           </div>
@@ -143,10 +143,10 @@ export default function Home() {
           </p>
           <div>          
             <Link href="/hub/philip-intern-project">
-              <button className="w-60 mobile-100 cta border-[#ffba00] border-[3px] bg-[#ffba00] black-txt">Phunky Hub</button>
+              <button className="w-60 mobile-100 cta g-b g-bg black-txt">Phunky Hub</button>
             </Link>
             <Link href="/dose-of-phunks">
-              <button className="w-60 mobile-100 cta border-[#ffba00] border-[3px] text-[#ffba00] black-bg">Dose of Phunks</button>
+              <button className="w-60 mobile-100 cta g-b g-txt black-bg">Dose of Phunks</button>
             </Link>
           </div>
         </div>
