@@ -7,6 +7,7 @@ import Wallet from '../assets/wallet.png'
 import Profile from '../assets/profile-icon.png'
 import Discord from '../assets/discord.png'
 import Info from '../assets/info.png'
+import PH from '../assets/ph.png'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
 
@@ -61,14 +62,22 @@ const Header = () => {
 						alt="site info icon"
 					/>
 				</Link>
-				<a href="https://discord.gg/hMC6cxBg3u" target="_blank" className="sans-underline">
+				<Link href="/hub/philip-intern-project" className="sans-underline">
+					<Image 
+						height={30}
+						className="inline-flex align-middle my-3 mr-5 h-img-w" 
+						src={PH}
+						alt="site info icon"
+					/>
+				</Link>
+				{/*<a href="https://discord.gg/hMC6cxBg3u" target="_blank" className="sans-underline">
 					<Image
 						height={30} 
 						className="inline-flex align-middle my-3 mr-5 h-img-w" 
 						src={Discord}
 						alt="discord link icon"
 					/>
-				</a>
+				</a>*/}
 				<Image 
 					height={30}
 					className="inline-flex align-middle my-3 mr-5 h-img-w brite" 
