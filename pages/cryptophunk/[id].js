@@ -93,9 +93,10 @@ export default function V3Phunks() {
         } catch (error) {  }
 
         try {
+          //------- UPDATE - NEED TO SEE IF TRANSFER AFTER LIST BLOCK ---------------------
           const listing = await market.phunksOfferedForSale(id);
           setListed(listing);
-          //console.log('seller: ', listing.seller);
+          //console.log('listing: ', listing);
         } catch (error) {  }
 
         try {
@@ -219,7 +220,7 @@ export default function V3Phunks() {
             </div>
             <div className="contract-interactions inline-block pr-0 align-top w-full md:w-3/12">
               <div className="price-and-bid">
-                {!listed.isForSale ?
+                {!listed.isForSale || listed.seller != owner ?
                   <p>Phunk not listed</p>
                   :
                   <p id="price">Price:&nbsp;
