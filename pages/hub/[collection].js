@@ -41,7 +41,7 @@ export default function PhunkyHub() {
   const { nllSales } = getNllSales();
   const { flywheelSales } = getFlywheelBuys();
   const [iWidth, setIWidth] = useState(getInitialWidth());
-  const coll = router.query.collection || 'philip-intern-project'
+  const coll = router.query.collection
   const [ensAddy, setEnsAddy] = useState('')
   const [nfts, setNFTs] = useState([]);
   const [nftsData, setNFTsData] = useState([]);
@@ -218,6 +218,10 @@ export default function PhunkyHub() {
     getBalance();
   },[aucEvent])
 
+  useEffect(() => {
+    setActiveCollection(coll);
+  }, [coll]);
+
   return (
     <>
       <Header/>
@@ -227,13 +231,14 @@ export default function PhunkyHub() {
           <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
             <p 
               className={`picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'philip-intern-project' ? 'text-[#a79aff]' : ''}`}
-              onClick={() => collUpdate('philip-intern-project')}>Philips</p>
+              onClick={() => Router.push({ pathname: `/hub/philip-intern-project` })}
+              >Philips</p>
             <p 
               className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'cryptophunks' ? 'text-[#75a8c2]' : ''}`}
-              onClick={() => collUpdate('cryptophunks')}>CryptoPhunks</p>
+              onClick={() => Router.push({ pathname: `/hub/cryptophunks` })}>CryptoPhunks</p>
             <p 
               className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v3phunks' ? 'text-[#83dfb2]' : ''}`}
-              onClick={() => collUpdate('v3phunks')}>v3Phunks</p>
+              onClick={() => Router.push({ pathname: `/hub/v3phunks` })}>v3Phunks</p>
           </div>
           {activeCollection === 'philip-intern-project' ?
             <div className="mt-8 w-full">
