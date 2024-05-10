@@ -50,7 +50,7 @@ const Header = () => {
 						src={Logo}
 						alt="vphree logo"
 					/>
-					<h1 className="inline-flex align-middle h-txt ml-2">vphree</h1>
+					<h1 className="inline-flex align-middle h-txt ml-2 txt-new-fallback">vPhree</h1>
 				</Link>
 			</div>
 			<div className="justify-content-end">
