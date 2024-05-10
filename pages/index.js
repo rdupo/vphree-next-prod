@@ -25,6 +25,8 @@ export default function Home() {
   const [searchAddy, setSearchAddy] = useState("");
   const [showWarning, setShowWarning] = useState(false);
   let salesBand, vphreeText, nllText;
+  console.log("nll", nllSales);
+  console.log("sales", sales)
 
   if(mp === "vphree") {
     salesBand = "v3-bg"
@@ -86,22 +88,23 @@ export default function Home() {
         <div className="g-bg black-txt">
           <div className="pl-8 text-green-500">
             <p>
+              <span className="black-txt">Recent Sales: &nbsp;</span>
               <span 
                 className={vphreeText}
                 onClick={() => {setMp("vphree")}}
               >
-              Recent vPhree Sales</span> |&nbsp;
+              vPhree</span> |&nbsp;
               <span 
                 className={nllText}
                 onClick={() => {setMp("nll")}}
-              >Recent NLL Sales</span></p>
+              >NLL</span></p>
           </div>
           <div className={`${salesBand} flex flex-wrap justify-center border-b-4 g-b-c`}>
             {mp === "vphree" ?
               (sales.slice(0, iWidth).map((sale) => (
               sales.length > 0 ? (
                 <SaleCard
-                  key={sale.id}
+                  key={sale.id + sale.price + Math.random()}
                   price={sale.price + "Ξ"}
                   atts=""
                   id={sale.id}
@@ -112,7 +115,7 @@ export default function Home() {
               (nllSales.slice(0, iWidth).map((sale) => (
               nllSales.length > 0 ? (
                 <SaleCard
-                  key={sale.id}
+                  key={sale.id + sale.price + Math.random()}
                   price={sale.price + "Ξ"}
                   atts=""
                   id={sale.id}
