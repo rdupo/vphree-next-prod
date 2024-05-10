@@ -86,16 +86,15 @@ export default function Home() {
         <div className="g-bg black-txt">
           <div className="pl-8 text-green-500">
             <p>
-              <span className="black-txt">Recent Sales:&nbsp;</span> 
               <span 
                 className={vphreeText}
                 onClick={() => {setMp("vphree")}}
               >
-              vPhree</span> |&nbsp;
+              Recent vPhree Sales</span> |&nbsp;
               <span 
                 className={nllText}
                 onClick={() => {setMp("nll")}}
-              >NLL</span></p>
+              >Recent NLL Sales</span></p>
           </div>
           <div className={`${salesBand} flex flex-wrap justify-center border-b-4 g-b-c`}>
             {mp === "vphree" ?
