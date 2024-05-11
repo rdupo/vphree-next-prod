@@ -339,12 +339,16 @@ export default function V3Phunks() {
       const mContract = new ethers.Contract(mAddy, mAbi, provider);
       const phunkBidFilter = mContract.filters.PhunkBidEntered();
       const phunkBidWithdrawnFilter = mContract.filters.PhunkBidWithdrawn();
+      const filterBought = mContract.filters.PhunkBought(null, null, null, walletAddy); 
 
       const initialBidEvents = await mContract.queryFilter(phunkBidFilter);
       const initialBidWithdrawnEvents = await mContract.queryFilter(phunkBidWithdrawnFilter);
 
+      const initialBoughtEvents = await mContract.queryFilter(filterBought);
+
       const allBidEvents = [...initialBidEvents,
-                         ...initialBidWithdrawnEvents]
+                         ...initialBidWithdrawnEvents,
+                         ...initialBoughtEvents]
 
       // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
       allBidEvents.sort((a, b) => {

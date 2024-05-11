@@ -25,8 +25,8 @@ export default function Home() {
   const [searchAddy, setSearchAddy] = useState("");
   const [showWarning, setShowWarning] = useState(false);
   let salesBand, vphreeText, nllText;
-  console.log("nll", nllSales);
-  console.log("sales", sales)
+  //console.log("nll", nllSales);
+  //console.log("sales", sales)
 
   if(mp === "vphree") {
     salesBand = "v3-bg"
