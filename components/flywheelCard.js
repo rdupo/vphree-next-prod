@@ -29,7 +29,7 @@ const FlywheelCard = ({ price, atts, id, minPrice }) => {
       <div className="img-wrapper v2-bg">
         <Image
           className="w-100"
-          src={id === "-1" ? `/phunks/philip.png` : `/phunks/phunk${alt_id}.svg`}
+          src={id === "-1" ? `/phunks/phunk2711.svg` : `/phunks/phunk${alt_id}.svg`}
           loading="lazy"
           alt={`phunk ${id}`}
           height="100"

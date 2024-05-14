@@ -19,6 +19,8 @@ function LatestProp() {
     fetchPolls();
   }, []);
 
+  console.log('Now', Date.now())
+
   return (
     <div>
       <h2 className="mt-16 mb-4 text-2xl">Latest Treasury Props</h2> 
@@ -29,7 +31,7 @@ function LatestProp() {
             <div className="w-10/12 mb-4" key={poll.id}>
               <p className="g-txt">Poll #{poll.id}</p>
               <p className="collection-desc text-gray-300 break-all">{poll.description}</p>
-              {poll.until > Date.now() ?
+              {new Date(poll.until) > Date.now() ?
                 <p className="collection-desc text-gray-300">Ends: {poll.until}</p>
                 :
                 <div>

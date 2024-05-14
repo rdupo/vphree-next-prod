@@ -84,7 +84,7 @@ export default function Home() {
   return (
     <>
       <Header onUpdateConnectedWallet={updateConnectedWallet} />
-      <div className="content bg-opacity-60 bg-black">
+      <div className="content bg-opacity-60 bg-black txt-new-fallback">
         <div className="g-bg black-txt">
           <div className="pl-8 text-green-500">
             <p>

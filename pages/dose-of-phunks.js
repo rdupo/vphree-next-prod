@@ -21,7 +21,7 @@ export default function Home() {
       <Header onUpdateConnectedWallet={updateConnectedWallet} />
       <div className="content bg-opacity-60 bg-black">
         <div className="home-wrapper">
-          <h2 className="home-title v3-txt">DOPE | S3 E1</h2>
+          <h2 className="home-title g-txt">DOPE | S3 E1</h2>
           <p>by&nbsp; 
             <a 
               target="_blank"
@@ -30,7 +30,7 @@ export default function Home() {
             @NFTenchi
             </a>
           </p>
-          <p className="home-body w-75">Phunks never shy away from being innovative creative, disruptors, and trendsetters. Here’s a monthly DOSE of that ethos.</p>
+          <p className="home-body w-75 my-4">Phunks never shy away from being innovative creative, disruptors, and trendsetters. Here’s a monthly DOSE of that ethos.</p>
           <div>
             {/*<p>Image goes here...</p>
             <Link href="/collections/v3-phunks">
@@ -40,7 +40,7 @@ export default function Home() {
               __html:
               `<div
               data-widget="m-claim-complete"
-              data-id="83112176"
+              data-id="535914736"
               ></div>`
             }}/>
           </div>
@@ -49,7 +49,7 @@ export default function Home() {
               data-widget="m-connect"  
               data-app-name="doseofphunks"  
               data-network="1"
-              data-id="83112176"
+              data-id="535914736"
             >
             </div>
           </div>
