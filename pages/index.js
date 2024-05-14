@@ -12,6 +12,7 @@ import getV3Sales from '../hooks/v3Sales'
 import getNllSales from '../hooks/nllSales'
 import { Network, Alchemy } from 'alchemy-sdk'
 import phunkAddy from '../utils/phunkAddy'
+import { useSearchParams } from "next/navigation";
 
 
 export default function Home() {
@@ -21,12 +22,20 @@ export default function Home() {
   const [iWidth, setIWidth] = useState(getInitialWidth());
   const { sales } = getV3Sales();
   const { nllSales } = getNllSales();
-  const [mp, setMp] = useState("vphree");
   const [searchAddy, setSearchAddy] = useState("");
   const [showWarning, setShowWarning] = useState(false);
+  const searchParams = useSearchParams();
+  let c = searchParams.get("c") || "vphree"
+  console.log(c)
+  const [mp, setMp] = useState(c);
+  console.log(mp)
   let salesBand, vphreeText, nllText;
   //console.log("nll", nllSales);
   //console.log("sales", sales)
+
+  useEffect(() => {
+    setMp(c)
+  },[c]);
 
   if(mp === "vphree") {
     salesBand = "v3-bg"
