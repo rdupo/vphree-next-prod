@@ -160,9 +160,9 @@ export default function Home() {
             <Link href="/collections/v3-phunks">
               <button className="w-60 mobile-100 cta g-b g-txt black-bg">v3 Marketplace</button>
             </Link>
-            {/*<Link href="/dose-of-phunks">
-              <button className="w-60 mobile-100 cta g-b g-txt black-bg">Dose of Phunks</button>
-            </Link>*/}
+            <Link href="/dose-of-phunks">
+              <button className="w-60 mobile-100 cta bg-[##ffb900] black-txt b-b">Dose of Phunks</button>
+            </Link>
           </div>
         </div>
       </div>

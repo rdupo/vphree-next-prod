@@ -129,6 +129,10 @@ select, option, .black-txt {
   border: 3px solid #648596;
 }
 
+.b-b {
+  border: 3px solid #000;
+}
+
 /*page styles*/
 .page {
   position: relative;
