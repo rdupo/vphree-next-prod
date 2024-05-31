@@ -30,6 +30,11 @@ import phunkAtts from '../../utils/phunkAtts'
 import AuctionTimer from '../../components/auctionTimer'
 import getV3Sales from '../../hooks/v3Sales'
 import getNllSales from '../../hooks/nllSales'
+import wrapperAddy from '../../utils/wrapperAddy'
+import wrapperAbi from '../../utils/wrapperAbi'
+import philipAbi from '../../utils/philipAbi'
+import xferAbi from '../../utils/xferAbi'
+import philipAddy from '../../utils/philipAddy'
 import getFlywheelBuys from '../../hooks/FlywheelBuys'
 import SaleCard from '../../components/SaleCard'
 
@@ -74,6 +79,10 @@ export default function PhunkyHub() {
   const [flywheelLoading, setFlywheelLoading] = useState(true);
   const [flywheelId, setFlywheelId] = useState("0");
   const [flywheelBalance, setFlywheelBalance] = useState("---")
+
+  //philip wrapper
+  const [wrapId, setWrapId] = useState(-1);
+  const [wError, setWError] = useState('none');
 
   //sales card div bg
   let cardBg;
@@ -213,6 +222,56 @@ export default function PhunkyHub() {
     });
   };
 
+  /* ---- START WRAPPER FUNC ---- */
+
+  async function wrapPhilip() {
+    const mmp = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = mmp.getSigner(connectedAddress);
+    const pc = new ethers.Contract(philipAddy, xferAbi, signer);
+    const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
+    
+    try{
+      const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+      if(w) {
+      const xferPromise = pc.safeTransferFrom(signer._address, wrapperAddy, wrapId);
+      txnToast(xferPromise, `Wrapping Philip #${wrapId}`); 
+      await xferPromise
+        .then(async (result) => {
+          const rh = result.hash
+          await mmp.waitForTransaction(rh).then((listReceipt) => {
+            if (listReceipt.status === 1) { // Check if listing transaction was successful
+              toast.dismiss();
+              toast('Transaction confirmed!', {
+                style: {
+                  minWidth: '80%',
+                  color: '#000',
+                  background: '#ffb900',
+                },
+              });
+              fetchDataWithRetry();
+            } else {
+              toast.dismiss();
+              toast('⚠️ Transaction failed! ⚠️', {
+                style: {
+                  minWidth: '80%',
+                  color: '#000',
+                  background: '#ffb900',
+                },
+              });
+            }
+          });
+        });
+      } else { setWError('own'); }
+    } catch(error){
+      if(error.message.search('nonexistent token') >= 0) {
+        setWError('exist')
+      } else {
+        setWError('reject')
+      }
+    }
+  }
+  /* ---- END WRAPPER FUNC ---- */
+
   useEffect(() => {
     curAuc();
     getBalance();
@@ -228,22 +287,25 @@ export default function PhunkyHub() {
       <Toaster/>
       <div className="page bg-opacity-60 bg-black">
         <div className="content px-8 z-10">
-          <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
+          <div className="hub-picker-div divide-x-2 divide-gray-500 text-gray-500">
             <p 
-              className={`picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'philip-intern-project' ? 'text-[#a79aff]' : ''}`}
+              className={`hub-picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'philip-intern-project' ? 'text-[#a79aff]' : ''}`}
               onClick={() => Router.push({ pathname: `/hub/philip-intern-project` })}
               >Philips</p>
             <p 
-              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'cryptophunks' ? 'text-[#75a8c2]' : ''}`}
+              className={`hub-picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'cryptophunks' ? 'text-[#75a8c2]' : ''}`}
               onClick={() => Router.push({ pathname: `/hub/cryptophunks` })}>CryptoPhunks</p>
             <p 
-              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v3phunks' ? 'text-[#83dfb2]' : ''}`}
+              className={`hub-picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v3phunks' ? 'text-[#83dfb2]' : ''}`}
               onClick={() => Router.push({ pathname: `/hub/v3phunks` })}>v3Phunks</p>
           </div>
           {activeCollection === 'philip-intern-project' ?
             <div className="mt-8 w-full">
+              <Link href="/collections/philip-intern-project">
+                <button className="mobile-100 cta v1-b v1-bg black-txt">Philip Marketplace</button>
+              </Link>
               <Link href="/view-all/philip-intern-project">
-                <button className="mobile-100 cta v1-b v1-bg black-txt">Philip Phinder</button>
+                <button className="mobile-100 cta v1-b black-bg v1-txt">Philip Phinder</button>
               </Link>
             </div>
             :
@@ -335,6 +397,58 @@ export default function PhunkyHub() {
               :
             null}
           </div> 
+
+{/* --- START WRAPPER ---- */}  
+          {activeCollection !== 'philip-intern-project' ? null :
+            <div>
+              <h2 className="mt-16 mb-4 text-2xl">Philip Wrapper</h2>
+              <div className="inline-flex">
+                <div>
+                  <Card
+                    key={`wrap${wrapId}`}
+                    price=""
+                    coll="v1"
+                    atts=""
+                    id={ wrapId === "" ? -1 : wrapId}
+                  />
+                </div>
+                <div className="align-top mx-4">
+                  <div>
+                  <input
+                      className="bg-green-100 p-1 black-txt w-[144px]" 
+                      type="text" 
+                      name="wrap-id" 
+                      placeholder="PHILIP ID"
+                      id="wrap-id-value"
+                      minLength="1" 
+                      maxLength="4" 
+                      onChange={(e) => {setWrapId(e.target.value);setWError('none')}}
+                    />
+                    </div>
+                    {connectedAddress.length > 4 ? 
+                      <div>
+                        <button 
+                          className="black-bg g-txt w-[144px] g-b p-1 brite my-2" 
+                          onClick={() => {wrapPhilip()}}
+                          id="search-btn">WRAP PHILIP
+                        </button>
+                        <p className={`text-red-500 ${wError === 'exist' ? '' : 'hidden'}`}>This Philip does not exist</p>
+                        <p className={`text-red-500 ${wError === 'own' ? '' : 'hidden'}`}>You cannot wrap this Philip</p>
+                        <p className={`text-red-500 ${wError === 'reject' ? '' : 'hidden'}`}>User rejected transaction</p>
+                      </div>
+                      :
+                      <div 
+                        className="p-3 black-bg g-txt g-b w-auto my-2"  
+                        id="not-connected">
+                          Please connect your wallet to wrap
+                      </div> 
+                    }
+                  </div>
+              </div>
+            </div>
+          }
+{/* --- END WRAPPER ---- */}  
+
           {activeCollection === 'cryptophunks' ? <h2 className="mt-16 mb-4 text-2xl">Current Auction</h2> : null }
           {activeCollection === 'cryptophunks' ? 
             aucData.length > 0 ? 

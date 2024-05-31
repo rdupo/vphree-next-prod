@@ -304,7 +304,7 @@ select, option, .black-txt {
 }
 
 /*dashboard*/
-.picker-div {
+.picker-div, .hub-picker-div {
     display: inline-flex;
   }
 
@@ -330,6 +330,19 @@ select, option, .black-txt {
 /*end manifold css*/
 
 /*mobile*/
+@media only screen and (max-width: 995px) {
+  .picker-div {
+      display: block;
+    }
+
+  .picker {
+    border: none;
+    margin: .25em 0;
+    padding: 0;
+    width: 100%;
+  }
+} 
+
 @media only screen and (max-width: 768px) {
   /*home*/
   h1.h-txt {
@@ -384,19 +397,19 @@ select, option, .black-txt {
     margin: 0em 0 0 1.5em;
   }
 
-  label, .t-to, .t-from {
-    display: none;
-  }
+  .hub-picker-div {
+      display: block;
+    }
 
-  .picker-div {
-    display: block;
-  }
-
-  .picker {
+  .hub-picker {
     border: none;
     margin: .25em 0;
     padding: 0;
     width: 100%;
+  }
+
+  label, .t-to, .t-from {
+    display: none;
   }
 
   .atts-div, .contract-interactions, .filter-dropdown, #view-mr {

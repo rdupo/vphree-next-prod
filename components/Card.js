@@ -47,6 +47,18 @@ const Card = ({ price, atts, id, coll }) => {
     imageClassName = 'img-wrapper v2-bg';
     idClassName = 'phunk-id mb-0 v2-txt';
     collSrc = 'cryptophunk';
+  } else if (coll === 'v1' && id >= 0) {
+    // philip hover state
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper v1-bg';
+    idClassName = 'phunk-id mb-0 v1-txt';
+    collSrc = 'philip';
+  } else if (coll === 'v1' && id === -1) {
+    // philip hover state
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper philip-bg';
+    idClassName = 'phunk-id mb-0 philip-txt';
+    collSrc = 'philip';
   } else {
     // Values for v3 phunks; default
     imageSrc = `/phunks/phunk${alt_id}.svg`;
@@ -75,7 +87,7 @@ const Card = ({ price, atts, id, coll }) => {
       <div className={imageClassName}>
         <Image
           className="w-100"
-          src={imageSrc}
+          src={id === -1 ? '/phunks/philip.png' : imageSrc}
           loading="lazy"
           alt={`phunk ${id}`}
           height="100"
@@ -83,7 +95,7 @@ const Card = ({ price, atts, id, coll }) => {
         />
       </div>
       <div className="card-info-wrapper ml-2">
-        <p className={idClassName}>#{id}</p>
+        <p className={idClassName}>#{id >= 0 ? id : '---'}</p>
         <h4 className="phunk-price mb-1">{price}</h4>
       </div>
     </div>

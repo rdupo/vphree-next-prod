@@ -25,6 +25,8 @@ import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
 import flywheelAddy from '../../utils/flywheelAddy'
 import flywheelAbi from '../../utils/flywheelAbi'
+import wrapperAddy from '../../utils/wrapperAddy'
+import wrapperAbi from '../../utils/wrapperAbi'
 import phunkAddy from '../../utils/phunkAddy'
 import toast, {Toaster} from 'react-hot-toast'
 import { useWallet } from '../../contexts/WalletContext'
@@ -33,6 +35,12 @@ import phunkAtts from '../../utils/phunkAtts'
 import walletHistory from '../../hooks/walletHistory' 
 import nllHistory from '../../hooks/nllWalletHistory'
 import AuctionTimer from '../../components/auctionTimer'
+//philip updates
+import philipAddy from '../../utils/philipAddy'
+import philipAbi from '../../utils/philipAbi'
+import philipMarketAddy from '../../utils/philipMarketAddy'
+import philipMarketAbi from '../../utils/philipMarketAbi'
+import philipHistory from '../../hooks/philipWalletHistory'
 
 export default function V3Phunks() {
   const router = useRouter()
@@ -42,12 +50,14 @@ export default function V3Phunks() {
   const [ensAddy, setEnsAddy] = useState('')
   const [nfts, setNFTs] = useState([]);
   const [nftsData, setNFTsData] = useState([]);
-  const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
+  const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('');
+  const [philipWithdrawAmt, setPhilipWithdrawAmt] = useState('')
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
+  const philipMarket = new ethers.Contract(philipMarketAddy, philipMarketAbi, provider);
   const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider)
   const { connectedAddress, walletChanged } = useWallet();
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
@@ -85,14 +95,9 @@ export default function V3Phunks() {
   //history
   const { transactionHistory } = walletHistory(walletAddy);
   const { nllTxnHistory } = nllHistory(walletAddy);
+  const { philipTxnHistory } = philipHistory(walletAddy);
   //collection displayed
   const [activeCollection, setActiveCollection] = useState("v3");
-  //auction
-  const aucContract = new ethers.Contract(auctionAddy, auctionAbi, provider);
-  const [aucData, setAucData] = useState([]);
-  const [bidInc, setBidInc] = useState();
-  const [aucBidder, setAucBidder] = useState();
-  const [aucEvent, setAucEvent] = useState([]);
   //flywheel
   // 1) get price estimate from NFTBank API
   // 2) get pctOfOraclePriceEstimateToPay using contractConfig method from flywheel contract
@@ -125,37 +130,6 @@ export default function V3Phunks() {
 
     setFlywheelLoading(false);
   }
-
-  const curAuc = async () => {
-    const aucDetails = await aucContract.auction();
-    const name = await provider.lookupAddress(aucDetails.bidder);
-    const aucMinBidPerc = await aucContract.minBidIncrementPercentage();
-    const aucPhunk = (ethers.utils.formatUnits(aucDetails.phunkId._hex,0));
-    setAucData(aucDetails);
-    setBidInc(1+(Number(aucMinBidPerc)/100));
-    setAucBidder(name ? name : aucDetails.bidder.substr(0,4)+'...'+aucDetails.bidder.substr(aucDetails.bidder.length-4, aucDetails.bidder.length))
-  }
-
-  useEffect(() => {    
-    //events
-    const eventNames = ["AuctionBid", "AuctionExtended", 
-      "AuctionSettled", "AuctionCreated"];
-
-    //event listeners
-    eventNames.forEach(eventName => {
-      aucContract.on(eventName, (event) => {
-        console.log("Auction Event:", event);
-        setAucEvent(event);
-      });
-    });
-
-    //clear event listeners on unmount
-    return () => {
-      eventNames.forEach(eventName => {
-        aucContract.removeAllListeners(eventName);
-      });
-    };
-  }, []);
 
   const collUpdate = (x) => {
     setActiveCollection((prevValue) => (x));
@@ -438,8 +412,12 @@ export default function V3Phunks() {
     const thisAddy = x;
     const nftIds = await getNFTs(thisAddy, activeCollection);
     const pWith = await contract.pendingWithdrawals(thisAddy);
+    const pmpWith = await philipMarket.pendingWithdrawals(thisAddy);
     const withEth = Number(Number(pWith._hex)/1000000000000000000).toFixed(3);
+    const pWithEth = Number(Number(pmpWith._hex)/1000000000000000000).toFixed(3);
     setPendingWithdrawAmt(withEth);
+    setPhilipWithdrawAmt(pWithEth);
+    console.log(pmpWith);
     setNFTs(nftIds);
 
     //start filtering
@@ -461,10 +439,6 @@ export default function V3Phunks() {
     const bidR = bidArray.find(entry => entry.tokenId === tokenId);
     return bidR ? bidR.bidValue : ''; // Return empty string if tokenId not found in listings
   }
-
-  useEffect(() => {
-    curAuc();
-  },[aucEvent])
 
   useEffect(() => {
     async function fetchData() {
@@ -530,10 +504,49 @@ export default function V3Phunks() {
     });
   }
 
+  //withdraw() function
+  async function withdrawMyEthPhilip() {
+    const mmp = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = mmp.getSigner(connectedAddress);
+    const cpmp = new ethers.Contract(philipMarketAddy, philipMarketAbi, signer);
+    const withdrawPromise = cpmp.withdraw();
+    txnToast(withdrawPromise, `Withdrawing ${philipWithdrawAmt}Ξ`);
+    await withdrawPromise
+    .then(async (result) => {
+      const rh = result.hash
+      await mmp.waitForTransaction(rh).then((listReceipt) => {
+        if (listReceipt.status === 1) { // Check if listing transaction was successful
+          toast.dismiss();
+          toast('Transaction confirmed!', {
+            style: {
+              minWidth: '80%',
+              color: '#000',
+              background: '#ffb900',
+            },
+          });
+          fetchDataWithRetry();
+        } else {
+          toast.dismiss();
+          toast('⚠️ Transaction failed! ⚠️', {
+            style: {
+              minWidth: '80%',
+              color: '#000',
+              background: '#ffb900',
+            },
+          });
+        }
+      });
+    });
+  }
+
   //withdraw
   async function withdraw() {
-    if(signer) {
-      withdrawMyEth()
+    if(signer && activeCollection === 'v3') {
+      withdrawMyEth();
+    }
+
+    if(signer && activeCollection === 'v1') {
+      withdrawMyEthPhilip();
     }
   }
 
@@ -560,13 +573,25 @@ export default function V3Phunks() {
               }
             </a>
           </h1>           
-          { connectedAddress === walletAddy && pendingWithdrawAmt > 0 ?
+          { connectedAddress === walletAddy && pendingWithdrawAmt > 0 && activeCollection === "v3" ?
             <div className="my-2">
               <button 
                 className="cta b-b g-bg black-txt brite"
                 onClick={() => {withdraw()}}
               >
                 WITHDRAW {pendingWithdrawAmt}Ξ
+              </button>
+            </div>
+            :
+            null
+          }
+          { connectedAddress === walletAddy && philipWithdrawAmt > 0 && activeCollection === "v1" ?
+            <div className="my-2">
+              <button 
+                className="cta b-b g-bg black-txt brite"
+                onClick={() => {withdraw()}}
+              >
+                WITHDRAW {philipWithdrawAmt}Ξ
               </button>
             </div>
             :
@@ -582,18 +607,21 @@ export default function V3Phunks() {
             <p 
               className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v1' ? 'white-txt' : ''}`}
               onClick={() => collUpdate('v1')}>Philips</p>
+            <p 
+              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'wv1' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('wv1')}>Wrapped v1s</p>
           </div>
           <p className="text-xl text-gray-300">
             {!loading ? nfts.length : '-'} owned
           </p>
-          {activeCollection === 'v1' ? null :<p className="text-xl text-gray-300">
-            {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal : '-'}Ξ 
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+            {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal.toFixed(3) : '-'}Ξ 
           </p>}
-          {activeCollection === 'v1' ? null :<p className="text-xl text-gray-300">
-            {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal : '-'}Ξ 
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+            {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal.toFixed(3) : '-'}Ξ 
           </p>}
-          {activeCollection === 'v1' ? null :<p className="text-xl text-gray-300">
-            {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal : '-'}Ξ
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+            {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal.toFixed(3) : '-'}Ξ
           </p>}
           <h2 className="mt-8 text-2xl">Owned</h2> 
           <div className="filter-sort-wrapper mb-4">
@@ -1179,8 +1207,8 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
             }
         	</div>
-          {activeCollection === 'v1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
-          {activeCollection === 'v1' ? null : 
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : 
           <div className="flex flex-wrap justify-left">
             {bidLoading === false ?
               (bidsPlaced.length > 0 ? 
@@ -1201,8 +1229,8 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Fetching your bids...</p>
             }
           </div>}
-          {activeCollection === 'v1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
-          {activeCollection === 'v1' ? null : <div>
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
+          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <div>
           {activeCollection === 'v2' ?
             <>
             {flywheelLoading === false ?
@@ -1246,19 +1274,6 @@ export default function V3Phunks() {
               </p>
             }                       
           </div>}
-          {/*
-          {activeCollection !== 'v2' ? null : <h2 className="mt-8 text-2xl">Current Auction</h2>}
-          {activeCollection !== 'v2' ? null : 
-            <AuctionTimer
-              targetDate={Number(ethers.utils.formatUnits(aucData.endTime._hex,0))*1000}
-              id={ethers.utils.formatUnits(aucData.phunkId._hex,0)}
-              bidder={aucBidder}
-              highBid={ethers.utils.formatUnits(aucData.amount._hex,18)}
-              bidPercent={bidInc}
-            />
-          }
-          {activeCollection === 'v2' ? <LatestProp/> : null}
-          */}
           {activeCollection !== 'v3' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
           {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
             {loading === false ?
@@ -1281,83 +1296,17 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Loading NLL transaction history...</p>
             }
           </div>}
-          {/*<h2 className="mt-8 text-2xl">Links</h2>
-          {activeCollection === 'v1' ? 
-            <div>
-              <h3 className="mt-4">Marketplace</h3>
-              <p><a target="_blank" href="https://pro.opensea.io/collection/philipinternproject">OpenSea Pro - PhilipInternProject</a></p>
-              <p><a target="_blank" href="https://pro.opensea.io/collection/official-v1-phunks">OpenSea Pro - v1Phunks (Wrapped)</a></p>
-
-              <h3 className="mt-4">Wrapper</h3>
-              <p><a target="_blank" href="https://v1phunks.io/">Philip Wrapper</a></p>
-
-              <h3 className="mt-4">Contract</h3>
-              <p><a target="_blank" href="https://etherscan.io/address/0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce">PhilipInternProject Contract</a></p>
-
-              <h3 className="mt-4">Twitter</h3>
-              <p><a target="_blank" href="https://twitter.com/CryptoPhunksV1">Philips</a></p>
-
-              <h3 className="mt-4">Websites</h3>
-              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks Website</a></p>
-              <p><a target="_blank" href="https://phunks.net/">Phunks.net</a></p>
-
-              <h3 className="mt-4">Resources</h3>
-              <p><a target="_blank" href="https://phunks.gitbook.io/">Phunks GitBook</a></p>
-              <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
-              <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
-            </div>
-            :
-            activeCollection === 'v2' ?
-            <div>
-              <h3 className="mt-4">Vote!</h3>
-              <p><a target="_blank" href="https://phunk.cc/">Treasury Prop Voting</a></p>
-
-              <h3 className="mt-4">Marketplace</h3>
-              <p><a target="_blank" href="https://notlarvalabs.com/cryptophunks/forsale">Not Larva Labs</a></p>
-              <p><a target="_blank" href="https://pro.opensea.io/collection/crypto-phunks">OpenSea Pro</a></p>
-
-              <h3 className="mt-4">Contract</h3>
-              <p><a target="_blank" href="https://etherscan.io/address/0xf07468ead8cf26c752c676e43c814fee9c8cf402">CryptoPhunks Contract</a></p>
-
-              <h3 className="mt-4">Twitter</h3>
-              <p><a target="_blank" href="https://twitter.com/CryptoPhunksV2">CryptoPhunks</a></p>
-              <p><a target="_blank" href="https://twitter.com/PhunksAuction">Phunks Auction House</a></p>
-              <p><a target="_blank" href="https://twitter.com/NotLarvaLabs">Not Larva Labs</a></p>
-              <p><a target="_blank" href="https://twitter.com/PhunkBot">PhunkBot</a></p>
-
-              <h3 className="mt-4">Websites</h3>
-              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks Website</a></p>
-              <p><a target="_blank" href="https://phunks.net/">Phunks.net</a></p>
-
-              <h3 className="mt-4">Resources</h3>
-              <p><a target="_blank" href="https://phunks.gitbook.io/">Phunks GitBook</a></p>
-              <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
-              <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
-            </div> 
-            :
-            <div>
-              <h3 className="mt-4">Marketplaces</h3>
-              <p className="text-gray-400">vPhree (you are here)</p>
-              <p><a target="_blank" href="https://pro.opensea.io/collection/v3phunks">OpenSea Pro</a></p>
-
-              <h3 className="mt-4">Contract</h3>
-              <p><a target="_blank" href="https://etherscan.io/address/0xb7d405bee01c70a9577316c1b9c2505f146e8842">v3Phunks Contract</a></p>
-
-              <h3 className="mt-4">Twitter</h3>
-              <p><a target="_blank" href="https://twitter.com/v3phunks">v3Phunks</a></p>
-              <p><a target="_blank" href="https://twitter.com/vphree_io">vPhree</a></p>
-              <p><a target="_blank" href="https://twitter.com/v3phunksbot">v3Phunks Bot</a></p>
-
-              <h3 className="mt-4">Websites</h3>
-              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks Website</a></p>
-              <p><a target="_blank" href="https://phunks.net/">Phunks.net</a></p>
-
-              <h3 className="mt-4">Resources</h3>
-              <p><a target="_blank" href="https://phunks.gitbook.io/">Phunks GitBook</a></p>
-              <p><a target="_blank" href="https://www.dropbox.com/sh/jucx14px2ogalkc/AADHnFyBd7tFkodw6pCV84CFa?dl=0">Phunky Media Machine</a></p>
-              <p><a target="_blank" href="https://www.dropbox.com/sh/0xvnratb371f4u9/AAAFQN9eEECkl1K5gu4f79qIa?dl=0">Phunky GIFs</a></p>
-            </div>
-          }*/}
+          {activeCollection !== 'v1' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
+          {activeCollection !== 'v1' ? null : <div className="row-wrapper my-2">
+            {loading === false ?
+              <History 
+                transactions={philipTxnHistory}
+                mp="v1"
+              />
+              :
+              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
+            }
+          </div>}
         </div>
       </div>
       <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>

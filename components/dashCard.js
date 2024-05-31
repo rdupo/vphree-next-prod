@@ -8,7 +8,7 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
   let displayPrice;
   let bidPrice;
 
-  if (coll === "v1") {
+  if (coll === "v1" || coll === "wv1") {
     collName = "philip";
   } else if (coll === "v2") {
     collName = "https://notlarvalabs.com/cryptophunks/details/";
@@ -47,7 +47,7 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
   let idClassName;
 
   // Set values based on hover state and coll value
-  if (isHovered && coll === 'v1') {
+  if ((isHovered && coll === 'v1') || coll === 'wv1') {
     // philip hover state
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v1-bg';
@@ -97,8 +97,8 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
       </div>
       <div className="card-info-wrapper ml-2">
         <p className={idClassName}>#{id}</p>
-        {coll === 'v1' ? null : <p className="mb-1 text-xs">{displayPrice}</p>}
-        {coll === 'v1' ? null : <p className="mb-1 text-xs text-gray-400">{bidPrice}</p>}
+        {coll === 'v1' || coll === 'wv1' ? null : <p className="mb-1 text-xs">{displayPrice}</p>}
+        {coll === 'v1' || coll === 'wv1' ? null : <p className="mb-1 text-xs text-gray-400">{bidPrice}</p>}
       </div>
     </div>
   );

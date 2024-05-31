@@ -7,6 +7,8 @@ import philipAbi from '../utils/philipAbi';
 import philipAddy from '../utils/philipAddy';
 import phunkAbi from '../utils/phunkAbi';
 import phunkAddy from '../utils/phunkAddy';
+import wrapperAddy from '../utils/wrapperAddy';
+import wrapperAbi from '../utils/wrapperAbi';
 
 export async function getNFTs(walletAddy, collection) {
   let cAddy, cAbi;
@@ -17,6 +19,9 @@ export async function getNFTs(walletAddy, collection) {
   } else if (collection === 'v2') {
     cAddy = phunkAddy;
     cAbi = phunkAbi;
+  } else if (collection === 'wv1') {
+    cAddy = wrapperAddy;
+    cAbi = wrapperAbi;
   } else {
     cAddy = v3PhunkAddy;
     cAbi = v3PhunkAbi;
