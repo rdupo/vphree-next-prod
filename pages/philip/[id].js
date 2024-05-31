@@ -18,7 +18,7 @@ import philipAddy from '../../utils/philipAddy'
 import philipAbi from '../../utils/philipAbi'
 import philips from '../../utils/philips'
 
-export default function buyPhilips() {
+export default function Philips() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const router = useRouter()
   const id = router.query.id
