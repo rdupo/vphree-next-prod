@@ -265,7 +265,8 @@ export default function PhunkyHub() {
     } catch(error){
       if(error.message.search('nonexistent token') >= 0) {
         setWError('exist')
-      } else {
+      }
+      if (error.message.search('rejected') >= 0) {
         setWError('reject')
       }
     }
