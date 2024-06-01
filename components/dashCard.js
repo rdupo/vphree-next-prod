@@ -97,8 +97,8 @@ const DashCard = ({ price, bid, atts, id, coll }) => {
       </div>
       <div className="card-info-wrapper ml-2">
         <p className={idClassName}>#{id}</p>
-        {coll === 'v1' || coll === 'wv1' ? null : <p className="mb-1 text-xs">{displayPrice}</p>}
-        {coll === 'v1' || coll === 'wv1' ? null : <p className="mb-1 text-xs text-gray-400">{bidPrice}</p>}
+        {coll === 'wv1' ? null : <p className="mb-1 text-xs">{displayPrice}</p>}
+        {coll === 'wv1' ? null : <p className="mb-1 text-xs text-gray-400">{bidPrice}</p>}
       </div>
     </div>
   );

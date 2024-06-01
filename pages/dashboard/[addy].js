@@ -290,6 +290,32 @@ export default function V3Phunks() {
       setListVal(ethSum);
       setListed(currentListings);
     }
+
+    if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v1'){
+      const currentListings = [];
+
+      //define nll contract
+      const pmp = new ethers.Contract(philipMarketAddy, philipMarketAbi, provider);
+      
+      //get listing data and push to empty array
+      for (var i = nfts.length - 1; i >= 0; i--) {
+        const pmpList = await pmp.phunksOfferedForSale(nfts[i]);
+        if(pmpList.isForSale){          
+          currentListings.push({
+            tokenId:Number(pmpList.phunkIndex),
+            minValue: Number(pmpList.minValue)/1000000000000000000,
+          }) 
+        } 
+      }
+
+      let ethSum = 0;
+      for(let i = 0; i < currentListings.length; i++) {
+        ethSum += currentListings[i].minValue;
+      }
+
+      setListVal(ethSum);
+      setListed(currentListings);
+    }
   };
 
   //bids
@@ -306,6 +332,9 @@ export default function V3Phunks() {
     } else if (activeCollection === 'v3') {
       mAddy = v3MarketAddy;
       mAbi = v3MarketAbi;
+    } else if (activeCollection === 'v1') {
+      mAddy = philipMarketAddy;
+      mAbi = philipMarketAbi;
     }
 
     if(mAddy && mAbi) {
@@ -614,13 +643,13 @@ export default function V3Phunks() {
           <p className="text-xl text-gray-300">
             {!loading ? nfts.length : '-'} owned
           </p>
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+          {activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
             {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal.toFixed(3) : '-'}Ξ 
           </p>}
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+          {activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
             {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal.toFixed(3) : '-'}Ξ 
           </p>}
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+          {activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
             {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal.toFixed(3) : '-'}Ξ
           </p>}
           <h2 className="mt-8 text-2xl">Owned</h2> 
@@ -1207,8 +1236,8 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
             }
         	</div>
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : 
+          {activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
+          {activeCollection === 'wv1' ? null : 
           <div className="flex flex-wrap justify-left">
             {bidLoading === false ?
               (bidsPlaced.length > 0 ? 
