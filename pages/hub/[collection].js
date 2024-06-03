@@ -529,7 +529,7 @@ async function unwrapPhilip() {
                         <p className={`text-red-500 ${wError === 'exist' ? '' : 'hidden'}`}>This Philip does not exist</p>
                         <p className={`text-red-500 ${wError === 'own' ? '' : 'hidden'}`}>You cannot wrap this Philip</p>
                         <p className={`text-red-500 ${wError === 'reject' ? '' : 'hidden'}`}>User rejected transaction</p>
-                        <p className={`text-red-500 ${wError === 'generic' ? '' : 'hidden'}`}>You do not own this v1 or it doesn't exist</p>
+                        <p className={`text-red-500 ${wError === 'generic' ? '' : 'hidden'}`}>You do not own this v1 or it does not exist</p>
                       </div>
                       :
                       <div 
