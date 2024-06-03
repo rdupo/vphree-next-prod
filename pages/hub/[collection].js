@@ -83,6 +83,8 @@ export default function PhunkyHub() {
   //philip wrapper
   const [wrapId, setWrapId] = useState(-1);
   const [wError, setWError] = useState('none');
+  const [wrapBtnClass, setWrapBtnClass] = useState('hidden');
+  const [wrapBtnText, setWrapBtnText] = useState('');
 
   //sales card div bg
   let cardBg;
@@ -142,7 +144,7 @@ export default function PhunkyHub() {
     //event listeners
     eventNames.forEach(eventName => {
       aucContract.on(eventName, (event) => {
-        console.log("Auction Event:", event);
+        //console.log("Auction Event:", event);
         setAucEvent(event);
       });
     });
@@ -223,6 +225,37 @@ export default function PhunkyHub() {
   };
 
   /* ---- START WRAPPER FUNC ---- */
+  async function loadV1() {
+    const mmp = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = mmp.getSigner(connectedAddress);
+    const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
+
+    try {
+        const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+
+        if (w) {
+            setWrapBtnText("Wrap Philip");
+            setWrapBtnClass("black-bg g-txt w-[144px] g-b p-1 brite my-2");
+            return;  // Exit early if this condition is met
+        }
+    } catch (error) {
+        console.log("Error checking canBeWrappedByUser:", error.message);
+    }
+
+    try {
+        const u = await wc.canBeUnwrappedByUser(signer._address, wrapId);
+
+        if (u) {
+            setWrapBtnText("Unwrap v1");
+            setWrapBtnClass("black-bg g-txt w-[144px] g-b p-1 brite my-2");
+            return;  // Exit early if this condition is met
+        }
+    } catch (error) {
+        console.log("Error checking canBeUnwrappedByUser:", error.message);
+    }
+
+    setWError('generic');  // This is reached only if both conditions fail
+  }
 
   async function wrapPhilip() {
     const mmp = new ethers.providers.Web3Provider(window.ethereum);
@@ -232,6 +265,7 @@ export default function PhunkyHub() {
     
     try{
       const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+
       if(w) {
       const xferPromise = pc.safeTransferFrom(signer._address, wrapperAddy, wrapId);
       txnToast(xferPromise, `Wrapping Philip #${wrapId}`); 
@@ -271,6 +305,54 @@ export default function PhunkyHub() {
       }
     }
   }
+  
+async function unwrapPhilip() {
+    const mmp = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = mmp.getSigner(connectedAddress);
+    const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
+    
+    try{
+      const u = await wc.canBeUnwrappedByUser(signer._address, wrapId);
+      if (u) {
+        const xferPromise = wc.unwrap(wrapId);
+        txnToast(xferPromise, `Unwrapping Philip #${wrapId}`); 
+        await xferPromise
+          .then(async (result) => {
+            const rh = result.hash
+            await mmp.waitForTransaction(rh).then((listReceipt) => {
+              if (listReceipt.status === 1) { // Check if listing transaction was successful
+                toast.dismiss();
+                toast('Transaction confirmed!', {
+                  style: {
+                    minWidth: '80%',
+                    color: '#000',
+                    background: '#ffb900',
+                  },
+                });
+                fetchDataWithRetry();
+              } else {
+                toast.dismiss();
+                toast('⚠️ Transaction failed! ⚠️', {
+                  style: {
+                    minWidth: '80%',
+                    color: '#000',
+                    background: '#ffb900',
+                  },
+                });
+              }
+            });
+          });
+      } else { setWError('own'); }
+    } catch(error){
+      if(error.message.search('nonexistent token') >= 0) {
+        setWError('exist')
+      }
+      if (error.message.search('rejected') >= 0) {
+        setWError('reject')
+      }
+    }
+  }
+
   /* ---- END WRAPPER FUNC ---- */
 
   useEffect(() => {
@@ -423,25 +505,37 @@ export default function PhunkyHub() {
                       id="wrap-id-value"
                       minLength="1" 
                       maxLength="4" 
-                      onChange={(e) => {setWrapId(e.target.value);setWError('none')}}
+                      onChange={(e) => {setWrapId(e.target.value);setWError('none'); setWrapBtnClass('hidden')}}
                     />
                     </div>
                     {connectedAddress.length > 4 ? 
                       <div>
+                        <p
+                          className="underline v1-txt cursor-pointer my-2"
+                          onClick={() => {loadV1()}}
+                        >
+                          Load v1 Phunk
+                        </p>
                         <button 
-                          className="black-bg g-txt w-[144px] g-b p-1 brite my-2" 
+                          className={wrapBtnText === "Wrap Philip" ? wrapBtnClass : "hidden"} 
                           onClick={() => {wrapPhilip()}}
-                          id="search-btn">WRAP PHILIP
+                          id="search-btn">{wrapBtnText}
+                        </button>
+                        <button 
+                          className={wrapBtnText === "Unwrap v1" ? wrapBtnClass : "hidden"} 
+                          onClick={() => {unwrapPhilip()}}
+                          id="search-btn">{wrapBtnText}
                         </button>
                         <p className={`text-red-500 ${wError === 'exist' ? '' : 'hidden'}`}>This Philip does not exist</p>
                         <p className={`text-red-500 ${wError === 'own' ? '' : 'hidden'}`}>You cannot wrap this Philip</p>
                         <p className={`text-red-500 ${wError === 'reject' ? '' : 'hidden'}`}>User rejected transaction</p>
+                        <p className={`text-red-500 ${wError === 'generic' ? '' : 'hidden'}`}>You do not own this v1 or it doesn't exist</p>
                       </div>
                       :
                       <div 
                         className="p-3 black-bg g-txt g-b w-auto my-2"  
                         id="not-connected">
-                          Please connect your wallet to wrap
+                          Please connect your wallet to use wrapper
                       </div> 
                     }
                   </div>
@@ -557,6 +651,7 @@ export default function PhunkyHub() {
           {activeCollection === 'philip-intern-project' ? 
             <div>
               <h3 className="">Marketplace</h3>
+              <p className="text-gray-400">vPhree (you are here)</p>
               <p><a target="_blank" href="https://pro.opensea.io/collection/philipinternproject">OpenSea Pro - PhilipInternProject</a></p>
               <p><a target="_blank" href="https://pro.opensea.io/collection/official-v1-phunks">OpenSea Pro - v1Phunks (Wrapped)</a></p>
 

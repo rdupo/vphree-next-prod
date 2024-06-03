@@ -1229,7 +1229,7 @@ export default function V3Phunks() {
                     </p>
                     :
                     <p className="text-2xl text-gray-400 my-4">
-                      You do not own any Philips. You can pick one up <a target="_blank" href="https://pro.opensea.io/collection/philipinternproject">here</a>!
+                      You do not own any Philips. Check out the <Link href="/collections/philip-intern-project">marketplace</Link> to pick one up!!
                     </p>
               )
                 :
