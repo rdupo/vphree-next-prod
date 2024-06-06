@@ -383,6 +383,7 @@ async function unwrapPhilip() {
               onClick={() => Router.push({ pathname: `/hub/v3phunks` })}>v3Phunks</p>
           </div>
           {activeCollection === 'philip-intern-project' ?
+            <>
             <div className="mt-8 w-full">
               <Link href="/collections/philip-intern-project">
                 <button className="mobile-100 cta v1-b v1-bg black-txt">Philip Marketplace</button>
@@ -391,6 +392,15 @@ async function unwrapPhilip() {
                 <button className="mobile-100 cta v1-b black-bg v1-txt">Philip Phinder</button>
               </Link>
             </div>
+            <div className="mt-2 w-full">
+              <Link href="/collections/wrapped-v1-phunks">
+                <button className="mobile-100 cta v1-b v1-bg black-txt">Wrapped v1 Marketplace</button>
+              </Link>
+              <Link href="/view-all/wrapped-v1-phunks">
+                <button className="mobile-100 cta v1-b black-bg v1-txt">View All Wrapped v1s</button>
+              </Link>
+            </div>
+            </>
             :
             null
           }

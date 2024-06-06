@@ -48,13 +48,13 @@ const Card = ({ price, atts, id, coll }) => {
     idClassName = 'phunk-id mb-0 v2-txt';
     collSrc = 'cryptophunk';
   } else if (coll === 'v1' && id >= 0) {
-    // philip hover state
+    // wrapped v1 state
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v1-bg';
     idClassName = 'phunk-id mb-0 v1-txt';
-    collSrc = 'philip';
+    collSrc = 'wrapped-v1-phunk';
   } else if (coll === 'v1' && id === -1) {
-    // philip hover state
+    // default v1 image state
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
