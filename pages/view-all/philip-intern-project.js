@@ -33,7 +33,7 @@ export default function V3Phunks() {
   const [appliedFilters, setAppliedFilters] = useState({})
   const [fP, setFP] = useState(philips)
   const phunks = philips
-  const philDesc = ["View all 1,004 Philips. Click on a Philip to view it's attribute(s) and buy/bid on it. A preview of the wrapped Philip is displayed on hover. You can wrap your Philip at the", <Link href="/hub/philip-intern-project">Phunky Hub</Link>, "."]
+  const philDesc = ["View all 1,004 Philips. Click on a Philip to view it's attribute(s) and buy/bid on it. A preview of the wrapped Philip is displayed on hover. You can wrap your Philip at the", <Link key="phlink" href="/hub/philip-intern-project">Phunky Hub</Link>, "."]
 
   // Use the useEffect hook to monitor changes to the 'f' state
   useEffect(() => {

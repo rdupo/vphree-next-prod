@@ -41,7 +41,7 @@ export default function V3Phunks() {
   const [appliedFilters, setAppliedFilters] = useState({})
   const [fP, setFP] = useState(philips)
   const [phunks, setPhunks] = useState([])
-  const philDesc = ["View all Wrapped v1 Phunks. Click on a Wrapped v1 Phunk to view it's attribute(s) or bid on/buy it. Miss Philip? You can unwrap your Wrapped v1 Phunk using the ", <Link href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
+  const philDesc = ["View all Wrapped v1 Phunks. Click on a Wrapped v1 Phunk to view it's attribute(s) or bid on/buy it. Miss Philip? You can unwrap your Wrapped v1 Phunk using the ", <Link key="phlink" href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
 
   useEffect(() => {
     async function fetchWrapped() {

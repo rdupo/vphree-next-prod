@@ -30,7 +30,7 @@ export default function PhilipMarket() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const maps = "https://www.cryptophunks.com/"
   const target = "_blank"
-  const desc = ["V1 Phunks are not a derivative, but are in fact the original set of Phunks released in 2021 (and actually predate the release of CryptoPhunks NFTs). This is verified on the Ethereum blockchain and is immutable. Wrapped v1 Phunks restore the image and metadata lost when the origional 1,004 CryptoPhunks were converted to Philips. You can unwrap your Wrapped v1 Phunk using the ", <Link href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
+  const desc = ["V1 Phunks are not a derivative, but are in fact the original set of Phunks released in 2021 (and actually predate the release of CryptoPhunks NFTs). This is verified on the Ethereum blockchain and is immutable. Wrapped v1 Phunks restore the image and metadata lost when the origional 1,004 CryptoPhunks were converted to Philips. You can unwrap your Wrapped v1 Phunk using the ", <Link key="phlink" href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
   const [listed, setListed] = useState([]);
   const [f, setF] = useState({})
   const [filtersActive, setFilterState] = useState(false)
