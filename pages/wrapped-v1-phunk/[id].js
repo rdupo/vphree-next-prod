@@ -15,15 +15,8 @@ import phunks from '../../utils/phunkAtts'
 import wrapperAddy from '../../utils/wrapperAddy'
 import wrapperAbi from '../../utils/wrapperAbi'
 import philips from '../../utils/philips'
-
-//delete
-import philipAddy from '../../utils/philipAddy'
-import philipAbi from '../../utils/philipAbi'
-
-/* --- UPDATE TO WRAPPED V1 PHUNKS --- */
-import philipMarketAddy from '../../utils/philipMarketAddy'
-import philipMarketAbi from '../../utils/philipMarketAbi'
-/* --- END WRAPPED V1 PHUNK UPDATES --- */
+import wv1pAddy from '../../utils/wv1pAddy'
+import wv1pAbi from '../../utils/wv1pAbi'
 
 export default function Philips() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY

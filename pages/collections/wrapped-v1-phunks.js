@@ -14,16 +14,9 @@ import { useWallet } from '../../contexts/WalletContext'
 import phunkAttMap from '../../utils/phunkAttMap'
 import wrapperAddy from '../../utils/wrapperAddy'
 import wrapperAbi from '../../utils/wrapperAbi'
-
-/* --- UPDATE TO WRAPPED V1 PHUNKS --- */
-import philipMarketAddy from '../../utils/philipMarketAddy'
-import philipMarketAbi from '../../utils/philipMarketAbi'
+import wv1pAddy from '../../utils/wv1pAddy'
+import wv1pAbi from '../../utils/wv1pAbi'
 import Banner from '../../assets/wv1p-banner.png'
-/* --- END WRAPPED V1 PHUNK UPDATES --- */
-
-//delete
-import philipAddy from '../../utils/philipAddy'
-import philipAbi from '../../utils/philipAbi'
 
 export default function PhilipMarket() {
   const collectionContract = philipAddy
