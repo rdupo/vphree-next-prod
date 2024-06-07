@@ -643,15 +643,15 @@ export default function V3Phunks() {
           <p className="text-xl text-gray-300">
             {!loading ? nfts.length : '-'} owned
           </p>
-          {activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+          <p className="text-xl text-gray-300">
             {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal.toFixed(3) : '-'}Ξ 
-          </p>}
-          {activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+          </p>
+          <p className="text-xl text-gray-300">
             {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal.toFixed(3) : '-'}Ξ 
-          </p>}
-          {activeCollection === 'wv1' ? null :<p className="text-xl text-gray-300">
+          </p>
+          <p className="text-xl text-gray-300">
             {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal.toFixed(3) : '-'}Ξ
-          </p>}
+          </p>
           <h2 className="mt-8 text-2xl">Owned</h2> 
           <div className="filter-sort-wrapper mb-4">
             <div>
@@ -1236,8 +1236,7 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
             }
         	</div>
-          {activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Your Bids</h2>}
-          {activeCollection === 'wv1' ? null : 
+          <h2 className="mt-8 text-2xl">Your Bids</h2>
           <div className="flex flex-wrap justify-left">
             {bidLoading === false ?
               (bidsPlaced.length > 0 ? 
@@ -1257,7 +1256,7 @@ export default function V3Phunks() {
                 :
               <p className="text-2xl g-txt my-4">Fetching your bids...</p>
             }
-          </div>}
+          </div>
           {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
           {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <div>
           {activeCollection === 'v2' ?
@@ -1325,8 +1324,18 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Loading NLL transaction history...</p>
             }
           </div>}
-          {activeCollection !== 'v1' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
+          <h2 className="mt-8 text-2xl">vPhree Activity</h2>
           {activeCollection !== 'v1' ? null : <div className="row-wrapper my-2">
+            {loading === false ?
+              <History 
+                transactions={philipTxnHistory}
+                mp="v1"
+              />
+              :
+              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
+            }
+          </div>}
+          {activeCollection !== 'wv1' ? null : <div className="row-wrapper my-2">
             {loading === false ?
               <History 
                 transactions={philipTxnHistory}

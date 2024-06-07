@@ -6,7 +6,7 @@ import Header from  '../../components/Header'
 import CollectionInfo from '../../components/CollectionInfo'
 import Card from '../../components/Card'
 import Footer from '../../components/Footer'
-import Banner from '../../assets/philip-banner.png'
+import Banner from '../../assets/wv1p-banner.png'
 import Twitter from '../../assets/twitter.png'
 import Etherscan from '../../assets/etherscan.png'
 import { Silkscreen, Montserrat } from 'next/font/google'
@@ -14,6 +14,7 @@ import philips from '../../utils/philips'
 import philipAddy from '../../utils/philipAddy'
 import philipAbi from '../../utils/philipAbi'
 import wrapperAddy from '../../utils/wrapperAddy'
+import Link from 'next/link'
 
 export default function V3Phunks() {
   const collectionContract = philipAddy
@@ -40,7 +41,7 @@ export default function V3Phunks() {
   const [appliedFilters, setAppliedFilters] = useState({})
   const [fP, setFP] = useState(philips)
   const [phunks, setPhunks] = useState([])
-  const philDesc = ["View all 1,004 Philips. Click on a Philip to view it's attribute(s) and links to buy/bid on the Philip, v2, and v3. A preview of the wrapped Philip is displayed on hover. You can wrap your Philip at ", <a key="philip-wrapper" href="https://www.v1phunks.io/" target="_blank">v1phunks.io</a>]
+  const philDesc = ["View all Wrapped v1 Phunks. Click on a Wrapped v1 Phunk to view it's attribute(s) or bid on/buy it. Miss Philip? You can unwrap your Wrapped v1 Phunk using the ", <Link href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
 
   useEffect(() => {
     async function fetchWrapped() {
@@ -80,7 +81,7 @@ export default function V3Phunks() {
         </div>
         <div className="content px-8 z-10">
           <CollectionInfo
-            title="All Philips"
+            title="All Wrapped v1 Phunks"
             desc={philDesc}
             twitter="https://twitter.com/CryptoPhunksV1"
             contract={collectionContract}

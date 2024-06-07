@@ -199,6 +199,10 @@ select, option, .black-txt {
   cursor: pointer;
 }
 
+.brite2:hover {
+  filter: brightness(1.33);
+}
+
 /*collection*/
 .col-banner {
   position: relative;

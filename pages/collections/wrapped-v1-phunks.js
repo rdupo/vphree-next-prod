@@ -17,7 +17,7 @@ import wrapperAbi from '../../utils/wrapperAbi'
 /* --- UPDATE TO WRAPPED V1 PHUNKS --- */
 import philipMarketAddy from '../../utils/philipMarketAddy'
 import philipMarketAbi from '../../utils/philipMarketAbi'
-import Banner from '../../assets/philip-banner.png'
+import Banner from '../../assets/wv1p-banner.png'
 /* --- END WRAPPED V1 PHUNK UPDATES --- */
 
 //delete
@@ -29,7 +29,7 @@ export default function PhilipMarket() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const maps = "https://www.cryptophunks.com/"
   const target = "_blank"
-  const desc = ["CryptoPhunks are 10,000 punks created through the ERC-721 contract on the Ethereum blockchain from a perspective that we've never seen before. Each Phunk faces left and is minted through the flip of a completely randomized Punk."]
+  const desc = ["V1 Phunks are not a derivative, but are in fact the original set of Phunks released in 2021 (and actually predate the release of CryptoPhunks NFTs). This is verified on the Ethereum blockchain and is immutable. Wrapped v1 Phunks restore the image and metadata lost when the origional 1,004 CryptoPhunks were converted to Philips. You can unwrap your Wrapped v1 Phunk using the ", <Link href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
   const [listed, setListed] = useState([]);
   const [f, setF] = useState({})
   const [filtersActive, setFilterState] = useState(false)

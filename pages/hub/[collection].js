@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Header from  '../../components/Header'
 import DashCard from '../../components/dashCard'
 import Card from '../../components/Card'
+import StaticCard from '../../components/StaticCard'
 import FlywheelCard from '../../components/flywheelCard'
 import LatestProp from '../../components/LatestProp'
 import History from '../../components/userHistory'
@@ -497,7 +498,7 @@ async function unwrapPhilip() {
               <h2 className="mt-16 mb-4 text-2xl">Philip Wrapper</h2>
               <div className="inline-flex">
                 <div>
-                  <Card
+                  <StaticCard
                     key={`wrap${wrapId}`}
                     price=""
                     coll="v1"

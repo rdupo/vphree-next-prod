@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Router from 'next/router';
 
-const SaleCard = ({ price, atts, id, coll }) => {
+const Card = ({ price, atts, id, coll }) => {
   let alt_id;
-  let priceAlt;
   let s_id = id.toString();
 
   if (s_id.length === 1) {
@@ -17,10 +15,6 @@ const SaleCard = ({ price, atts, id, coll }) => {
     alt_id = s_id;
   }
 
-  if (price.length === 7) {
-    priceAlt = price.substr(0,5) + price.substr(6)
-  } else {priceAlt = price}
-
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseEnter = () => {
@@ -32,10 +26,7 @@ const SaleCard = ({ price, atts, id, coll }) => {
   };
 
   // Define variables for dynamic values
-  let imageSrc;
-  let imageClassName;
-  let idClassName;
-  let salesClassName;
+  let imageSrc, imageClassName, idClassName, collSrc;
 
   // Set values based on hover state and coll value
   if (isHovered && coll === 'philip') {
@@ -43,59 +34,63 @@ const SaleCard = ({ price, atts, id, coll }) => {
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v1-bg';
     idClassName = 'phunk-id mb-0 v1-txt';
-    salesClassName = 'cursor-default mx-1 v1-bg black-txt inline-block sans-underline';
-  } 
-
-  else if (coll === 'v2') {
-    imageSrc = `/phunks/phunk${alt_id}.svg`;
-    imageClassName = 'img-wrapper v2-bg';
-    idClassName = 'phunk-id mb-0 v2-txt';
-    salesClassName = 'cursor-default mx-1 v2-bg black-txt inline-block sans-underline';
-  } 
-
-  else if ((!isHovered && coll === 'philip')|(coll === 'v1' && id===-1)) {
+    collSrc = 'philip';
+  } else if (!isHovered && coll === 'philip') {
   	// philip default state
 	  imageSrc = '/phunks/philip.png';
     imageClassName = 'img-wrapper philip-bg';
     idClassName = 'phunk-id mb-0 philip-txt';
-    salesClassName = 'cursor-default mx-1 v2-bg black-txt inline-block sans-underline';
-  } 
-
-  else {
+    collSrc = 'philip';
+  } else if (coll === 'v2' || coll === 'auc') {
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper v2-bg';
+    idClassName = 'phunk-id mb-0 v2-txt';
+    collSrc = 'cryptophunk';
+  } else if (coll === 'v1' && id >= 0) {
+    // wrapped v1 state
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper v1-bg';
+    idClassName = 'phunk-id mb-0 v1-txt';
+    collSrc = 'wrapped-v1-phunk';
+  } else if (coll === 'v1' && id === -1) {
+    // default v1 image state
+    imageSrc = `/phunks/phunk${alt_id}.svg`;
+    imageClassName = 'img-wrapper philip-bg';
+    idClassName = 'phunk-id mb-0 philip-txt';
+    collSrc = 'philip';
+  } else {
     // Values for v3 phunks; default
     imageSrc = `/phunks/phunk${alt_id}.svg`;
     imageClassName = 'img-wrapper v3-bg';
     idClassName = 'phunk-id mb-0 v3-txt';
-    salesClassName = 'cursor-default mx-1 v3-bg black-txt inline-block sans-underline';
+    collSrc = 'v3phunk'
   }
 
   return (
     <div
       key={id}
-      className={salesClassName}
-      data-price={priceAlt}
+      className="brite2 black-bg white-txt inline-block sans-underline"
+      data-price={price}
       data-atts={atts}
-      //onClick={() => {
-      //  Router.push({ pathname: `/${coll}/${id}` });
-      //}}
-      //onMouseEnter={handleMouseEnter}
-      //onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className={imageClassName}>
         <Image
           className="w-100"
-          src={imageSrc}
+          src={id === -1 ? '/phunks/philip.png' : imageSrc}
           loading="lazy"
           alt={`phunk ${id}`}
-          height="50"
-          width="50"
+          height="100"
+          width="100"
         />
       </div>
-      <div className="card-info-wrapper mx-2">
-        <h4 className="phunk-price text-xs">{priceAlt}</h4>
+      <div className="card-info-wrapper ml-2">
+        <p className={idClassName}>#{id >= 0 ? id : '---'}</p>
+        <h4 className="phunk-price mb-1">{price}</h4>
       </div>
     </div>
   );
 };
 
-export default SaleCard;
+export default Card;
