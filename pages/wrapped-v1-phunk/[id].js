@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Header from  '../../components/Header'
 import Footer from '../../components/Footer'
 import History from '../../components/History_qBC'
-import getTxnHistory from '../../hooks/philipMarketHistory'
+import getTxnHistory from '../../hooks/wv1pMarketHistory'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import { Network, Alchemy } from 'alchemy-sdk'
 import { ethers } from 'ethers'
@@ -182,7 +182,7 @@ export default function Philips() {
     if (ap) {
       const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
       const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-      txnToast(listPromise, `Listing Philip for ${ethers.utils.formatEther(lPrice)}Ξ`);      
+      txnToast(listPromise, `Listing Wrapped v1 Phunk for ${ethers.utils.formatEther(lPrice)}Ξ`);      
       await listPromise
         .then(async (result) => {
         const rh = result.hash
@@ -212,7 +212,7 @@ export default function Philips() {
       });
     } else {
       const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval, `Allowing vPhree to access Philips`);
+      txnToast(setApproval, `Allowing vPhree to access Wrapped v1 Phunks`);
 
       await setApproval.then(async (result) => {
         const rh = result.hash;
@@ -229,7 +229,7 @@ export default function Philips() {
 
             const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
             const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-            txnToast(listPromise, `Listing Philip for ${ethers.utils.formatEther(lPrice)}Ξ`);
+            txnToast(listPromise, `Listing Wrapped v1 Phunk for ${ethers.utils.formatEther(lPrice)}Ξ`);
 
             await listPromise.then(async (result) => {
               const rh = result.hash;
@@ -278,7 +278,7 @@ export default function Philips() {
     const signer = mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const delistPromise = cpmp.phunkNoLongerForSale(id);
-    txnToast(delistPromise, `Delisting Philip`); 
+    txnToast(delistPromise, `Delisting Wrapped v1 Phunk`); 
     await delistPromise
       .then(async (result) => {
         const rh = result.hash
@@ -346,7 +346,7 @@ export default function Philips() {
       });
     } else {
       const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval, `Allowing vphree to access v3phunks`);
+      txnToast(setApproval, `Allowing vphree to access Wrapped v1 Phunks`);
 
       await setApproval.then(async (result) => {
         const rh = result.hash;
@@ -410,7 +410,7 @@ export default function Philips() {
     const signer = mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const buyPhunkPromise = cpmp.connect(signer).buyPhunk(id, {value: listed.minValue._hex});
-    txnToast(buyPhunkPromise, `Buying Philip for ${ethers.utils.formatUnits(listed.minValue._hex,18)}Ξ`);
+    txnToast(buyPhunkPromise, `Buying Wrapped v1 Phunk for ${ethers.utils.formatUnits(listed.minValue._hex,18)}Ξ`);
     await buyPhunkPromise
       .then(async (result) => {
         const rh = result.hash
@@ -481,7 +481,7 @@ export default function Philips() {
     const signer = mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const withdrawBidPromise = cpmp.withdrawBidForPhunk(id);
-    txnToast(withdrawBidPromise, `Canceling bid for Philip`);  
+    txnToast(withdrawBidPromise, `Canceling bid for Wrapped v1 Phunk`);  
     await withdrawBidPromise
       .then(async (result) => {
         const rh = result.hash
@@ -576,7 +576,7 @@ export default function Philips() {
               </div>
             </div>
             <h2 id="title" className="g-txt mb-3">Philip #{id}</h2>
-            <p className="drk-grey-txt mb-4 collection-desc">Want to unwrap your Philip? Check out the <Link href="/hub/philip-intern-project">Phunky Hub</Link></p>
+            <p className="drk-grey-txt mb-4 collection-desc">Want to unwrap your Wrapped v1 Phunk? Check out the <Link href="/hub/philip-intern-project">Phunky Hub</Link></p>
             <div className="metadata inline-block align-top w-full md:w-3/12">
               <div className="id-and-owner">
                 <p>Owner</p>

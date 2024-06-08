@@ -653,7 +653,7 @@ export default function PhilipMarket() {
                   price={ethers.utils.formatUnits(phunk.args.minValue._hex,18) + "Ξ"}
                   atts=""
                   id={ethers.utils.formatUnits(phunk.args.phunkIndex._hex,0)}
-                  coll="philip"
+                  coll="v1"
                 />
               : null )  
             ))}

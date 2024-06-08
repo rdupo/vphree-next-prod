@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { Network, Alchemy } from 'alchemy-sdk';
-import philipMarketAddy from '../utils/philipMarketAddy'
-import philipMarketAbi from '../utils/philipMarketAbi'
+import wv1pAddy from '../utils/wv1pAddy'
+import wv1pAbi from '../utils/wv1pAbi'
 
-const getPhilipHistory = (wallet) => {
+const getWv1pHistory = (wallet) => {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const settings = {
     apiKey: alcKey,
@@ -12,7 +12,7 @@ const getPhilipHistory = (wallet) => {
   };
   const alchemy = new Alchemy(settings);
   const [txn, setTxn] = useState([]);
-  const [philipTxnHistory, setPhilipTxnHistory] = useState([]);
+  const [wv1pTxnHistory, setWv1pTxnHistory] = useState([]);
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
 
   const resolveENS = async (address) => {
@@ -53,7 +53,7 @@ const getPhilipHistory = (wallet) => {
       }
     };
 
-    const contract = new ethers.Contract(philipMarketAddy, philipMarketAbi, provider);
+    const contract = new ethers.Contract(wv1pAddy, wv1pAbi, provider);
 
     const filterList = contract.filters.PhunkOffered(null, null, wallet, null); //listed
     const filterOffer = contract.filters.PhunkBidEntered(null, null, wallet); //bid entered
@@ -67,11 +67,12 @@ const getPhilipHistory = (wallet) => {
     const Sold = await retry(async () => await contract.queryFilter(filterSold));
     const Bought = await retry(async () => await contract.queryFilter(filterBought));
     const marketplaceEvents = [...List, ...Offer, ...Withdraw, ...Sold, ...Bought];
+    console.log("wv1p events",marketplaceEvents)
 
     // Check if any of the event arrays is empty
-    if (List.length === 0 && Offer.length === 0 && Withdraw.length === 0 && Sold.length === 0 && Bought.length === 0) {
+    if (Offer.length === 0 && Withdraw.length === 0 && Sold.length === 0 && Bought.length === 0 && List.length === 0) {
       // Handle the case where no events are returned
-      setPhilipTxnHistory([{eventType:'none'}]);
+      setWv1pTxnHistory([{eventType:'none'}]);
       return;
     }
 
@@ -84,7 +85,7 @@ const getPhilipHistory = (wallet) => {
 
     // Filter out events with the same timestamp as in transactionHistory
     const refilteredEvents = combinedEvents.filter(event => {
-      return !philipTxnHistory.some(prevEvent => prevEvent.timestamp === event.timestamp);
+      return !wv1pTxnHistory.some(prevEvent => prevEvent.timestamp === event.timestamp);
     });
   
     const formattedEvents = refilteredEvents.map(async event => {
@@ -130,19 +131,19 @@ const getPhilipHistory = (wallet) => {
 
     Promise.all(formattedEvents).then((results) => {
       if (results.length > 0) {
-        setPhilipTxnHistory(results);
+        setWv1pTxnHistory(results);
         //console.log('txn', philipTxnHistory);
       }
     });
   };
 
   useEffect(() => {
-    if(typeof(wallet) !== 'undefined' && wallet.length > 1) {
+    if (typeof(wallet) !== 'undefined' && wallet.length > 1) {
       fetchTransactionHistory();
     }
   }, [wallet]);
 
-  return { philipTxnHistory };
+  return { wv1pTxnHistory };
 };
 
-export default getPhilipHistory;
+export default getWv1pHistory;

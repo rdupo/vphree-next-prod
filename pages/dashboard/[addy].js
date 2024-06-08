@@ -43,6 +43,7 @@ import wv1pAddy from '../../utils/wv1pAddy'
 import wv1pAbi from '../../utils/wv1pAbi'
 import wrapperAddy from '../../utils/wrapperAddy'
 import wrapperAbi from '../../utils/wrapperAbi'
+import wv1pHistory from '../../hooks/wv1pWalletHistory'
 
 export default function V3Phunks() {
   const router = useRouter()
@@ -98,6 +99,7 @@ export default function V3Phunks() {
   const { transactionHistory } = walletHistory(walletAddy);
   const { nllTxnHistory } = nllHistory(walletAddy);
   const { philipTxnHistory } = philipHistory(walletAddy);
+  const { wv1pTxnHistory } = wv1pHistory(walletAddy);
   //collection displayed
   const [activeCollection, setActiveCollection] = useState("v3");
   //flywheel
@@ -318,6 +320,32 @@ export default function V3Phunks() {
       setListVal(ethSum);
       setListed(currentListings);
     }
+
+    if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'wv1'){
+      const currentListings = [];
+
+      //define nll contract
+      const pmp = new ethers.Contract(wv1pAddy, wv1pAbi, provider);
+      
+      //get listing data and push to empty array
+      for (var i = nfts.length - 1; i >= 0; i--) {
+        const pmpList = await pmp.phunksOfferedForSale(nfts[i]);
+        if(pmpList.isForSale){          
+          currentListings.push({
+            tokenId:Number(pmpList.phunkIndex),
+            minValue: Number(pmpList.minValue)/1000000000000000000,
+          }) 
+        } 
+      }
+
+      let ethSum = 0;
+      for(let i = 0; i < currentListings.length; i++) {
+        ethSum += currentListings[i].minValue;
+      }
+
+      setListVal(ethSum);
+      setListed(currentListings);
+    }
   };
 
   //bids
@@ -337,6 +365,9 @@ export default function V3Phunks() {
     } else if (activeCollection === 'v1') {
       mAddy = philipMarketAddy;
       mAbi = philipMarketAbi;
+    } else if (activeCollection === 'wv1') {
+      mAddy = wv1pAddy;
+      mAbi = wv1pAbi;
     }
 
     if(mAddy && mAbi) {
@@ -1304,7 +1335,7 @@ export default function V3Phunks() {
               </p>
             }                       
           </div>}
-          {activeCollection !== 'v3' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
+          {activeCollection === 'v2' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
           {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
             {loading === false ?
               <History 
@@ -1326,7 +1357,6 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Loading NLL transaction history...</p>
             }
           </div>}
-          <h2 className="mt-8 text-2xl">vPhree Activity</h2>
           {activeCollection !== 'v1' ? null : <div className="row-wrapper my-2">
             {loading === false ?
               <History 
@@ -1340,7 +1370,7 @@ export default function V3Phunks() {
           {activeCollection !== 'wv1' ? null : <div className="row-wrapper my-2">
             {loading === false ?
               <History 
-                transactions={philipTxnHistory}
+                transactions={wv1pTxnHistory}
                 mp="v1"
               />
               :

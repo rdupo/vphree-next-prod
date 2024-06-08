@@ -363,7 +363,7 @@ export default function Philips() {
       });
     } else {
       const setApproval = cc.setApprovalForAll(marketContract, true);
-      txnToast(setApproval, `Allowing vphree to access v3phunks`);
+      txnToast(setApproval, `Allowing vphree to access Philips`);
 
       await setApproval.then(async (result) => {
         const rh = result.hash;
