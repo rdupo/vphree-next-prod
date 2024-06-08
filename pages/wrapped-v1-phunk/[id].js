@@ -17,6 +17,10 @@ import wrapperAbi from '../../utils/wrapperAbi'
 import philips from '../../utils/philips'
 import wv1pAddy from '../../utils/wv1pAddy'
 import wv1pAbi from '../../utils/wv1pAbi'
+/* --- delete --- */
+import philipAddy from '../../utils/philipAddy'
+import philipAbi from '../../utils/philipAbi'
+/* --- delete --- */
 
 export default function Philips() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
