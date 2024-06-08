@@ -19,7 +19,7 @@ import wv1pAbi from '../../utils/wv1pAbi'
 import Banner from '../../assets/wv1p-banner.png'
 
 export default function PhilipMarket() {
-  const collectionContract = philipAddy
+  const collectionContract = wrapperAddy
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const maps = "https://www.cryptophunks.com/"
   const target = "_blank"
@@ -99,8 +99,8 @@ export default function PhilipMarket() {
   //events approach
   useEffect(() => {
     const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
-    const contract = new ethers.Contract(philipMarketAddy, philipMarketAbi, provider);
-    const v3Contract = new ethers.Contract(philipAddy, philipAbi, provider)
+    const contract = new ethers.Contract(wv1pAddy, wv1pAbi, provider);
+    const v3Contract = new ethers.Contract(wrapperAddy, wrapperAbi, provider)
 
     const initialActiveListings = [];
     const phunkIds = [];
