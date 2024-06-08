@@ -17,20 +17,16 @@ import wrapperAbi from '../../utils/wrapperAbi'
 import philips from '../../utils/philips'
 import wv1pAddy from '../../utils/wv1pAddy'
 import wv1pAbi from '../../utils/wv1pAbi'
-/* --- delete --- */
-import philipAddy from '../../utils/philipAddy'
-import philipAbi from '../../utils/philipAbi'
-/* --- delete --- */
 
 export default function Philips() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const router = useRouter()
   const id = router.query.id
   const atts = phunks[id]
-  const collectionContract = philipAddy
-  const marketContract = philipMarketAddy
-  const v3Abi = philipAbi
-  const marketAbi = philipMarketAbi
+  const collectionContract = wrapperAddy
+  const marketContract = wv1pAddy
+  const v3Abi = wrapperAbi
+  const marketAbi = wv1pAbi
   const [listed, setListed] = useState([]);
   const [offers, setOffers] = useState('');
   const [offerer, setOfferer] = useState('');
