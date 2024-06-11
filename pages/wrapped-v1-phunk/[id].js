@@ -575,7 +575,7 @@ export default function Philips() {
                 </div>
               </div>
             </div>
-            <h2 id="title" className="g-txt mb-3">Philip #{id}</h2>
+            <h2 id="title" className="g-txt mb-3">Wrapped v1 Phunk #{id}</h2>
             <p className="drk-grey-txt mb-4 collection-desc">Want to unwrap your Wrapped v1 Phunk? Check out the <Link href="/hub/philip-intern-project">Phunky Hub</Link></p>
             <div className="metadata inline-block align-top w-full md:w-3/12">
               <div className="id-and-owner">

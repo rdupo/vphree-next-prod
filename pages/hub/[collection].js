@@ -387,18 +387,18 @@ async function unwrapPhilip() {
             <>
             <div className="mt-8 w-full">
               <Link href="/collections/philip-intern-project">
-                <button className="mobile-100 cta v1-b v1-bg black-txt">Philip Marketplace</button>
+                <button className="mobile-100 cta v1-b v1-bg black-txt w-[345px]">Philip Marketplace</button>
               </Link>
               <Link href="/view-all/philip-intern-project">
-                <button className="mobile-100 cta v1-b black-bg v1-txt">Philip Phinder</button>
+                <button className="mobile-100 cta v1-b black-bg v1-txt w-[315px]">Philip Phinder</button>
               </Link>
             </div>
             <div className="mt-2 w-full">
               <Link href="/collections/wrapped-v1-phunks">
-                <button className="mobile-100 cta v1-b v1-bg black-txt">Wrapped v1 Marketplace</button>
+                <button className="mobile-100 cta v1-b v1-bg black-txt w-[345px]">Wrapped v1 Marketplace</button>
               </Link>
               <Link href="/view-all/wrapped-v1-phunks">
-                <button className="mobile-100 cta v1-b black-bg v1-txt">View All Wrapped v1s</button>
+                <button className="mobile-100 cta v1-b black-bg v1-txt w-[315px]">View All Wrapped v1s</button>
               </Link>
             </div>
             </>

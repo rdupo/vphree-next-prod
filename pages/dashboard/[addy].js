@@ -54,14 +54,16 @@ export default function V3Phunks() {
   const [nfts, setNFTs] = useState([]);
   const [nftsData, setNFTsData] = useState([]);
   const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('');
-  const [philipWithdrawAmt, setPhilipWithdrawAmt] = useState('')
+  const [philipWithdrawAmt, setPhilipWithdrawAmt] = useState('');
+  const [wv1pWithdrawAmt, setWv1pWithdrawAmt] = useState('');
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
   const philipMarket = new ethers.Contract(philipMarketAddy, philipMarketAbi, provider);
-  const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider)
+  const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider);
+  const wv1pMarket = new ethers.Contract(wv1pAddy, wv1pAbi, provider);
   const { connectedAddress, walletChanged } = useWallet();
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   /*filter vars*/
@@ -103,9 +105,6 @@ export default function V3Phunks() {
   //collection displayed
   const [activeCollection, setActiveCollection] = useState("v3");
   //flywheel
-  // 1) get price estimate from NFTBank API
-  // 2) get pctOfOraclePriceEstimateToPay using contractConfig method from flywheel contract
-  // 3) multiply price by % of estimate to pay
   const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
   const [nftEstimate, setNftEstimate] = useState([]);
   const [minFlywheelPrice, setMinFlywheelPrice] = useState();
@@ -475,10 +474,13 @@ export default function V3Phunks() {
     const nftIds = await getNFTs(thisAddy, activeCollection);
     const pWith = await contract.pendingWithdrawals(thisAddy);
     const pmpWith = await philipMarket.pendingWithdrawals(thisAddy);
+    const wv1pWith = await wv1pMarket.pendingWithdrawals(thisAddy);
     const withEth = Number(Number(pWith._hex)/1000000000000000000).toFixed(3);
     const pWithEth = Number(Number(pmpWith._hex)/1000000000000000000).toFixed(3);
+    const v1WithEth = Number(Number(wv1pWith._hex)/1000000000000000000).toFixed(3);
     setPendingWithdrawAmt(withEth);
     setPhilipWithdrawAmt(pWithEth);
+    setWv1pWithdrawAmt(v1WithEth);
     console.log(pmpWith);
     setNFTs(nftIds);
 
@@ -601,6 +603,41 @@ export default function V3Phunks() {
     });
   }
 
+  //withdraw() function
+  async function withdrawMyEthWv1p() {
+    const mmp = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = mmp.getSigner(connectedAddress);
+    const cpmp = new ethers.Contract(wv1pAddy, wv1pAbi, signer);
+    const withdrawPromise = cpmp.withdraw();
+    txnToast(withdrawPromise, `Withdrawing ${wv1pWithdrawAmt}Ξ`);
+    await withdrawPromise
+    .then(async (result) => {
+      const rh = result.hash
+      await mmp.waitForTransaction(rh).then((listReceipt) => {
+        if (listReceipt.status === 1) { // Check if listing transaction was successful
+          toast.dismiss();
+          toast('Transaction confirmed!', {
+            style: {
+              minWidth: '80%',
+              color: '#000',
+              background: '#ffb900',
+            },
+          });
+          fetchDataWithRetry();
+        } else {
+          toast.dismiss();
+          toast('⚠️ Transaction failed! ⚠️', {
+            style: {
+              minWidth: '80%',
+              color: '#000',
+              background: '#ffb900',
+            },
+          });
+        }
+      });
+    });
+  }
+
   //withdraw
   async function withdraw() {
     if(signer && activeCollection === 'v3') {
@@ -609,6 +646,10 @@ export default function V3Phunks() {
 
     if(signer && activeCollection === 'v1') {
       withdrawMyEthPhilip();
+    }
+
+    if(signer && activeCollection === 'wv1') {
+      withdrawMyEthWv1p();
     }
   }
 
@@ -658,6 +699,18 @@ export default function V3Phunks() {
             </div>
             :
             null
+          }
+          { connectedAddress === walletAddy && philipWithdrawAmt > 0 && activeCollection === "wv1" ?
+            <div className="my-2">
+              <button 
+                className="cta b-b g-bg black-txt brite"
+                onClick={() => {withdraw()}}
+              >
+                WITHDRAW {wv1pWithdrawAmt}Ξ
+              </button>
+            </div>
+            :
+            null 
           }
           <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
             <p 

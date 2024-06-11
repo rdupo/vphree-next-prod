@@ -162,9 +162,9 @@ export default function PhilipMarket() {
         </div>
         <div className="content px-8 z-10">
           <CollectionInfo
-            title="V3Phunks"
+            title="Philip Intern Project"
             desc={desc}
-            twitter="https://twitter.com/v3phunks"
+            twitter="https://twitter.com/CryptoPhunksV1"
             contract={collectionContract}
           />
           <div className="filter-sort-wrapper mb-8">
