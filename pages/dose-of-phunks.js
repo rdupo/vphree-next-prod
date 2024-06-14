@@ -21,7 +21,8 @@ export default function Home() {
       <Header onUpdateConnectedWallet={updateConnectedWallet} />
       <div className="content bg-opacity-60 bg-black">
         <div className="home-wrapper">
-          <h2 className="home-title g-txt">DOPE | S3 E1</h2>
+          <h2 className="home-title g-txt">DOPE | S3 E2</h2>
+          <p className="text-xl mb-8 g-txt">Three Year Phunky Anniversary Philip Edition</p>
           <p>by&nbsp; 
             <a 
               target="_blank"
@@ -40,7 +41,7 @@ export default function Home() {
               __html:
               `<div
               data-widget="m-claim-complete"
-              data-id="535914736"
+              data-id="3837104368"
               ></div>`
             }}/>
           </div>
@@ -53,7 +54,22 @@ export default function Home() {
             >
             </div>
           </div>
-          <p className="home-body w-75 mt-28">Dose of Phunks Editions | Season 2</p>
+          <p className="home-body w-75 mt-28">Dose of Phunks Editions | Season 3</p>
+          <div className="inline-block">
+            <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunksS3-edition1">
+            <div className="mr-4">
+              <p>S3 E1</p>
+              <Image 
+                className="w-100"
+                src="/dope_s3e1.png"
+                loading="lazy"
+                alt="dose of phunks s3 e1"
+                height="100"
+                width="100"
+              /> 
+            </div></a>
+          </div>
+          <p className="home-body w-75 mt-12">Dose of Phunks Editions | Season 2</p>
           <div className="inline-block">
             <a className="inline-block mb-4" target="_blank" href="https://app.manifold.xyz/c/doseofphunks-edition1">
             <div className="mr-4">
