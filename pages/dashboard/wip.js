@@ -109,6 +109,16 @@ export default function walletView() {
 	const [bidLoading, setBidLoading] = useState(true);
 	const filteredPhunksMemo = useMemo(() => fP, [fP]);
 	
+	//owned
+	const [v1Nfts, setV1Nfts] = useState([]);
+	const [v1Data, setV1Data] = useState([]);
+	const [wv1Nfts, setWv1Nfts] = useState([]);
+	const [wv1Data, setWv1Data] = useState([]);
+	const [v2Nfts, setV2Nfts] = useState([]);
+	const [v2Data, setV2Data] = useState([]);
+	const [v3Nfts, setV3Nfts] = useState([]);
+	const [v3Data, setV3Data] = useState([]);
+	
 	//listing & bid info
 	const [listVal, setListVal] = useState("");
 	const [listed, setListed] = useState([]);
