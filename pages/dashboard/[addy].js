@@ -732,12 +732,12 @@ export default function V3Phunks() {
           <p className="text-xl text-gray-300">
             {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal.toFixed(3) : '-'}Ξ 
           </p>
-          <p className="text-xl text-gray-300">
+          {/*<p className="text-xl text-gray-300">
             {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal.toFixed(3) : '-'}Ξ 
           </p>
           <p className="text-xl text-gray-300">
             {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal.toFixed(3) : '-'}Ξ
-          </p>
+          </p>*/}
           <h2 className="mt-8 text-2xl">Owned</h2> 
           <div className="filter-sort-wrapper mb-4">
             <div>
@@ -1297,7 +1297,7 @@ export default function V3Phunks() {
                   <DashCard
                     key={phunk.tokenId}
                     price={getMinVal(phunk.tokenId, listed)} 
-                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+                    bid="---"//{getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
                     coll={activeCollection}
