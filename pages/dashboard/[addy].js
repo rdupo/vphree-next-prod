@@ -281,17 +281,20 @@ export default function V3Phunks() {
           currentListings.push({
             tokenId:Number(nllList.phunkIndex),
             minValue: Number(nllList.minValue)/1000000000000000000,
+            seller: nllList.seller
           }) 
         } 
       }
 
+      const filteredListings = currentListings.filter(listed => walletAddy.includes(listed.seller));
+
       let ethSum = 0;
-      for(let i = 0; i < currentListings.length; i++) {
-        ethSum += currentListings[i].minValue;
+      for(let i = 0; i < filteredListings.length; i++) {
+        ethSum += filteredListings[i].minValue;
       }
 
       setListVal(ethSum);
-      setListed(currentListings);
+      setListed(filteredListings);
     }
 
     if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v1'){
@@ -307,17 +310,20 @@ export default function V3Phunks() {
           currentListings.push({
             tokenId:Number(pmpList.phunkIndex),
             minValue: Number(pmpList.minValue)/1000000000000000000,
+            seller: nllList.seller
           }) 
         } 
       }
 
+      const filteredListings = currentListings.filter(listed => walletAddy.includes(listed.seller));
+
       let ethSum = 0;
-      for(let i = 0; i < currentListings.length; i++) {
-        ethSum += currentListings[i].minValue;
+      for(let i = 0; i < filteredListings.length; i++) {
+        ethSum += filteredListings[i].minValue;
       }
 
       setListVal(ethSum);
-      setListed(currentListings);
+      setListed(filteredListings);
     }
 
     if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'wv1'){
@@ -333,17 +339,20 @@ export default function V3Phunks() {
           currentListings.push({
             tokenId:Number(pmpList.phunkIndex),
             minValue: Number(pmpList.minValue)/1000000000000000000,
+            seller: nllList.seller
           }) 
         } 
       }
 
+      const filteredListings = currentListings.filter(listed => walletAddy.includes(listed.seller));
+
       let ethSum = 0;
-      for(let i = 0; i < currentListings.length; i++) {
-        ethSum += currentListings[i].minValue;
+      for(let i = 0; i < filteredListings.length; i++) {
+        ethSum += filteredListings[i].minValue;
       }
 
       setListVal(ethSum);
-      setListed(currentListings);
+      setListed(filteredListings);
     }
   };
 
@@ -374,7 +383,7 @@ export default function V3Phunks() {
       const mContract = new ethers.Contract(mAddy, mAbi, provider);
       const phunkBidFilter = mContract.filters.PhunkBidEntered();
       const phunkBidWithdrawnFilter = mContract.filters.PhunkBidWithdrawn();
-      const filterBought = mContract.filters.PhunkBought(null, null, null, walletAddy); 
+      const filterBought = mContract.filters.PhunkBought(); 
 
       const initialBidEvents = await mContract.queryFilter(phunkBidFilter);
       const initialBidWithdrawnEvents = await mContract.queryFilter(phunkBidWithdrawnFilter);
@@ -729,7 +738,7 @@ export default function V3Phunks() {
           <p className="text-xl text-gray-300">
             {!loading ? nfts.length : '-'} owned
           </p>
-          {/*<p className="text-xl text-gray-300">
+          <p className="text-xl text-gray-300">
             {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal.toFixed(3) : '-'}Ξ 
           </p>
           <p className="text-xl text-gray-300">
@@ -737,7 +746,7 @@ export default function V3Phunks() {
           </p>
           <p className="text-xl text-gray-300">
             {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal.toFixed(3) : '-'}Ξ
-          </p>*/}
+          </p>
           <h2 className="mt-8 text-2xl">Owned</h2> 
           <div className="filter-sort-wrapper mb-4">
             <div>
@@ -1296,8 +1305,8 @@ export default function V3Phunks() {
                 (fP.map((phunk) => (
                   <DashCard
                     key={phunk.tokenId}
-                    price="---"//{getMinVal(phunk.tokenId, listed)} 
-                    bid="---"//{getBidVal(phunk.tokenId, bidsRecieved)} 
+                    price={getMinVal(phunk.tokenId, listed)} 
+                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
                     coll={activeCollection}
@@ -1322,7 +1331,7 @@ export default function V3Phunks() {
               <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
             }
         	</div>
-          {/*<h2 className="mt-8 text-2xl">Your Bids</h2>
+          <h2 className="mt-8 text-2xl">Your Bids</h2>
           <div className="flex flex-wrap justify-left">
             {bidLoading === false ?
               (bidsPlaced.length > 0 ? 
@@ -1342,7 +1351,7 @@ export default function V3Phunks() {
                 :
               <p className="text-2xl g-txt my-4">Fetching your bids...</p>
             }
-          </div>*/}
+          </div>
           {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
           {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <div>
           {activeCollection === 'v2' ?
