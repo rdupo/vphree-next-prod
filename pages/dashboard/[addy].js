@@ -134,6 +134,23 @@ export default function V3Phunks() {
     setFlywheelLoading(false);
   }
 
+  const getNfts = async () => {
+    const td = [];
+    const res = await fetch(`/api/owned/${v3PhunkAddy}/${walletAddy}`);
+    const data = await res.json();
+    console.log("ownedNfts: ", data)
+
+    data.ownedNfts.map((phunk) => {
+      td.push({
+        tokenId: Number(phunk.tokenId)
+      })
+    });
+
+    console.log("owned ids:", td);
+  };
+
+  useEffect(() => {getNfts()},[]);
+
   const collUpdate = (x) => {
     setActiveCollection((prevValue) => (x));
     setLoading(true);
