@@ -44,6 +44,8 @@ import wv1pAbi from '../../utils/wv1pAbi'
 import wrapperAddy from '../../utils/wrapperAddy'
 import wrapperAbi from '../../utils/wrapperAbi'
 import wv1pHistory from '../../hooks/wv1pWalletHistory'
+//new get nfts
+import fetchNFTsForOwner from '../../hooks/alcFetchNfts'
 
 export default function V3Phunks() {
   const router = useRouter()
@@ -135,18 +137,8 @@ export default function V3Phunks() {
   }
 
   const getNfts = async () => {
-    const td = [];
-    const res = await fetch(`/api/owned/${v3PhunkAddy}/${walletAddy}`);
-    const data = await res.json();
-    console.log("ownedNfts: ", data)
-
-    data.ownedNfts.map((phunk) => {
-      td.push({
-        tokenId: Number(phunk.tokenId)
-      })
-    });
-
-    console.log("owned ids:", td);
+    const data = await fetchNFTsForOwner(walletAddy, v3PhunkAddy);
+    console.log("owned ids new:", data);
   };
 
   useEffect(() => {getNfts()},[]);
