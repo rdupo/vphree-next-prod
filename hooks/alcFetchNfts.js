@@ -1,4 +1,8 @@
 import { Alchemy, Network } from "alchemy-sdk";
+import philipAddy from "../utils/philipAddy";
+import wrapperAddy from "../utils/wrapperAddy";
+import phunkAddy from "../utils/phunkAddy";
+import v3PhunkAddy from "../utils/v3PhunkAddy";
 
 const settings = {
   apiKey: process.env.NEXT_PUBLIC_API_KEY,
@@ -7,13 +11,13 @@ const settings = {
 
 const alchemy = new Alchemy(settings);
 
-async function fetchNFTsForOwner(ownerAddress, contractAddress) {
+async function fetchNFTsForOwner(ownerAddress) {
   let allNFTs = [];
   let pageKey = null;
 
   do {
     const response = await alchemy.nft.getNftsForOwner(ownerAddress, {
-      contractAddresses: [contractAddress],
+      contractAddresses: [philipAddy, wrapperAddy, phunkAddy, v3PhunkAddy],
       pageKey: pageKey,
     });
 

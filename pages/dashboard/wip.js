@@ -33,6 +33,7 @@ import philipHistory from '../../hooks/philipWalletHistory'
 import wv1pHistory from '../../hooks/wv1pWalletHistory'
 import nllHistory from '../../hooks/nllWalletHistory'
 import walletHistory from '../../hooks/walletHistory' 
+import fetchNFTsForOwner from '../../hooks/alcFetchNfts'
 
 //contract info - collection
 import philipAddy from '../../utils/philipAddy'
@@ -77,8 +78,6 @@ export default function walletView() {
 	//states
 	const [activeCollection, setActiveCollection] = useState("v3");
 	const [ensAddy, setEnsAddy] = useState('')
-	const [nfts, setNFTs] = useState([]);
-	const [nftsData, setNFTsData] = useState([]);
 	const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('');
 	const [philipWithdrawAmt, setPhilipWithdrawAmt] = useState('');
 	const [wv1pWithdrawAmt, setWv1pWithdrawAmt] = useState('');
@@ -110,6 +109,8 @@ export default function walletView() {
 	const filteredPhunksMemo = useMemo(() => fP, [fP]);
 	
 	//owned
+	const [nfts, setNFTs] = useState([]);
+	const [nftsData, setNFTsData] = useState([]);
 	const [v1Nfts, setV1Nfts] = useState([]);
 	const [v1Data, setV1Data] = useState([]);
 	const [wv1Nfts, setWv1Nfts] = useState([]);
@@ -217,59 +218,19 @@ export default function walletView() {
 		const filteredPhunks = filterPhunks();
 		setFP(filteredPhunks);
 	}, [f, nftsData, isListed, hasBid]);
+	
 	const filterToggle = () => {
     	setFilterState((current) => !current)
   	}
 	/* --- END FILTERING LOGIC --- */
 
 	/* --- START FETCHING OWNED NFTS --- */
-	//Need to update this
-		//Move to Alchemy method
-		//Fetch once per collection
-		//Then switch which is "used" based on active collection
-	async function fetchNFTs(x) {
-    //get IDs for all 4 collections
-    const v1Ids = await getNFTs(x, "v1");
-    const wv1Ids = await getNFTs(x, "wv1");
-    const v2Ids = await getNFTs(x, "v2");
-    const v3Ids = await getNFTs(x, "v3");
-
-    //convert string IDs to Numeric IDs
-    const v1Numeric = v1Ids.map(Number);
-    const wv1Numeric = wv1Ids.map(Number);
-    const v2Numeric = v2Ids.map(Number);
-    const v3Numeric = v3Ids.map(Number);
-
-    //use IDs to get NFTs w/ metdata
-    const ownedV1 = phunks.filter(item => v1Numeric.includes(item.tokenId));
-    const ownedWv1 = phunks.filter(item => wv1Numeric.includes(item.tokenId));
-    const ownedV2 = phunks.filter(item => v2Numeric.includes(item.tokenId));
-    const ownedV3 = phunks.filter(item => v3Numeric.includes(item.tokenId));
-
-    //get pending withdraw amounts for 3 vphree contracts
-    const pWith = await contract.pendingWithdrawals(thisAddy);
-    const pmpWith = await philipMarket.pendingWithdrawals(thisAddy);
-    const wv1pWith = await wv1pMarket.pendingWithdrawals(thisAddy);
-
-    const withEth = Number(Number(pWith._hex)/1000000000000000000).toFixed(3);
-    const pWithEth = Number(Number(pmpWith._hex)/1000000000000000000).toFixed(3);
-    const v1WithEth = Number(Number(wv1pWith._hex)/1000000000000000000).toFixed(3);
-
-    //set values
-    setV1Nfts(v1Ids); 
-    setWv1Nfts(wv1Ids);
-    setV2Nfts(v2Ids);
-    setV3Nfts(v3Ids);
-
-    setV1Data(ownedV1); 
-    setWv1Data(ownedWv1);
-    setV2Data(ownedV2);
-    setV3Data(ownedV3);
-
-    setPendingWithdrawAmt(withEth);
-    setPhilipWithdrawAmt(pWithEth);
-    setWv1pWithdrawAmt(v1WithEth);
-  }
+  	const getNfts = async () => {
+	    const data = await fetchNFTsForOwner(walletAddy);
+	    const ids = data.map(Number(data.tokenId));
+	    const owned = phunks.filter(item => ids.includes(item.tokenId));
+	    console.log("owned ids new:", owned);
+	  };
 	/* --- END FETCHING OWNED NFTS --- */
 
 	/* --- START FETCHING LISTED NFTS --- */
@@ -401,7 +362,7 @@ export default function walletView() {
               }
             </a>
           </h1>           
-          { connectedAddress === walletAddy && pendingWithdrawAmt > 0 && activeCollection === "v3" ?
+          { connectedAddress === walletAddy && pendingWithdrawAmt > 0 ?
             <div className="my-2">
               <button 
                 className="cta b-b g-bg black-txt brite"
@@ -413,7 +374,7 @@ export default function walletView() {
             :
             null
           }
-          { connectedAddress === walletAddy && philipWithdrawAmt > 0 && activeCollection === "v1" ?
+          { connectedAddress === walletAddy && philipWithdrawAmt > 0 ?
             <div className="my-2">
               <button 
                 className="cta b-b g-bg black-txt brite"
@@ -425,7 +386,7 @@ export default function walletView() {
             :
             null
           }
-          { connectedAddress === walletAddy && philipWithdrawAmt > 0 && activeCollection === "wv1" ?
+          { connectedAddress === walletAddy && philipWithdrawAmt > 0 ?
             <div className="my-2">
               <button 
                 className="cta b-b g-bg black-txt brite"
@@ -437,32 +398,6 @@ export default function walletView() {
             :
             null 
           }
-          <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
-            <p 
-              className={`picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'v3' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('v3')}>v3Phunks</p>
-            <p 
-              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v2' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('v2')}>CryptoPhunks</p>
-            <p 
-              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v1' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('v1')}>Philips</p>
-            <p 
-              className={`picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'wv1' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('wv1')}>Wrapped v1s</p>
-          </div>
-          <p className="text-xl text-gray-300">
-            {!loading ? nfts.length : '-'} owned
-          </p>
-          <p className="text-xl text-gray-300">
-            {!bidLoading ? listed.length : '-'} listed totaling {!bidLoading ? listVal.toFixed(3) : '-'}Ξ 
-          </p>
-          <p className="text-xl text-gray-300">
-            {!bidLoading ? bidsRecieved.length : '-'} bid(s) recieved totaling {!bidLoading ? bidVal.toFixed(3) : '-'}Ξ 
-          </p>
-          <p className="text-xl text-gray-300">
-            {!bidLoading ? bidsPlaced.length : '-'} bid(s) placed totaling {!bidLoading ? bidPlacedVal.toFixed(3) : '-'}Ξ
-          </p>
           <h2 className="mt-8 text-2xl">Owned</h2> 
           <div className="filter-sort-wrapper mb-4">
             <div>
@@ -1016,6 +951,7 @@ export default function walletView() {
           <div>
           </div>
         	<div className="flex flex-wrap justify-left">
+        		<p>Philip Intern Project</p>
             {loading === false ?
               (nfts.length > 0 ?
                 (fP.map((phunk) => (
@@ -1029,19 +965,72 @@ export default function walletView() {
                   />
                 )))
                 :
-                activeCollection === "v3" ?
-                  <p className="text-2xl text-gray-400 my-4">
-                    You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
-                  </p> 
-                  :
-                  activeCollection === "v2" ?
-                    <p className="text-2xl text-gray-400 my-4">
-                      You do not own any CryptoPhunks. Check out the <a target="_blank" href="https://notlarvalabs.com/cryptophunks/forsale">Not Larva Labs</a> to pick one up!
-                    </p>
-                    :
-                    <p className="text-2xl text-gray-400 my-4">
-                      You do not own any Philips. Check out the <Link href="/collections/philip-intern-project">marketplace</Link> to pick one up!!
-                    </p>
+                <p className="text-2xl text-gray-400 my-4">
+                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                </p> 
+              )
+                :
+              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+            }
+            <p>Wrapper v1 Phunks</p>
+            {loading === false ?
+              (nfts.length > 0 ?
+                (fP.map((phunk) => (
+                  <DashCard
+                    key={phunk.tokenId}
+                    price={getMinVal(phunk.tokenId, listed)} 
+                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+                    atts={phunk.atts} 
+                    id={phunk.tokenId}
+                    coll={activeCollection}
+                  />
+                )))
+                :
+                <p className="text-2xl text-gray-400 my-4">
+                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                </p> 
+              )
+                :
+              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+            }
+            <p>CryptoPhunks</p>
+            {loading === false ?
+              (nfts.length > 0 ?
+                (fP.map((phunk) => (
+                  <DashCard
+                    key={phunk.tokenId}
+                    price={getMinVal(phunk.tokenId, listed)} 
+                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+                    atts={phunk.atts} 
+                    id={phunk.tokenId}
+                    coll={activeCollection}
+                  />
+                )))
+                :
+                <p className="text-2xl text-gray-400 my-4">
+                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                </p> 
+              )
+                :
+              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+            }
+            <p>v3Phunks</p>
+            {loading === false ?
+              (nfts.length > 0 ?
+                (fP.map((phunk) => (
+                  <DashCard
+                    key={phunk.tokenId}
+                    price={getMinVal(phunk.tokenId, listed)} 
+                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+                    atts={phunk.atts} 
+                    id={phunk.tokenId}
+                    coll={activeCollection}
+                  />
+                )))
+                :
+                <p className="text-2xl text-gray-400 my-4">
+                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                </p> 
               )
                 :
               <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
@@ -1101,14 +1090,14 @@ export default function walletView() {
               <p className="text-gray-400">Any ineligible Phunks can still be sold to the 
                 <a 
                   href={`https://nftx.io/vault/0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91/sell/`} 
-                  target="_blank"> NTFX Liquidity Pool
+                  target="_blank">CryptoPhunks NTFX Liquidity Pool
                 </a>
               </p>
               :
               <p className="text-gray-400"> Sell to the 
                 <a 
                   href={`https://nftx.io/vault/0x4fae03385dcf5518dd43c03c2f963092c89de33c/sell/`} 
-                  target="_blank"> NTFX Liquidity Pool
+                  target="_blank">v3Phunks NTFX Liquidity Pool
                 </a>
               </p>
             }                       

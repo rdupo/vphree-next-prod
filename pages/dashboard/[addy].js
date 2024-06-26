@@ -139,6 +139,11 @@ export default function V3Phunks() {
   const getNfts = async () => {
     const data = await fetchNFTsForOwner(walletAddy, v3PhunkAddy);
     console.log("owned ids new:", data);
+    const dataIds = data.map(item => Number(item.tokenId));
+    const ownedNfts = phunks.filter(item => dataIds.includes(item.tokenId));
+    console.log("owned phunks:", ownedNfts)
+    const v2 = data.filter(item => item.contract.address === '0x235d49774139c218034c0571ba8f717773edd923')
+    console.log("owned v2:", v2)
   };
 
   useEffect(() => {getNfts()},[]);
