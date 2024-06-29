@@ -112,13 +112,13 @@ export default function walletView() {
 	const [nfts, setNFTs] = useState([]);
 	const [nftsData, setNFTsData] = useState([]);
 	const [v1Nfts, setV1Nfts] = useState([]);
-	const [v1Data, setV1Data] = useState([]);
 	const [wv1Nfts, setWv1Nfts] = useState([]);
-	const [wv1Data, setWv1Data] = useState([]);
 	const [v2Nfts, setV2Nfts] = useState([]);
-	const [v2Data, setV2Data] = useState([]);
 	const [v3Nfts, setV3Nfts] = useState([]);
-	const [v3Data, setV3Data] = useState([]);
+	//const [v1Data, setV1Data] = useState([]);
+	//const [wv1Data, setWv1Data] = useState([]);
+	//const [v2Data, setV2Data] = useState([]);
+	//const [v3Data, setV3Data] = useState([]);
 	
 	//listing & bid info
 	const [listVal, setListVal] = useState("");
@@ -226,10 +226,31 @@ export default function walletView() {
 
 	/* --- START FETCHING OWNED NFTS --- */
   	const getNfts = async () => {
-	    const data = await fetchNFTsForOwner(walletAddy);
-	    const ids = data.map(Number(data.tokenId));
-	    const owned = phunks.filter(item => ids.includes(item.tokenId));
-	    console.log("owned ids new:", owned);
+	    const data = await fetchNFTsForOwner(walletAddy, v3PhunkAddy);
+	    const dataIds = data.map(item => Number(item.tokenId));
+	    setNFTs(dataIds); //ids of phunks owned accross collections
+
+	    const ownedNfts = phunks.filter(item => dataIds.includes(item.tokenId));
+	    setNFTsData(ownedNfts); //full metadata for owned phunks across collections
+	    
+	    //parse owned by collection; IDs only (numeric)
+	    const v1 = data
+	      .filter(item => item.contract.address === "0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce")
+	      .map(item => Number(item.tokenId))
+	    const wv1 = data
+	      .filter(item => item.contract.address === "0x235d49774139c218034c0571ba8f717773edd923")
+	      .map(item => Number(item.tokenId))
+	    const v2 = data
+	      .filter(item => item.contract.address === "0xf07468ead8cf26c752c676e43c814fee9c8cf402")
+	      .map(item => Number(item.tokenId))
+	    const v3 = data
+	      .filter(item => item.contract.address === "0xb7d405bee01c70a9577316c1b9c2505f146e8842")
+	      .map(item => Number(item.tokenId))
+
+	    setV1Nfts(v1);
+	    setWv1Nfts(wv1);
+	    setV2Nfts(v2);
+	    setV3Nfts(v3);
 	  };
 	/* --- END FETCHING OWNED NFTS --- */
 
@@ -954,89 +975,97 @@ export default function walletView() {
         		<p>Philip Intern Project</p>
             {loading === false ?
               (nfts.length > 0 ?
-                (fP.map((phunk) => (
+                (fP
+                	.filter(phunk => v1Nfts.includes(phunk.tokenId))
+                	.map((phunk) => (
                   <DashCard
                     key={phunk.tokenId}
                     price={getMinVal(phunk.tokenId, listed)} 
                     bid={getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
-                    coll={activeCollection}
+                    coll="v1"
                   />
                 )))
                 :
                 <p className="text-2xl text-gray-400 my-4">
-                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                  You do not own any Philips. Check out the <Link href="/collections/philip-intern-project">marketplace</Link> to pick one up!
                 </p> 
               )
                 :
-              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+              <p className="text-2xl g-txt my-4">Fetching your Philips...</p>
             }
             <p>Wrapper v1 Phunks</p>
             {loading === false ?
               (nfts.length > 0 ?
-                (fP.map((phunk) => (
+                (fP
+                	.filter(phunk => wv1Nfts.includes(phunk.tokenId))
+                	.map((phunk) => (
                   <DashCard
                     key={phunk.tokenId}
                     price={getMinVal(phunk.tokenId, listed)} 
                     bid={getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
-                    coll={activeCollection}
+                    coll="wv1"
                   />
                 )))
                 :
                 <p className="text-2xl text-gray-400 my-4">
-                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                  You do not own any Wrapped v1 Phunks. Check out the <Link href="/collections/wrapped-v1-phunks">marketplace</Link> to pick one up!
                 </p> 
               )
                 :
-              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+              <p className="text-2xl g-txt my-4">Fetching your Wrapped v1 Phunks...</p>
             }
             <p>CryptoPhunks</p>
             {loading === false ?
               (nfts.length > 0 ?
-                (fP.map((phunk) => (
+                (fP
+                	.filter(phunk => v2Nfts.includes(phunk.tokenId))
+                	.map((phunk) => (
                   <DashCard
                     key={phunk.tokenId}
                     price={getMinVal(phunk.tokenId, listed)} 
                     bid={getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
-                    coll={activeCollection}
+                    coll="v2"
                   />
                 )))
                 :
                 <p className="text-2xl text-gray-400 my-4">
-                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                  You do not own any CryptoPhunks. Check out <Link href="https://notlarvalabs.com/cryptophunks/forsale" target="_blank">Not Larva Labs</Link> to pick one up!
                 </p> 
               )
                 :
-              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+              <p className="text-2xl g-txt my-4">Fetching your CryptoPhunks...</p>
             }
             <p>v3Phunks</p>
             {loading === false ?
               (nfts.length > 0 ?
-                (fP.map((phunk) => (
+                (fP
+                	.filter(phunk => v3Nfts.includes(phunk.tokenId))
+                	.map((phunk) => (
                   <DashCard
                     key={phunk.tokenId}
                     price={getMinVal(phunk.tokenId, listed)} 
                     bid={getBidVal(phunk.tokenId, bidsRecieved)} 
                     atts={phunk.atts} 
                     id={phunk.tokenId}
-                    coll={activeCollection}
+                    coll="v3"
                   />
                 )))
                 :
                 <p className="text-2xl text-gray-400 my-4">
-                  You do not own any Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+                  You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
                 </p> 
               )
                 :
-              <p className="text-2xl g-txt my-4">Fetching your Phunks...</p>
+              <p className="text-2xl g-txt my-4">Fetching your v3Phunks...</p>
             }
         	</div>
-          <h2 className="mt-8 text-2xl">Your Bids</h2>
+          <h2 className="mt-8 text-2xl">Offers</h2>
           <div className="flex flex-wrap justify-left">
             {bidLoading === false ?
               (bidsPlaced.length > 0 ? 

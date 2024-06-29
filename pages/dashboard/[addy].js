@@ -138,15 +138,22 @@ export default function V3Phunks() {
 
   const getNfts = async () => {
     const data = await fetchNFTsForOwner(walletAddy, v3PhunkAddy);
-    console.log("owned ids new:", data);
+
     const dataIds = data.map(item => Number(item.tokenId));
     const ownedNfts = phunks.filter(item => dataIds.includes(item.tokenId));
-    console.log("owned phunks:", ownedNfts)
-    const p = data.filter(item => item.contract.address === "0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce")
-    const v1 = data.filter(item => item.contract.address === "0x235d49774139c218034c0571ba8f717773edd923")
-    const v2 = data.filter(item => item.contract.address === "0xf07468ead8cf26c752c676e43c814fee9c8cf402")
-    const v3 = data.filter(item => item.contract.address === "0xb7d405bee01c70a9577316c1b9c2505f146e8842")
-    console.log("owned", "p:" , p, "v1:" , v1, "v2:" , v2, "v3:" , v3)
+    
+    const p = data
+      .filter(item => item.contract.address === "0xa82f3a61f002f83eba7d184c50bb2a8b359ca1ce")
+      .map(item => Number(item.tokenId))
+    const v1 = data
+      .filter(item => item.contract.address === "0x235d49774139c218034c0571ba8f717773edd923")
+      .map(item => Number(item.tokenId))
+    const v2 = data
+      .filter(item => item.contract.address === "0xf07468ead8cf26c752c676e43c814fee9c8cf402")
+      .map(item => Number(item.tokenId))
+    const v3 = data
+      .filter(item => item.contract.address === "0xb7d405bee01c70a9577316c1b9c2505f146e8842")
+      .map(item => Number(item.tokenId))
   };
 
   useEffect(() => {getNfts()},[]);

@@ -14,7 +14,6 @@ import { Network, Alchemy } from 'alchemy-sdk'
 import phunkAddy from '../utils/phunkAddy'
 import { useSearchParams } from "next/navigation";
 
-
 export default function Home() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
