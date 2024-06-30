@@ -76,7 +76,7 @@ export default function walletView() {
 	const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
 
 	//states
-	const [activeCollection, setActiveCollection] = useState("v3");
+	const [active, setActive] = useState("owned");
 	const [ensAddy, setEnsAddy] = useState('')
 	const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('');
 	const [philipWithdrawAmt, setPhilipWithdrawAmt] = useState('');
@@ -148,7 +148,7 @@ export default function walletView() {
 
 	/* --- START HANDLE COLLECTION STATE CHANGE --- */
 	const collUpdate = (x) => {
-		setActiveCollection((prevValue) => (x));
+		setActive((prevValue) => (x));
 		setLoading(true);
 		setBidLoading(true);
 	}
@@ -382,7 +382,27 @@ export default function walletView() {
                walletAddy.substr(0,4) + "..." + walletAddy.substr(walletAddy.length - 4, walletAddy.length)
               }
             </a>
-          </h1>           
+          </h1>
+          <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
+            <p 
+              className={`picker mt-6 pr-4 text-3xl cursor-pointer ${active=== 'owned' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('owned')}>Owned</p>
+            <p 
+              className={`picker mt-6 px-4 text-3xl cursor-pointer ${active === 'offers' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('offers')}>Offers Made</p>
+            <p 
+              className={`picker mt-6 px-4 text-3xl cursor-pointer ${active === 'activity' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('activity')}>Activity</p>
+            {
+            	pendingWithdrawAmt + philipWithdrawAmt + wv1pWithdrawAmt > 0 ?
+	            <p 
+	              className={`picker mt-6 px-4 text-3xl cursor-pointer ${active === 'withdraw' ? 'white-txt' : ''}`}
+	              onClick={() => collUpdate('withdraw')}>Withdraw Funds
+	            </p>
+	            :
+	            null
+          	}
+          </div>           
           { connectedAddress === walletAddy && pendingWithdrawAmt > 0 ?
             <div className="my-2">
               <button 
