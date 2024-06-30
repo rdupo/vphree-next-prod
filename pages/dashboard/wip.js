@@ -386,13 +386,20 @@ export default function walletView() {
           <div className="picker-div divide-x-2 divide-gray-500 text-gray-500">
             <p 
               className={`picker mt-6 pr-4 text-3xl cursor-pointer ${active=== 'owned' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('owned')}>Owned</p>
+              onClick={() => collUpdate('owned')}>Owned
+            </p>
             <p 
               className={`picker mt-6 px-4 text-3xl cursor-pointer ${active === 'offers' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('offers')}>Offers Made</p>
+              onClick={() => collUpdate('offers')}>Offers Made
+            </p>
             <p 
               className={`picker mt-6 px-4 text-3xl cursor-pointer ${active === 'activity' ? 'white-txt' : ''}`}
-              onClick={() => collUpdate('activity')}>Activity</p>
+              onClick={() => collUpdate('activity')}>Activity
+            </p>
+            <p
+            	className={`picker mt-6 px-4 text-3xl cursor-pointer ${active === 'liquidity' ? 'white-txt' : ''}`}
+              onClick={() => collUpdate('activity')}>Liquidity
+            </p>
             {
             	pendingWithdrawAmt + philipWithdrawAmt + wv1pWithdrawAmt > 0 ?
 	            <p 
@@ -403,796 +410,827 @@ export default function walletView() {
 	            null
           	}
           </div>           
-          { connectedAddress === walletAddy && pendingWithdrawAmt > 0 ?
-            <div className="my-2">
-              <button 
-                className="cta b-b g-bg black-txt brite"
-                onClick={() => {withdraw()}}
-              >
-                WITHDRAW {pendingWithdrawAmt}Ξ
-              </button>
-            </div>
-            :
-            null
-          }
-          { connectedAddress === walletAddy && philipWithdrawAmt > 0 ?
-            <div className="my-2">
-              <button 
-                className="cta b-b g-bg black-txt brite"
-                onClick={() => {withdraw()}}
-              >
-                WITHDRAW {philipWithdrawAmt}Ξ
-              </button>
-            </div>
-            :
-            null
-          }
-          { connectedAddress === walletAddy && philipWithdrawAmt > 0 ?
-            <div className="my-2">
-              <button 
-                className="cta b-b g-bg black-txt brite"
-                onClick={() => {withdraw()}}
-              >
-                WITHDRAW {wv1pWithdrawAmt}Ξ
-              </button>
-            </div>
-            :
-            null 
-          }
-          <h2 className="mt-8 text-2xl">Owned</h2> 
-          <div className="filter-sort-wrapper mb-4">
-            <div>
-              <label className="mr-3">ID</label>
-              <input 
-                type="text" 
-                id="id" 
-                className="bg-green-100 black-txt mr-4" 
-                name="id" 
-                minLength="1" 
-                maxLength="4" 
-                placeholder="Phunk ID..." 
-                onChange={(e) => setF((prevState) => ({ ...prevState, tokenId: e.target.value }))}
-              />
-              <div className="p-0 filter-dropdown" data-type="list-state">
-                <select 
-                  className="select-short bg-green-100" 
-                  type="text" 
-                  value={isListed}
-                  onChange={(e) => {
-                    setIsListed(e.target.value)
-                  }}
-                >
-                  <option value="" disabled hidden>List Status</option>
-                  <option value="1">Listed</option>
-                </select>
-                <div className="input-group-append">
-                  <button 
-                    className="btn-outline g-bg black-txt" 
-                    onClick={() => {
-                      setIsListed("");
-                    }} 
-                    type="button">x</button>
-                </div>
-              </div>
-              <div className="p-0 filter-dropdown" data-type="bid-state">
-                <select 
-                  className="select-short bg-green-100" 
-                  type="text" 
-                  value={hasBid}
-                  onChange={(e) => {
-                    setHasBid(e.target.value)
-                  }}
-                >
-                  <option value="" disabled hidden>Bid Status</option>
-                  <option value="1">Has Bid</option>
-                </select>
-                <div className="input-group-append">
-                  <button 
-                    className="btn-outline g-bg black-txt" 
-                    onClick={() => {
-                      setHasBid("");
-                    }} 
-                    type="button">x</button>
-                </div>
-              </div>
-              <button 
-                id="view-mr" 
-                className={`g-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
-                onClick={filterToggle}>
-                View Trait Filters
-              </button>
-              <button 
-                id="hide-mr" 
-                className={`g-bg black-txt brite ${filtersActive ? '' : 'hidden'}`} 
-                onClick={filterToggle}>
-                Hide Trait Filters
-              </button>
-            </div>
-            <div id="filters" className={`${filtersActive ? '' : 'hidden'}`}>
-                <div className="p-0 filter-dropdown" data-type="beard ">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={beard}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, beard: e.target.value }));
-                      setBeard(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Beard</option>
-                    <option value="NA">None</option>
-                    <option value="Big-Beard">Big Beard</option>
-                    <option value="Chinstrap">Chinstrap</option>
-                    <option value="Front-Beard">Front Beard</option>
-                    <option value="Front-Beard-Dark">Front Beard Dark</option>
-                    <option value="Goat">Goat</option>
-                    <option value="Handlebars">Handlebars</option>
-                    <option value="Luxurious-Beard">Luxurious Beard</option>
-                    <option value="Mustache">Mustache</option>
-                    <option value="Muttonchops">Muttonchops</option>
-                    <option value="Normal-Beard">Normal Beard</option>
-                    <option value="Normal-Beard-Black">Normal Beard Black</option>
-                    <option value="Shadow-Beard">Shadow Beard</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt"
-                      onClick={() => {
-                        setF((prevState) => {
-                          // Create a copy of the state to avoid modifying it directly
-                          const updatedState = { ...prevState };
-                          // Remove the 'beard' property from the state
-                          delete updatedState.beard;
-                          // Return the updated state
-                          return updatedState;
-                        });
-                        setBeard("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="cheeks">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={cheeks}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, cheeks: e.target.value }));
-                      setCheeks(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Cheeks</option>
-                    <option value="NA">None</option>
-                    <option value="Rosy-Cheeks">Rosy Cheeks</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.cheeks;
-                          return updatedState;
-                        });
-                        setCheeks("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="ears">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={ears}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, ears: e.target.value }));
-                      setEars(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Ears</option>
-                    <option value="NA">None</option>
-                    <option value="Earring">Earring</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.ears;
-                          return updatedState;
-                        });
-                        setEars("");
-                      }}
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="emotion">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={emotion}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, emotion: e.target.value }));
-                      setEmotion(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Emotion</option>
-                    <option value="NA">None</option>
-                    <option value="Frown">Frown</option>
-                    <option value="Smile">Smile</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.emotion;
-                          return updatedState;
-                        });
-                        setEmotion("");
-                      }}  
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="eyes">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text"
-                    value={eyes}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, eyes: e.target.value }));
-                      setEyes(e.target.value)
-                    }}>
-                    <option value="" disabled hidden>Eyes</option>
-                    <option value="NA">None</option>
-                    <option value="3D-Glasses">3D Glasses</option>
-                    <option value="Big-Shades">Big Shades</option>
-                    <option value="Blue-Eye-Shadow">Blue Eye Shadow</option>
-                    <option value="Classic-Shades">Classic Shades</option>
-                    <option value="Clown-Eyes-Blue">Clown Eyes Blue</option>
-                    <option value="Clown-Eyes-Green">Clown Eyes Green</option>
-                    <option value="Eye-Mask">Eye Mask</option>
-                    <option value="Eye-Patch">Eye Patch</option>
-                    <option value="Green-Eye-Shadow">Green Eye Shadow</option>
-                    <option value="Horned-Rim-Glasses">Horned Rim Glasses</option>
-                    <option value="Nerd-Glasses">Nerd Glasses</option>
-                    <option value="Purple-Eye-Shadow">Purple Eye Shadow</option>
-                    <option value="Regular-Shades">Regular Shades</option>
-                    <option value="Small-Shades">Small Shades</option>
-                    <option value="VR">VR</option>
-                    <option value="Welding-Goggles">Welding Goggles</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.eyes;
-                          return updatedState;
-                        });
-                        setEyes("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="face">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={face}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, face: e.target.value }));
-                      setFace(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Face</option>
-                    <option value="NA">None</option>
-                    <option value="Mole">Mole</option>
-                    <option value="Spots">Spots</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.face;
-                          return updatedState;
-                        });
-                        setFace("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="hair">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={hair}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, hair: e.target.value }));
-                      setHair(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Hair</option>
-                    <option value="NA">None</option>
-                    <option value="Bandana">Bandana</option>
-                    <option value="Beanie">Beanie</option>
-                    <option value="Blonde-Bob">Blonde Bob</option>
-                    <option value="Blonde-Short">Blonde Short</option>
-                    <option value="Cap">Cap</option>
-                    <option value="Cap-Forward">Cap Forward</option>
-                    <option value="Clown-Hair-Green">Clown Hair Green</option>
-                    <option value="Cowboy-Hat">Cowboy Hat</option>
-                    <option value="Crazy-Hair">Crazy Hair</option>
-                    <option value="Dark-Hair">Dark Hair</option>
-                    <option value="Do-rag">Do-rag</option>
-                    <option value="Fedora">Fedora</option>
-                    <option value="Frumpy-Hair">Frumpy Hair</option>
-                    <option value="Half-Shaved">Half Shaved</option>
-                    <option value="Headband">Headband</option>
-                    <option value="Hoodie">Hoodie</option>
-                    <option value="Knitted-Cap">Knitted Cap</option>
-                    <option value="Messy-Hair">Messy Hair</option>
-                    <option value="Mohawk">Mohawk</option>
-                    <option value="Mohawk-Dark">Mohawk Dark</option>
-                    <option value="Mohawk-Thin">Mohawk Thin</option>
-                    <option value="Orange-Side">Orange Side</option>
-                    <option value="Peak-Spike">Peak Spike</option>
-                    <option value="Pigtails">Pigtails</option>
-                    <option value="Pilot-Helmet">Pilot Helmet</option>
-                    <option value="Pink-With-Hat">Pink With Hat</option>
-                    <option value="Police-Cap">Police Cap</option>
-                    <option value="Purple-Hair">Purple Hair</option>
-                    <option value="Red-Mohawk">Red Mohawk</option>
-                    <option value="Shaved-Head">Shaved Head</option>
-                    <option value="Straight-Hair">Straight Hair</option>
-                    <option value="Straight-Hair-Blonde">Straight Hair Blonde</option>
-                    <option value="Straight-Hair-Dark">Straight Hair Dark</option>
-                    <option value="Stringy-Hair">Stringy Hair</option>
-                    <option value="Tassle-Hat">Tassle Hat</option>
-                    <option value="Tiara">Tiara</option>
-                    <option value="Top-Hat">Top Hat</option>
-                    <option value="Vampire-Hair">Vampire Hair</option>
-                    <option value="Wild-Blonde">Wild Blonde</option>
-                    <option value="Wild-Hair">Wild Hair</option>
-                    <option value="Wild-White-Hair">Wild White Hair</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.hair;
-                          return updatedState;
-                        });
-                        setHair("");
-                      }}
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="lips">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={lips}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, lips: e.target.value }));
-                      setLips(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Lips</option>
-                    <option value="NA">None</option>
-                    <option value="Black-Lipstick">Black Lipstick</option>
-                    <option value="Hot-Lipstick">Hot Lipstick</option>
-                    <option value="Purple-Lipstick">Purple Lipstick</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.lips;
-                          return updatedState;
-                        });
-                        setLips("");
-                      }}
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="mouth">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={mouth}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, mouth: e.target.value }));
-                      setMouth(e.target.value)
-                    }}
-                    >
-                    <option value="" disabled hidden>Mouth</option>
-                    <option value="NA">None</option>
-                    <option value="Cigarette">Cigarette</option>
-                    <option value="Medical-Mask">Medical Mask</option>
-                    <option value="Pipe">Pipe</option>
-                    <option value="Vape">Vape</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.mouth;
-                          return updatedState;
-                        });
-                        setMouth("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="neck">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={neck}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, neck: e.target.value }));
-                      setNeck(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Neck</option>
-                    <option value="NA">None</option>
-                    <option value="Choker">Choker</option>
-                    <option value="Gold-Chain">Gold Chain</option>
-                    <option value="Silver-Chain">Silver Chain</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.neck;
-                          return updatedState;
-                        });
-                        setNeck("");
-                      }}
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="nose">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={nose}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, nose: e.target.value }));
-                      setNose(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Nose</option>
-                    <option value="NA">None</option>
-                    <option value="Clown-Nose">Clown Nose</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.nose;
-                          return updatedState;
-                        });
-                        setNose("");
-                      }}
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="sex">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={sex}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, sex: e.target.value }));
-                      setSex(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Sex</option>
-                    <option value="Alien">Alien</option>
-                    <option value="Ape">Ape</option>
-                    <option value="Female">Female</option>
-                    <option value="Male">Male</option>
-                    <option value="Zombie">Zombie</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.sex;
-                          return updatedState;
-                        });
-                        setSex("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="teeth">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={teeth}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, teeth: e.target.value }));
-                      setTeeth(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Teeth</option>
-                    <option value="NA">None</option>
-                    <option value="Buck-Teeth">Buck Teeth</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.teeth;
-                          return updatedState;
-                        });
-                        setTeeth("");
-                      }}
-                      type="button">x</button>
-                  </div>
-                </div>
-                <div className="p-0 filter-dropdown" data-type="traits">
-                  <select 
-                    className="select bg-green-100" 
-                    type="text" 
-                    value={atts}
-                    onChange={(e) => {
-                      setF((prevState) => ({ ...prevState, atts: e.target.value }));
-                      setAtts(e.target.value)
-                    }}
-                  >
-                    <option value="" disabled hidden>Trait Count</option>
-                    <option value="0">0 Trait</option>
-                    <option value="1">1 Trait</option>
-                    <option value="2">2 Traits</option>
-                    <option value="3">3 Traits</option>
-                    <option value="4">4 Traits</option>
-                    <option value="5">5 Traits</option>
-                    <option value="6">6 Traits</option>
-                    <option value="7">7 Traits</option>
-                  </select>
-                  <div className="input-group-append">
-                    <button 
-                      className="btn-outline g-bg black-txt" 
-                      onClick={() => {
-                        setF((prevState) => {
-                          const updatedState = { ...prevState };
-                          delete updatedState.atts;
-                          return updatedState;
-                        });
-                        setAtts("");
-                      }} 
-                      type="button">x</button>
-                  </div>
-                </div>
-            </div>
-          </div>
-          <div>
-          </div>
-        	<div className="flex flex-wrap justify-left">
-        		<p>Philip Intern Project</p>
-            {loading === false ?
-              (nfts.length > 0 ?
-                (fP
-                	.filter(phunk => v1Nfts.includes(phunk.tokenId))
-                	.map((phunk) => (
-                  <DashCard
-                    key={phunk.tokenId}
-                    price={getMinVal(phunk.tokenId, listed)} 
-                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
-                    atts={phunk.atts} 
-                    id={phunk.tokenId}
-                    coll="v1"
-                  />
-                )))
-                :
-                <p className="text-2xl text-gray-400 my-4">
-                  You do not own any Philips. Check out the <Link href="/collections/philip-intern-project">marketplace</Link> to pick one up!
-                </p> 
-              )
-                :
-              <p className="text-2xl g-txt my-4">Fetching your Philips...</p>
-            }
-            <p>Wrapper v1 Phunks</p>
-            {loading === false ?
-              (nfts.length > 0 ?
-                (fP
-                	.filter(phunk => wv1Nfts.includes(phunk.tokenId))
-                	.map((phunk) => (
-                  <DashCard
-                    key={phunk.tokenId}
-                    price={getMinVal(phunk.tokenId, listed)} 
-                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
-                    atts={phunk.atts} 
-                    id={phunk.tokenId}
-                    coll="wv1"
-                  />
-                )))
-                :
-                <p className="text-2xl text-gray-400 my-4">
-                  You do not own any Wrapped v1 Phunks. Check out the <Link href="/collections/wrapped-v1-phunks">marketplace</Link> to pick one up!
-                </p> 
-              )
-                :
-              <p className="text-2xl g-txt my-4">Fetching your Wrapped v1 Phunks...</p>
-            }
-            <p>CryptoPhunks</p>
-            {loading === false ?
-              (nfts.length > 0 ?
-                (fP
-                	.filter(phunk => v2Nfts.includes(phunk.tokenId))
-                	.map((phunk) => (
-                  <DashCard
-                    key={phunk.tokenId}
-                    price={getMinVal(phunk.tokenId, listed)} 
-                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
-                    atts={phunk.atts} 
-                    id={phunk.tokenId}
-                    coll="v2"
-                  />
-                )))
-                :
-                <p className="text-2xl text-gray-400 my-4">
-                  You do not own any CryptoPhunks. Check out <Link href="https://notlarvalabs.com/cryptophunks/forsale" target="_blank">Not Larva Labs</Link> to pick one up!
-                </p> 
-              )
-                :
-              <p className="text-2xl g-txt my-4">Fetching your CryptoPhunks...</p>
-            }
-            <p>v3Phunks</p>
-            {loading === false ?
-              (nfts.length > 0 ?
-                (fP
-                	.filter(phunk => v3Nfts.includes(phunk.tokenId))
-                	.map((phunk) => (
-                  <DashCard
-                    key={phunk.tokenId}
-                    price={getMinVal(phunk.tokenId, listed)} 
-                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
-                    atts={phunk.atts} 
-                    id={phunk.tokenId}
-                    coll="v3"
-                  />
-                )))
-                :
-                <p className="text-2xl text-gray-400 my-4">
-                  You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
-                </p> 
-              )
-                :
-              <p className="text-2xl g-txt my-4">Fetching your v3Phunks...</p>
-            }
-        	</div>
-          <h2 className="mt-8 text-2xl">Offers</h2>
-          <div className="flex flex-wrap justify-left">
-            {bidLoading === false ?
-              (bidsPlaced.length > 0 ? 
-                (bidsPlaced.map((phunk) => (
-                  <DashCard
-                    key={phunk.tokenId}
-                    price={getMinVal(phunk.tokenId, bidPlacedMinVal)}
-                    bid={phunk.bidValue} 
-                    atts={phunk.atts} 
-                    id={phunk.tokenId}
-                    coll={activeCollection}
-                  />
-                )))
-                :
-                <p className="text-2xl text-gray-400 my-4">You do not have any active bids.</p>
-              )
-                :
-              <p className="text-2xl g-txt my-4">Fetching your bids...</p>
-            }
-          </div>
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <h2 className="mt-8 text-2xl">Instant Liquidity</h2>}
-          {activeCollection === 'v1' || activeCollection === 'wv1' ? null : <div>
-          {activeCollection === 'v2' ?
-            <>
-            {flywheelLoading === false ?
-              (nftEstimate.length > 0 ? 
-                (nftEstimate.map((phunk) => (
-                  <FlywheelCard
-                    key={`flywheel${phunk}`}
-                    price={phunk.nftbEst}
-                    minPrice={minFlywheelPrice}
-                    atts=""
-                    id={phunk.tokenId}
-                  />
-                )))
-                :
-                (nfts.length > 0 ?
-                 <p className="text-2xl g-txt my-4">Fetching flywheel estimates...</p>
-                  :
-                 <p className="text-2xl text-gray-400 my-4">Uh oh! No phunks in this wallet. </p>
-                )
-              )
-                :
-              <p className="text-2xl g-txt my-4">Fetching flywheel estimates...</p>
-            } 
-            </>
-            :
-            null
-          }
-            {activeCollection === "v2" ?
-              <p className="text-gray-400">Any ineligible Phunks can still be sold to the 
+          {
+          	active === "owned" ?
+	          <>
+		          <h2 className="mt-8 text-2xl">Owned</h2> 
+		          <div className="filter-sort-wrapper mb-4">
+		            <div>
+		              <label className="mr-3">ID</label>
+		              <input 
+		                type="text" 
+		                id="id" 
+		                className="bg-green-100 black-txt mr-4" 
+		                name="id" 
+		                minLength="1" 
+		                maxLength="4" 
+		                placeholder="Phunk ID..." 
+		                onChange={(e) => setF((prevState) => ({ ...prevState, tokenId: e.target.value }))}
+		              />
+		              <div className="p-0 filter-dropdown" data-type="list-state">
+		                <select 
+		                  className="select-short bg-green-100" 
+		                  type="text" 
+		                  value={isListed}
+		                  onChange={(e) => {
+		                    setIsListed(e.target.value)
+		                  }}
+		                >
+		                  <option value="" disabled hidden>List Status</option>
+		                  <option value="1">Listed</option>
+		                </select>
+		                <div className="input-group-append">
+		                  <button 
+		                    className="btn-outline g-bg black-txt" 
+		                    onClick={() => {
+		                      setIsListed("");
+		                    }} 
+		                    type="button">x</button>
+		                </div>
+		              </div>
+		              <div className="p-0 filter-dropdown" data-type="bid-state">
+		                <select 
+		                  className="select-short bg-green-100" 
+		                  type="text" 
+		                  value={hasBid}
+		                  onChange={(e) => {
+		                    setHasBid(e.target.value)
+		                  }}
+		                >
+		                  <option value="" disabled hidden>Bid Status</option>
+		                  <option value="1">Has Bid</option>
+		                </select>
+		                <div className="input-group-append">
+		                  <button 
+		                    className="btn-outline g-bg black-txt" 
+		                    onClick={() => {
+		                      setHasBid("");
+		                    }} 
+		                    type="button">x</button>
+		                </div>
+		              </div>
+		              <button 
+		                id="view-mr" 
+		                className={`g-bg black-txt brite ${filtersActive ? 'hidden' : ''}`} 
+		                onClick={filterToggle}>
+		                View Trait Filters
+		              </button>
+		              <button 
+		                id="hide-mr" 
+		                className={`g-bg black-txt brite ${filtersActive ? '' : 'hidden'}`} 
+		                onClick={filterToggle}>
+		                Hide Trait Filters
+		              </button>
+		            </div>
+		            <div id="filters" className={`${filtersActive ? '' : 'hidden'}`}>
+		                <div className="p-0 filter-dropdown" data-type="beard ">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={beard}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, beard: e.target.value }));
+		                      setBeard(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Beard</option>
+		                    <option value="NA">None</option>
+		                    <option value="Big-Beard">Big Beard</option>
+		                    <option value="Chinstrap">Chinstrap</option>
+		                    <option value="Front-Beard">Front Beard</option>
+		                    <option value="Front-Beard-Dark">Front Beard Dark</option>
+		                    <option value="Goat">Goat</option>
+		                    <option value="Handlebars">Handlebars</option>
+		                    <option value="Luxurious-Beard">Luxurious Beard</option>
+		                    <option value="Mustache">Mustache</option>
+		                    <option value="Muttonchops">Muttonchops</option>
+		                    <option value="Normal-Beard">Normal Beard</option>
+		                    <option value="Normal-Beard-Black">Normal Beard Black</option>
+		                    <option value="Shadow-Beard">Shadow Beard</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt"
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          // Create a copy of the state to avoid modifying it directly
+		                          const updatedState = { ...prevState };
+		                          // Remove the 'beard' property from the state
+		                          delete updatedState.beard;
+		                          // Return the updated state
+		                          return updatedState;
+		                        });
+		                        setBeard("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="cheeks">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={cheeks}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, cheeks: e.target.value }));
+		                      setCheeks(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Cheeks</option>
+		                    <option value="NA">None</option>
+		                    <option value="Rosy-Cheeks">Rosy Cheeks</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.cheeks;
+		                          return updatedState;
+		                        });
+		                        setCheeks("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="ears">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={ears}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, ears: e.target.value }));
+		                      setEars(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Ears</option>
+		                    <option value="NA">None</option>
+		                    <option value="Earring">Earring</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.ears;
+		                          return updatedState;
+		                        });
+		                        setEars("");
+		                      }}
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="emotion">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={emotion}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, emotion: e.target.value }));
+		                      setEmotion(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Emotion</option>
+		                    <option value="NA">None</option>
+		                    <option value="Frown">Frown</option>
+		                    <option value="Smile">Smile</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.emotion;
+		                          return updatedState;
+		                        });
+		                        setEmotion("");
+		                      }}  
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="eyes">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text"
+		                    value={eyes}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, eyes: e.target.value }));
+		                      setEyes(e.target.value)
+		                    }}>
+		                    <option value="" disabled hidden>Eyes</option>
+		                    <option value="NA">None</option>
+		                    <option value="3D-Glasses">3D Glasses</option>
+		                    <option value="Big-Shades">Big Shades</option>
+		                    <option value="Blue-Eye-Shadow">Blue Eye Shadow</option>
+		                    <option value="Classic-Shades">Classic Shades</option>
+		                    <option value="Clown-Eyes-Blue">Clown Eyes Blue</option>
+		                    <option value="Clown-Eyes-Green">Clown Eyes Green</option>
+		                    <option value="Eye-Mask">Eye Mask</option>
+		                    <option value="Eye-Patch">Eye Patch</option>
+		                    <option value="Green-Eye-Shadow">Green Eye Shadow</option>
+		                    <option value="Horned-Rim-Glasses">Horned Rim Glasses</option>
+		                    <option value="Nerd-Glasses">Nerd Glasses</option>
+		                    <option value="Purple-Eye-Shadow">Purple Eye Shadow</option>
+		                    <option value="Regular-Shades">Regular Shades</option>
+		                    <option value="Small-Shades">Small Shades</option>
+		                    <option value="VR">VR</option>
+		                    <option value="Welding-Goggles">Welding Goggles</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.eyes;
+		                          return updatedState;
+		                        });
+		                        setEyes("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="face">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={face}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, face: e.target.value }));
+		                      setFace(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Face</option>
+		                    <option value="NA">None</option>
+		                    <option value="Mole">Mole</option>
+		                    <option value="Spots">Spots</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.face;
+		                          return updatedState;
+		                        });
+		                        setFace("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="hair">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={hair}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, hair: e.target.value }));
+		                      setHair(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Hair</option>
+		                    <option value="NA">None</option>
+		                    <option value="Bandana">Bandana</option>
+		                    <option value="Beanie">Beanie</option>
+		                    <option value="Blonde-Bob">Blonde Bob</option>
+		                    <option value="Blonde-Short">Blonde Short</option>
+		                    <option value="Cap">Cap</option>
+		                    <option value="Cap-Forward">Cap Forward</option>
+		                    <option value="Clown-Hair-Green">Clown Hair Green</option>
+		                    <option value="Cowboy-Hat">Cowboy Hat</option>
+		                    <option value="Crazy-Hair">Crazy Hair</option>
+		                    <option value="Dark-Hair">Dark Hair</option>
+		                    <option value="Do-rag">Do-rag</option>
+		                    <option value="Fedora">Fedora</option>
+		                    <option value="Frumpy-Hair">Frumpy Hair</option>
+		                    <option value="Half-Shaved">Half Shaved</option>
+		                    <option value="Headband">Headband</option>
+		                    <option value="Hoodie">Hoodie</option>
+		                    <option value="Knitted-Cap">Knitted Cap</option>
+		                    <option value="Messy-Hair">Messy Hair</option>
+		                    <option value="Mohawk">Mohawk</option>
+		                    <option value="Mohawk-Dark">Mohawk Dark</option>
+		                    <option value="Mohawk-Thin">Mohawk Thin</option>
+		                    <option value="Orange-Side">Orange Side</option>
+		                    <option value="Peak-Spike">Peak Spike</option>
+		                    <option value="Pigtails">Pigtails</option>
+		                    <option value="Pilot-Helmet">Pilot Helmet</option>
+		                    <option value="Pink-With-Hat">Pink With Hat</option>
+		                    <option value="Police-Cap">Police Cap</option>
+		                    <option value="Purple-Hair">Purple Hair</option>
+		                    <option value="Red-Mohawk">Red Mohawk</option>
+		                    <option value="Shaved-Head">Shaved Head</option>
+		                    <option value="Straight-Hair">Straight Hair</option>
+		                    <option value="Straight-Hair-Blonde">Straight Hair Blonde</option>
+		                    <option value="Straight-Hair-Dark">Straight Hair Dark</option>
+		                    <option value="Stringy-Hair">Stringy Hair</option>
+		                    <option value="Tassle-Hat">Tassle Hat</option>
+		                    <option value="Tiara">Tiara</option>
+		                    <option value="Top-Hat">Top Hat</option>
+		                    <option value="Vampire-Hair">Vampire Hair</option>
+		                    <option value="Wild-Blonde">Wild Blonde</option>
+		                    <option value="Wild-Hair">Wild Hair</option>
+		                    <option value="Wild-White-Hair">Wild White Hair</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.hair;
+		                          return updatedState;
+		                        });
+		                        setHair("");
+		                      }}
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="lips">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={lips}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, lips: e.target.value }));
+		                      setLips(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Lips</option>
+		                    <option value="NA">None</option>
+		                    <option value="Black-Lipstick">Black Lipstick</option>
+		                    <option value="Hot-Lipstick">Hot Lipstick</option>
+		                    <option value="Purple-Lipstick">Purple Lipstick</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.lips;
+		                          return updatedState;
+		                        });
+		                        setLips("");
+		                      }}
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="mouth">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={mouth}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, mouth: e.target.value }));
+		                      setMouth(e.target.value)
+		                    }}
+		                    >
+		                    <option value="" disabled hidden>Mouth</option>
+		                    <option value="NA">None</option>
+		                    <option value="Cigarette">Cigarette</option>
+		                    <option value="Medical-Mask">Medical Mask</option>
+		                    <option value="Pipe">Pipe</option>
+		                    <option value="Vape">Vape</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.mouth;
+		                          return updatedState;
+		                        });
+		                        setMouth("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="neck">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={neck}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, neck: e.target.value }));
+		                      setNeck(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Neck</option>
+		                    <option value="NA">None</option>
+		                    <option value="Choker">Choker</option>
+		                    <option value="Gold-Chain">Gold Chain</option>
+		                    <option value="Silver-Chain">Silver Chain</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.neck;
+		                          return updatedState;
+		                        });
+		                        setNeck("");
+		                      }}
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="nose">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={nose}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, nose: e.target.value }));
+		                      setNose(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Nose</option>
+		                    <option value="NA">None</option>
+		                    <option value="Clown-Nose">Clown Nose</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.nose;
+		                          return updatedState;
+		                        });
+		                        setNose("");
+		                      }}
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="sex">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={sex}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, sex: e.target.value }));
+		                      setSex(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Sex</option>
+		                    <option value="Alien">Alien</option>
+		                    <option value="Ape">Ape</option>
+		                    <option value="Female">Female</option>
+		                    <option value="Male">Male</option>
+		                    <option value="Zombie">Zombie</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.sex;
+		                          return updatedState;
+		                        });
+		                        setSex("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="teeth">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={teeth}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, teeth: e.target.value }));
+		                      setTeeth(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Teeth</option>
+		                    <option value="NA">None</option>
+		                    <option value="Buck-Teeth">Buck Teeth</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.teeth;
+		                          return updatedState;
+		                        });
+		                        setTeeth("");
+		                      }}
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		                <div className="p-0 filter-dropdown" data-type="traits">
+		                  <select 
+		                    className="select bg-green-100" 
+		                    type="text" 
+		                    value={atts}
+		                    onChange={(e) => {
+		                      setF((prevState) => ({ ...prevState, atts: e.target.value }));
+		                      setAtts(e.target.value)
+		                    }}
+		                  >
+		                    <option value="" disabled hidden>Trait Count</option>
+		                    <option value="0">0 Trait</option>
+		                    <option value="1">1 Trait</option>
+		                    <option value="2">2 Traits</option>
+		                    <option value="3">3 Traits</option>
+		                    <option value="4">4 Traits</option>
+		                    <option value="5">5 Traits</option>
+		                    <option value="6">6 Traits</option>
+		                    <option value="7">7 Traits</option>
+		                  </select>
+		                  <div className="input-group-append">
+		                    <button 
+		                      className="btn-outline g-bg black-txt" 
+		                      onClick={() => {
+		                        setF((prevState) => {
+		                          const updatedState = { ...prevState };
+		                          delete updatedState.atts;
+		                          return updatedState;
+		                        });
+		                        setAtts("");
+		                      }} 
+		                      type="button">x</button>
+		                  </div>
+		                </div>
+		            </div>
+		          </div>
+		          <div>
+		          </div>
+		        	<div className="flex flex-wrap justify-left">
+		        		<p>Philip Intern Project</p>
+		            {loading === false ?
+		              (nfts.length > 0 ?
+		                (fP
+		                	.filter(phunk => v1Nfts.includes(phunk.tokenId))
+		                	.map((phunk) => (
+		                  <DashCard
+		                    key={phunk.tokenId}
+		                    price={getMinVal(phunk.tokenId, listed)} 
+		                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+		                    atts={phunk.atts} 
+		                    id={phunk.tokenId}
+		                    coll="v1"
+		                  />
+		                )))
+		                :
+		                <p className="text-2xl text-gray-400 my-4">
+		                  You do not own any Philips. Check out the <Link href="/collections/philip-intern-project">marketplace</Link> to pick one up!
+		                </p> 
+		              )
+		                :
+		              <p className="text-2xl g-txt my-4">Fetching your Philips...</p>
+		            }
+		            <p>Wrapper v1 Phunks</p>
+		            {loading === false ?
+		              (nfts.length > 0 ?
+		                (fP
+		                	.filter(phunk => wv1Nfts.includes(phunk.tokenId))
+		                	.map((phunk) => (
+		                  <DashCard
+		                    key={phunk.tokenId}
+		                    price={getMinVal(phunk.tokenId, listed)} 
+		                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+		                    atts={phunk.atts} 
+		                    id={phunk.tokenId}
+		                    coll="wv1"
+		                  />
+		                )))
+		                :
+		                <p className="text-2xl text-gray-400 my-4">
+		                  You do not own any Wrapped v1 Phunks. Check out the <Link href="/collections/wrapped-v1-phunks">marketplace</Link> to pick one up!
+		                </p> 
+		              )
+		                :
+		              <p className="text-2xl g-txt my-4">Fetching your Wrapped v1 Phunks...</p>
+		            }
+		            <p>CryptoPhunks</p>
+		            {loading === false ?
+		              (nfts.length > 0 ?
+		                (fP
+		                	.filter(phunk => v2Nfts.includes(phunk.tokenId))
+		                	.map((phunk) => (
+		                  <DashCard
+		                    key={phunk.tokenId}
+		                    price={getMinVal(phunk.tokenId, listed)} 
+		                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+		                    atts={phunk.atts} 
+		                    id={phunk.tokenId}
+		                    coll="v2"
+		                  />
+		                )))
+		                :
+		                <p className="text-2xl text-gray-400 my-4">
+		                  You do not own any CryptoPhunks. Check out <Link href="https://notlarvalabs.com/cryptophunks/forsale" target="_blank">Not Larva Labs</Link> to pick one up!
+		                </p> 
+		              )
+		                :
+		              <p className="text-2xl g-txt my-4">Fetching your CryptoPhunks...</p>
+		            }
+		            <p>v3Phunks</p>
+		            {loading === false ?
+		              (nfts.length > 0 ?
+		                (fP
+		                	.filter(phunk => v3Nfts.includes(phunk.tokenId))
+		                	.map((phunk) => (
+		                  <DashCard
+		                    key={phunk.tokenId}
+		                    price={getMinVal(phunk.tokenId, listed)} 
+		                    bid={getBidVal(phunk.tokenId, bidsRecieved)} 
+		                    atts={phunk.atts} 
+		                    id={phunk.tokenId}
+		                    coll="v3"
+		                  />
+		                )))
+		                :
+		                <p className="text-2xl text-gray-400 my-4">
+		                  You do not own any v3Phunks. Check out the <Link href="/collections/v3-phunks">marketplace</Link> to pick one up!
+		                </p> 
+		              )
+		                :
+		              <p className="text-2xl g-txt my-4">Fetching your v3Phunks...</p>
+		            }
+		        	</div>
+		        </>
+		        :
+		        null
+	      	}
+	      	{
+	      		active === "offers" ?
+	      		<>
+	      			<h2 className="mt-8 text-2xl">Offers Made</h2>
+	      			<div className="flex flex-wrap justify-left">
+		            {bidLoading === false ?
+		              (bidsPlaced.length > 0 ? 
+		                (bidsPlaced.map((phunk) => (
+		                  <DashCard
+		                    key={phunk.tokenId}
+		                    price={getMinVal(phunk.tokenId, bidPlacedMinVal)}
+		                    bid={phunk.bidValue} 
+		                    atts={phunk.atts} 
+		                    id={phunk.tokenId}
+		                    coll={activeCollection}
+		                  />
+		                )))
+		                :
+		                <p className="text-2xl text-gray-400 my-4">You do not have any active bids.</p>
+		              )
+		                :
+		              <p className="text-2xl g-txt my-4">Fetching your bids...</p>
+		            }
+		          </div>  
+	      		</>
+	      		:
+	      		null
+	      	}
+	      	{
+	      		active === "activity" ?
+	      		<>
+	      			{/* --- Philips --- */}
+	      			<h2 className="mt-8 text-2xl">vPhree Activity</h2>
+	      			{loading === false ?
+	              <History 
+	                transactions={philipTxnHistory}
+	                mp="v1"
+	              />
+	              :
+	              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
+	            }
+
+	            {/* --- Wrapped v1Phunks --- */}
+	            <h2 className="mt-8 text-2xl">vPhree Activity</h2>
+	      			{loading === false ?
+	              <History 
+	                transactions={wv1pTxnHistory}
+	                mp="v1"
+	              />
+	              :
+	              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
+	            }
+
+	            {/* --- CryptoPhunks --- */}
+	            <h2 className="mt-8 text-2xl">CryptoPhunks Activity</h2>
+	      			{loading === false ?
+	              <History 
+	                transactions={nllTxnHistory}
+	                mp="NLL"
+	              />
+	              :
+	              <p className="text-2xl g-txt my-4">Loading CryptoPhunks transaction history...</p>
+	            }
+
+	            {/* --- v3Phunks --- */}
+	            <h2 className="mt-8 text-2xl">v3Phunks Activity</h2>
+	      			{loading === false ?
+	              <History 
+	                transactions={transactionHistory}
+	                mp="vPhree"
+	              />
+	              :
+	              <p className="text-2xl g-txt my-4">Loading v3Phunks transaction history...</p>
+	            }
+	      		</>
+	      		:
+	      		null
+	      	}
+	      	{
+	      		active === "liquidity" ?
+	      		<>
+	      			<h2 className="mt-8 text-2xl">Instant Liquidity</h2>
+	      			<p>
+	      				Explore instant liquidity options for CryptoPhunks and v3Phunks. At this time, there are no instant liquidity options for Philps or Wrapped v1 Phunks.
+	      			</p>
+	      			<br/>
+	      			{flywheelLoading === false ?
+	              (nftEstimate.length > 0 ? 
+	                (nftEstimate.map((phunk) => (
+	                  <FlywheelCard
+	                    key={`flywheel${phunk}`}
+	                    price={phunk.nftbEst}
+	                    minPrice={minFlywheelPrice}
+	                    atts=""
+	                    id={phunk.tokenId}
+	                  />
+	                )))
+	                :
+	                (nfts.length > 0 ?
+	                 <p className="text-2xl g-txt my-4">Fetching flywheel estimates...</p>
+	                  :
+	                 <p className="text-2xl text-gray-400 my-4">Uh oh! No phunks in this wallet. </p>
+	                )
+	              )
+	                :
+	              <p className="text-2xl g-txt my-4">Fetching flywheel estimates...</p>
+	            }
+	      			<p className="text-gray-400">Any ineligible CryptoPhunks can still be sold to the 
                 <a 
                   href={`https://nftx.io/vault/0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91/sell/`} 
                   target="_blank">CryptoPhunks NTFX Liquidity Pool
                 </a>
               </p>
-              :
-              <p className="text-gray-400"> Sell to the 
+              <br/>
+              <p className="text-gray-400"> v3Phunks do not have a Flywheel, but can be sold to the  
                 <a 
                   href={`https://nftx.io/vault/0x4fae03385dcf5518dd43c03c2f963092c89de33c/sell/`} 
-                  target="_blank">v3Phunks NTFX Liquidity Pool
+                  target="_blank">v3Phunks NTFX Vault 
                 </a>
+                for instant liquidity.
               </p>
-            }                       
-          </div>}
-          {activeCollection === 'v2' ? null : <h2 className="mt-8 text-2xl">vPhree Activity</h2>}
-          {activeCollection !== 'v3' ? null : <div className="row-wrapper my-2">
-            {loading === false ?
-              <History 
-                transactions={transactionHistory}
-                mp="vPhree"
-              />
-              :
-              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
-            }
-          </div>}
-          {activeCollection !== 'v2' ? null : <h2 className="mt-8 text-2xl">NLL Activity</h2>}
-          {activeCollection !== 'v2' ? null : <div className="row-wrapper my-2">
-            {loading === false ?
-              <History 
-                transactions={nllTxnHistory}
-                mp="NLL"
-              />
-              :
-              <p className="text-2xl g-txt my-4">Loading NLL transaction history...</p>
-            }
-          </div>}
-          {activeCollection !== 'v1' ? null : <div className="row-wrapper my-2">
-            {loading === false ?
-              <History 
-                transactions={philipTxnHistory}
-                mp="v1"
-              />
-              :
-              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
-            }
-          </div>}
-          {activeCollection !== 'wv1' ? null : <div className="row-wrapper my-2">
-            {loading === false ?
-              <History 
-                transactions={wv1pTxnHistory}
-                mp="v1"
-              />
-              :
-              <p className="text-2xl g-txt my-4">Loading vPhree transaction history...</p>
-            }
-          </div>}
+	      		</>
+	      		:
+	      		null
+	      	}
+	      	{
+	      		active === "withdraw" ?
+	      		<>
+		      		{ connectedAddress === walletAddy && pendingWithdrawAmt > 0 ?
+		            <div className="my-2">
+		              <button 
+		                className="cta b-b g-bg black-txt brite"
+		                onClick={() => {withdraw()}}
+		              >
+		                WITHDRAW {pendingWithdrawAmt}Ξ
+		              </button>
+		            </div>
+		            :
+		            null
+		          }
+		          { connectedAddress === walletAddy && philipWithdrawAmt > 0 ?
+		            <div className="my-2">
+		              <button 
+		                className="cta b-b g-bg black-txt brite"
+		                onClick={() => {withdraw()}}
+		              >
+		                WITHDRAW {philipWithdrawAmt}Ξ
+		              </button>
+		            </div>
+		            :
+		            null
+		          }
+		          { connectedAddress === walletAddy && philipWithdrawAmt > 0 ?
+		            <div className="my-2">
+		              <button 
+		                className="cta b-b g-bg black-txt brite"
+		                onClick={() => {withdraw()}}
+		              >
+		                WITHDRAW {wv1pWithdrawAmt}Ξ
+		              </button>
+		            </div>
+		            :
+		            null 
+		          }
+	      		</>
+	      		:
+	      		null
+	      	}   
         </div>
       </div>
       <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
@@ -1201,5 +1239,4 @@ export default function walletView() {
       />      
     </>
   )
-
 }
