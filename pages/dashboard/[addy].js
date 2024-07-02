@@ -119,10 +119,12 @@ export default function V3Phunks() {
       const res = await fetch(`/api/priceEstimate/${phunkAddy}/${phunk}`);
       const data = await res.json();
       const dispEst = Number(data.data.estimate.eth)*pct;
+      const nftb = Number(data.data.estimate.eth);
       temp.push({
         tokenId:phunk,
-        nftbEst: dispEst.toFixed(3),
-      })      
+        payout: dispEst.toFixed(3),
+        nftbEst: nftb
+      });      
     });
 
     setNftEstimate(temp);
@@ -1361,7 +1363,8 @@ export default function V3Phunks() {
                 (nftEstimate.map((phunk) => (
                   <FlywheelCard
                     key={`flywheel${phunk}`}
-                    price={phunk.nftbEst}
+                    price={phunk.payout}
+                    est={phunk.nftbEst}
                     minPrice={minFlywheelPrice}
                     atts=""
                     id={phunk.tokenId}

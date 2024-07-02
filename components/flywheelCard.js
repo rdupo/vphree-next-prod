@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import Router from 'next/router';
 
-const FlywheelCard = ({ price, atts, id, minPrice }) => {
+const FlywheelCard = ({ price, atts, id, minPrice, est }) => {
   let alt_id;
   let s_id = id.toString();
 
@@ -42,7 +42,7 @@ const FlywheelCard = ({ price, atts, id, minPrice }) => {
         {id === "-1" ?
           <p className ="mb-1 text-xs text-white">---</p>
           :
-          Number(price) >= Number(minPrice) ? 
+          Number(est) >= Number(minPrice) ? 
           <p className="mb-1 text-xs text-emerald-500">Eligible</p>
            : 
           <p className="mb-1 text-xs text-rose-500">Ineligible</p>

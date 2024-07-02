@@ -111,12 +111,15 @@ export default function PhunkyHub() {
     const res = await fetch(`/api/priceEstimate/${phunkAddy}/${phunk}`);
     const data = await res.json();
     const dispEst = Number(data.data.estimate.eth)*pct;
+    const nftb = Number(data.data.estimate.eth);
     temp.push({
       tokenId:phunk,
-      nftbEst: dispEst.toFixed(3),
+      payout: dispEst.toFixed(3),
+      nftbEst: nftb
     });
 
     setNftEstimate(temp);
+    console.log("flywheel:", temp);
 
     const minValue = await flywheelContract.getCurrentMinimumValidPrice();
     const minValidPrice = Number(ethers.utils.formatUnits(minValue[0]._hex,18));
@@ -592,7 +595,8 @@ async function unwrapPhilip() {
                     nftEstimate.map((phunk) => (
                       <FlywheelCard
                         key={`flywheel${phunk}`}
-                        price={phunk.nftbEst}
+                        price={phunk.payout}
+                        est={phunk.nftbEst}
                         minPrice={minFlywheelPrice}
                         atts=""
                         id={phunk.tokenId}
@@ -602,6 +606,7 @@ async function unwrapPhilip() {
                     <FlywheelCard
                       key={`flywheel-1`}
                       price=""
+                      est=""
                       minPrice=""
                       atts=""
                       id="-1"
