@@ -154,12 +154,18 @@ export default function Home() {
               Please enter a valid wallet address or ENS domain
           </p>
           <div>          
-            <Link href="/hub/philip-intern-project">
-              <button className="w-60 mobile-100 cta g-b g-bg black-txt">Phunky Hub</button>
+            <Link href="/collections/v3-phunks">
+              <button className="w-60 mobile-100 cta v3-b v3-txt black-bg">v3 Phunks Marketplace</button>
             </Link>
-            {/*<Link href="/collections/v3-phunks">
-              <button className="w-60 mobile-100 cta g-b g-txt black-bg">v3 Marketplace</button>
-            </Link>*/}
+            <Link href="/collections/philip-intern-project">
+              <button className="w-60 mobile-100 cta v2-b philip-txt black-bg">Philip Marketplace</button>
+            </Link>
+            <Link href="/collections/wrapped-v1-phunks">
+              <button className="w-60 mobile-100 cta v1-b v1-txt black-bg">Wrapped v1 Marketplace</button>
+            </Link>
+            <Link href="/hub/philip-intern-project">
+              <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Phunky Hub</button>
+            </Link>
             <Link href="/dose-of-phunks">
               <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Dose of Phunks</button>
             </Link>
