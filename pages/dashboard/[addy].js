@@ -149,8 +149,12 @@ export default function walletView() {
   /* --- START HANDLE COLLECTION STATE CHANGE --- */
   const collUpdate = (x) => {
     setActive((prevValue) => (x));
-    setLoading(true);
     setBidLoading(true);
+    if (x === 'owned' && nfts.length > 0) {
+      setLoading(false)
+    } else {
+      setLoading(true);
+    }
   }
   /* --- END HANDLE COLLECTION STATE CHANGE --- */
 
@@ -259,13 +263,269 @@ export default function walletView() {
   /* --- START FETCHING LISTED NFTS --- */
   //Need to update this
     //Fetch once per collection
-    //Then switch which is "used" based on active collection
+    //Should this be moved to function setting NFTs!?
+    /*
+    const fetchListings = async () => {
+      if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v3'){      
+        const initialActiveListings = [];
+        const phunkIds = [];
+        const currentListings = [];
+
+        const phunkOfferedFilter = contract.filters.PhunkOffered(null, null, walletAddy, null);
+        const phunkBoughtFilter = contract.filters.PhunkBought(null, null, walletAddy, null);
+        const phunkNoLongerForSaleFilter = contract.filters.PhunkNoLongerForSale();
+        const phunkXferFilter = v3Contract.filters.Transfer(walletAddy, null, null);
+
+        const initialPhunkOfferedEvents = await contract.queryFilter(phunkOfferedFilter);
+        const initialPhunkBoughtEvents = await contract.queryFilter(phunkBoughtFilter);
+        const initialphunkNoLongerForSaleEvents = await contract.queryFilter(phunkNoLongerForSaleFilter);
+        const initialPhunkXferEvents = await v3Contract.queryFilter(phunkXferFilter, 19085195);
+
+        const allEvents = [...initialPhunkOfferedEvents,
+                           ...initialPhunkBoughtEvents, 
+                           ...initialphunkNoLongerForSaleEvents,
+                           ...initialPhunkXferEvents]
+
+        // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
+        allEvents.sort((a, b) => {
+          return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
+        });
+
+        // Iterate through sorted events and select the first occurrence of each unique phunkIndex
+        allEvents.forEach(event => {
+          const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
+          if (phunkIds.indexOf(phunkIndex) === -1) {
+            phunkIds.push(phunkIndex);
+            initialActiveListings.push(event);
+          }
+        });
+
+        const updatedListings = initialActiveListings.filter((event) => event.event == 'PhunkOffered')
+
+        updatedListings.map(listing => (
+          currentListings.push({
+            tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
+            minValue: Number(ethers.utils.formatUnits(listing.args.minValue._hex, 18)),
+          })
+        ));
+        
+        let ethSum = 0;
+        for(let i = 0; i < currentListings.length; i++) {
+          ethSum += currentListings[i].minValue;
+        }
+
+        setListVal(ethSum);
+        setListed(currentListings);
+      }
+
+      if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v2'){
+        const currentListings = [];
+
+        //define nll contract
+        const nll = new ethers.Contract(nllAddy, nllAbi, provider);
+        
+        //get listing data and push to empty array
+        for (var i = nfts.length - 1; i >= 0; i--) {
+          const nllList = await nll.phunksOfferedForSale(nfts[i]);
+          if(nllList.isForSale){          
+            currentListings.push({
+              tokenId:Number(nllList.phunkIndex),
+              minValue: Number(nllList.minValue)/1000000000000000000,
+            }) 
+          } 
+        }
+
+        let ethSum = 0;
+        for(let i = 0; i < currentListings.length; i++) {
+          ethSum += currentListings[i].minValue;
+        }
+
+        setListVal(ethSum);
+        setListed(currentListings);
+      }
+
+      if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'v1'){
+        const currentListings = [];
+
+        //define nll contract
+        const pmp = new ethers.Contract(philipMarketAddy, philipMarketAbi, provider);
+        
+        //get listing data and push to empty array
+        for (var i = nfts.length - 1; i >= 0; i--) {
+          const pmpList = await pmp.phunksOfferedForSale(nfts[i]);
+          if(pmpList.isForSale){          
+            currentListings.push({
+              tokenId:Number(pmpList.phunkIndex),
+              minValue: Number(pmpList.minValue)/1000000000000000000,
+            }) 
+          } 
+        }
+
+        let ethSum = 0;
+        for(let i = 0; i < currentListings.length; i++) {
+          ethSum += currentListings[i].minValue;
+        }
+
+        setListVal(ethSum);
+        setListed(currentListings);
+      }
+
+      if(typeof(walletAddy) !== 'undefined' && walletAddy.length > 1 && activeCollection === 'wv1'){
+        const currentListings = [];
+
+        //define nll contract
+        const pmp = new ethers.Contract(wv1pAddy, wv1pAbi, provider);
+        
+        //get listing data and push to empty array
+        for (var i = nfts.length - 1; i >= 0; i--) {
+          const pmpList = await pmp.phunksOfferedForSale(nfts[i]);
+          if(pmpList.isForSale){          
+            currentListings.push({
+              tokenId:Number(pmpList.phunkIndex),
+              minValue: Number(pmpList.minValue)/1000000000000000000,
+            }) 
+          } 
+        }
+
+        let ethSum = 0;
+        for(let i = 0; i < currentListings.length; i++) {
+          ethSum += currentListings[i].minValue;
+        }
+
+        setListVal(ethSum);
+        setListed(currentListings);
+      }
+    };
+    */
   /* --- END FETCHING LISTED NFTS --- */
 
   /* --- START FETCHING BIDS --- */
   //Need to update this
     //Fetch once per collection
-    //Then switch which is "used" based on active collection
+    //Bids placed and received should be fetched seperately
+    //Placed is on another page
+    //Received may need to be part of getNfts
+    /*
+    const fetchBids = async () => {
+      let mAddy, mAbi;
+      const initialActiveBids = [];
+      const phunkIds = [];
+      const currentBids = [];
+      const myCurrentBids = [];
+
+      if (activeCollection === 'v2') {
+        mAddy = nllAddy;
+        mAbi = nllAbi;
+      } else if (activeCollection === 'v3') {
+        mAddy = v3MarketAddy;
+        mAbi = v3MarketAbi;
+      } else if (activeCollection === 'v1') {
+        mAddy = philipMarketAddy;
+        mAbi = philipMarketAbi;
+      } else if (activeCollection === 'wv1') {
+        mAddy = wv1pAddy;
+        mAbi = wv1pAbi;
+      }
+
+      if(mAddy && mAbi) {
+
+        const mContract = new ethers.Contract(mAddy, mAbi, provider);
+        const phunkBidFilter = mContract.filters.PhunkBidEntered();
+        const phunkBidWithdrawnFilter = mContract.filters.PhunkBidWithdrawn();
+        const filterBought = mContract.filters.PhunkBought(null, null, null, walletAddy); 
+
+        const initialBidEvents = await mContract.queryFilter(phunkBidFilter);
+        const initialBidWithdrawnEvents = await mContract.queryFilter(phunkBidWithdrawnFilter);
+
+        const initialBoughtEvents = await mContract.queryFilter(filterBought);
+
+        const allBidEvents = [...initialBidEvents,
+                           ...initialBidWithdrawnEvents,
+                           ...initialBoughtEvents]
+
+        // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
+        allBidEvents.sort((a, b) => {
+          return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
+        });
+
+        // Iterate through sorted events and select the first occurrence of each unique phunkIndex
+        allBidEvents.forEach(event => {
+          const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
+          if (phunkIds.indexOf(phunkIndex) === -1) {
+            phunkIds.push(phunkIndex);
+            initialActiveBids.push(event);
+          }
+        });
+
+        const allBids = initialActiveBids.filter((event) => event.event === 'PhunkBidEntered');
+
+        //console.log('nfts', nfts); 
+        const updatedBids = allBids.filter((event) => {
+          return nfts.includes(Number(ethers.utils.formatUnits(event.args.phunkIndex._hex,0)));
+        });
+        //console.log('bids recieved', updatedBids); //0x60 == 96
+
+        const myBids = allBids.filter((event) => event.args.fromAddress.toLowerCase() === walletAddy.toLowerCase());
+        //console.log('bids placed', myBids);
+
+        updatedBids.map(listing => (
+          currentBids.push({
+            tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
+            bidValue: Number(ethers.utils.formatUnits(listing.args.value._hex, 18)),
+          })
+        ));
+
+        myBids.map(listing => (
+          myCurrentBids.push({ 
+            tokenId:Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0)),
+            bidValue: Number(ethers.utils.formatUnits(listing.args.value._hex, 18)),
+            atts: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].atts,
+            beard: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].beard,
+            cheeks: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].cheeks,
+            ears: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].ears,
+            emotion: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].emotion,
+            eyes: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].eyes,
+            face: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].face,
+            hair: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].hair,
+            lips: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].lips,
+            mouth: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].mouth,
+            neck: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].neck,
+            nose: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].nose,
+            sex: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].sex,
+            teeth: phunks[Number(ethers.utils.formatUnits(listing.args.phunkIndex._hex,0))].teeth,
+          })
+        ));
+
+        const myBidVals = [];
+        for (let i = 0; i < myBids.length; i++){
+          const myBidListData = await contract.phunksOfferedForSale(myCurrentBids[i].tokenId);
+          //console.log('mbld:', myBidListData);
+          myBidVals.push({
+            tokenId:myCurrentBids[i].tokenId,
+            minValue:myBidListData.isForSale ? Number(ethers.utils.formatUnits(myBidListData.minValue._hex,18)) : ''
+          })
+        }
+        
+        let ethSum = 0;
+        for(let i = 0; i < currentBids.length; i++) {
+          ethSum += currentBids[i].bidValue;
+        }
+
+        let bidSum = 0;
+        for(let i = 0; i < myCurrentBids.length; i++) {
+          bidSum += myCurrentBids[i].bidValue;
+        }
+
+        //console.log('bidVals: ', myBidVals);
+
+        setBidVal(ethSum);
+        setBidsRecieved(currentBids);
+        setBidPlacedVal(bidSum);
+        setBidsPlaced(myCurrentBids);
+        setBidPlacedMinVal(myBidVals);
+      }
+    };
+    */
   /* --- END FETCHING BIDS --- */
 
   /* --- START HELPER FUNCTIONS --- */
@@ -969,7 +1229,7 @@ export default function walletView() {
               <div className="justify-left">
                 <p className="mt-8">Philip Intern Project</p>
                 {loading === false ?
-                  (nfts.length > 0 ?
+                  (nfts.length > 0 && v1Nfts.length > 0?
                     (fP
                       .filter(phunk => v1Nfts.includes(phunk.tokenId))
                       .map((phunk) => (
@@ -1015,7 +1275,7 @@ export default function walletView() {
                 }
                 <p className="mt-8">CryptoPhunks</p>
                 {loading === false ?
-                  (nfts.length > 0 ?
+                  (nfts.length > 0 && v2Nfts.length > 0 ?
                     (fP
                       .filter(phunk => v2Nfts.includes(phunk.tokenId))
                       .map((phunk) => (
@@ -1038,7 +1298,7 @@ export default function walletView() {
                 }
                 <p className="mt-8">v3Phunks</p>
                 {loading === false ?
-                  (nfts.length > 0 ?
+                  (nfts.length > 0 && v3Nfts.length > 0 ?
                     (fP
                       .filter(phunk => v3Nfts.includes(phunk.tokenId))
                       .map((phunk) => (
