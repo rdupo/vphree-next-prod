@@ -92,8 +92,9 @@ export default function Home() {
 
   return (
     <>
-      {/*<Header onUpdateConnectedWallet={updateConnectedWallet} />*/}
-      <div className="content bg-opacity-60 bg-black txt-new-fallback">
+      {/*<Header onUpdateConnectedWallet={updateConnectedWallet} />
+      <div className="content bg-opacity-60 bg-black txt-new-fallback">*/}
+      <div className="content txt-new-fallback">
         <div className="home-wrapper">
           <h2 className="home-title g-txt leading-none mt-[33%] mb-4">We&apos;ll be right back...</h2>
         </div>
