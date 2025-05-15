@@ -172,9 +172,9 @@ export default function Home() {
               <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Dose of Phunks</button>
             </Link>
           </div>
-        </div>
+        </div>*/}
       </div>
-      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>*/}
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
       <Footer
         bg='black'
       />
