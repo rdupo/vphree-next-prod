@@ -94,8 +94,9 @@ export default function Home() {
     <>
       {/*<Header onUpdateConnectedWallet={updateConnectedWallet} />*/}
       <div className="content bg-opacity-60 bg-black txt-new-fallback">
-        <h2 className="home-title g-txt leading-none mb-4">We&apos;ll be right back...</h2>
-
+        <div className="home-wrapper">
+          <h2 className="home-title g-txt leading-none mt-[33%] mb-4">We&apos;ll be right back...</h2>
+        </div>
         {/*<div className="g-bg black-txt">
           <div className="pl-8 text-green-500">
             <p>
@@ -175,9 +176,9 @@ export default function Home() {
         </div>*/}
       </div>
       <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
-      <Footer
+      {/*<Footer
         bg='black'
-      />
+      />*/}
     </>
   )
 }
