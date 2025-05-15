@@ -92,9 +92,11 @@ export default function Home() {
 
   return (
     <>
-      <Header onUpdateConnectedWallet={updateConnectedWallet} />
+      {/*<Header onUpdateConnectedWallet={updateConnectedWallet} />*/}
       <div className="content bg-opacity-60 bg-black txt-new-fallback">
-        <div className="g-bg black-txt">
+        <h2 className="home-title g-txt leading-none mb-4">We'll be right back...</h2>
+
+        {/*<div className="g-bg black-txt">
           <div className="pl-8 text-green-500">
             <p>
               <span className="black-txt">Recent Sales: &nbsp;</span>
@@ -172,7 +174,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
+      <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>*/}
       <Footer
         bg='black'
       />
