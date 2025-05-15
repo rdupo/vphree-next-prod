@@ -94,7 +94,7 @@ export default function Home() {
     <>
       {/*<Header onUpdateConnectedWallet={updateConnectedWallet} />*/}
       <div className="content bg-opacity-60 bg-black txt-new-fallback">
-        <h2 className="home-title g-txt leading-none mb-4">We'll be right back...</h2>
+        <h2 className="home-title g-txt leading-none mb-4">We&apos;ll be right back...</h2>
 
         {/*<div className="g-bg black-txt">
           <div className="pl-8 text-green-500">
