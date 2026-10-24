@@ -52,48 +52,52 @@ const Filter = ({ sections }) => {
   const activeCount = Object.keys(f).filter((k) => f[k] !== '').length;
 
   return (
-   <div className="filter-sort-wrapper mb-8">
-    <div>
-      <label className="mr-3 bg-black">ID</label>
-      <input
-        type="text"
-        id="id"
-        className="bg-white black-txt "
-        name="id"
-        minLength="1"
-        maxLength="4"
-        placeholder="Phunk ID..."
-        value={f.tokenId || ''}
-        onChange={(e) => setFilter('tokenId', e.target.value)}
-      />
-      <button
-        className="g-bg black-txt brite"
-        onClick={() => setFilterState((current) => !current)}>
-        {filtersActive ? 'Hide Filters' : 'View Filters'}
-      </button>
-      {activeCount > 0 ?
-        <button className="g-bg black-txt brite" onClick={() => setF({})}>Clear All ({activeCount})</button>
-        : null}
-    </div>
-    <div id="filters" className={`${filtersActive ? '' : 'hidden'}`}>
-      {TRAITS.map(([key, label, options]) => (
-        <div key={key} className="p-0 filter-dropdown" data-type={key}>
-          <select
-            className="select bg-white "
-            value={f[key] || ''}
-            onChange={(e) => setFilter(key, e.target.value)}
-          >
-            <option value="" disabled hidden>{label}</option>
-            {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
-          </select>
-          <div className="input-group-append">
-            <button
-              className="btn-outline g-bg black-txt "
-              onClick={() => setFilter(key, '')}
-              type="button">x</button>
+   <>
+    {/* same markup/classes as the filters on the /collections and /view-all pages */}
+    <div className="filter-sort-wrapper mb-8">
+      <div>
+        <label className="mr-3">ID</label>
+        <input
+          type="text"
+          id="id"
+          className="bg-green-100 black-txt"
+          name="id"
+          minLength="1"
+          maxLength="4"
+          placeholder="Phunk ID..."
+          value={f.tokenId || ''}
+          onChange={(e) => setFilter('tokenId', e.target.value)}
+        />
+        <button
+          id={filtersActive ? 'hide' : 'view'}
+          className="g-bg black-txt brite"
+          onClick={() => setFilterState((current) => !current)}>
+          {filtersActive ? 'Hide Filters' : 'View Filters'}
+        </button>
+        {activeCount > 0 ?
+          <button className="g-bg black-txt brite sorter" onClick={() => setF({})}>Clear All ({activeCount})</button>
+          : null}
+      </div>
+      <div id="filters" className={`${filtersActive ? '' : 'hidden'}`}>
+        {TRAITS.map(([key, label, options]) => (
+          <div key={key} className="p-0 filter-dropdown" data-type={key}>
+            <select
+              className="select bg-green-100"
+              value={f[key] || ''}
+              onChange={(e) => setFilter(key, e.target.value)}
+            >
+              <option value="" disabled hidden>{label}</option>
+              {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
+            </select>
+            <div className="input-group-append">
+              <button
+                className="btn-outline g-bg black-txt"
+                onClick={() => setFilter(key, '')}
+                type="button">x</button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
     {filteredSections.map((s) => (
       <div key={s.key} className="mt-6">
@@ -125,7 +129,7 @@ const Filter = ({ sections }) => {
         }
       </div>
     ))}
-  </div>
+   </>
   );
 };
 
