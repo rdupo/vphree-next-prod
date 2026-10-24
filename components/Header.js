@@ -31,7 +31,7 @@ const Header = () => {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         const mmp = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = mmp.getSigner(accounts[0]);       
+        const signer = mmp.getSigner(accounts[0]);
         const address = await signer.getAddress();
         setConnectedAddress(address); // Update the state with the connected address
       } catch (error) {

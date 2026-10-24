@@ -6,7 +6,6 @@ import Header from  '../../components/Header'
 import DashCard from '../../components/dashCard'
 import Card from '../../components/Card'
 import StaticCard from '../../components/StaticCard'
-import FlywheelCard from '../../components/flywheelCard'
 import LatestProp from '../../components/LatestProp'
 import History from '../../components/userHistory'
 import Footer from '../../components/Footer'
@@ -21,37 +20,32 @@ import auctionAddy from '../../utils/auctionAddy'
 import auctionAbi from '../../utils/auctionAbi'
 import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
-import flywheelAddy from '../../utils/flywheelAddy'
-import flywheelAbi from '../../utils/flywheelAbi'
 import phunkAddy from '../../utils/phunkAddy'
 import toast, {Toaster} from 'react-hot-toast'
 import { useWallet } from '../../contexts/WalletContext'
 import phunks from '../../utils/phunkData'
 import phunkAtts from '../../utils/phunkAtts' 
 import AuctionTimer from '../../components/auctionTimer'
-import getV3Sales from '../../hooks/v3Sales'
-import getNllSales from '../../hooks/nllSales'
+import useSales from '../../hooks/useSales'
 import wrapperAddy from '../../utils/wrapperAddy'
 import wrapperAbi from '../../utils/wrapperAbi'
 import philipAbi from '../../utils/philipAbi'
 import xferAbi from '../../utils/xferAbi'
 import philipAddy from '../../utils/philipAddy'
-import getFlywheelBuys from '../../hooks/FlywheelBuys'
 import SaleCard from '../../components/SaleCard'
 
 export default function PhunkyHub() {
   const router = useRouter()
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const nftbKey = process.env.NFTBANK_API_KEY
-  const { sales } = getV3Sales();
-  const { nllSales } = getNllSales();
-  const { flywheelSales } = getFlywheelBuys();
+  const { sales } = useSales('v3-phunks');
+  const { sales: nllSales } = useSales('cryptophunks');
   const [iWidth, setIWidth] = useState(getInitialWidth());
   const coll = router.query.collection
   const [ensAddy, setEnsAddy] = useState('')
-  const [nfts, setNFTs] = useState([]);
-  const [nftsData, setNFTsData] = useState([]);
-  const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
+  //const [nfts, setNFTs] = useState([]);
+  //const [nftsData, setNFTsData] = useState([]);
+  //const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
   const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
@@ -61,7 +55,7 @@ export default function PhunkyHub() {
   const { connectedAddress, walletChanged } = useWallet();
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   const [loading, setLoading] = useState(true);
-  const [bidLoading, setBidLoading] = useState(true);
+  //const [bidLoading, setBidLoading] = useState(true);
    
   //collection displayed
   const [activeCollection, setActiveCollection] = useState(coll);
@@ -74,12 +68,12 @@ export default function PhunkyHub() {
   const [aucEvent, setAucEvent] = useState([]);
   
   //flywheel
-  const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
+  /*const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
   const [nftEstimate, setNftEstimate] = useState([]);
   const [minFlywheelPrice, setMinFlywheelPrice] = useState();
   const [flywheelLoading, setFlywheelLoading] = useState(true);
   const [flywheelId, setFlywheelId] = useState("0");
-  const [flywheelBalance, setFlywheelBalance] = useState("---")
+  const [flywheelBalance, setFlywheelBalance] = useState("---")*/
 
   //philip wrapper
   const [wrapId, setWrapId] = useState(-1);
@@ -97,7 +91,7 @@ export default function PhunkyHub() {
   }
 
   //start flywheel js ---------
-  const getBalance = async () => {
+  /*const getBalance = async () => {
     const bal = await provider.getBalance(flywheelAddy);
     const ethBal = Number(ethers.utils.formatUnits(bal._hex,18)).toFixed(2);
     setFlywheelBalance(ethBal);
@@ -126,7 +120,7 @@ export default function PhunkyHub() {
     setMinFlywheelPrice(minValidPrice);
 
     setFlywheelLoading(false);
-  }
+  }*/
   //end flywheel js -----------
 
   //start auction js ----------
@@ -361,7 +355,7 @@ async function unwrapPhilip() {
 
   useEffect(() => {
     curAuc();
-    getBalance();
+    //getBalance();
   },[aucEvent])
 
   useEffect(() => {
@@ -493,7 +487,7 @@ async function unwrapPhilip() {
               )))
               :
             null}
-          </div> 
+          </div>
 
 {/* --- START WRAPPER ---- */}  
           {activeCollection !== 'philip-intern-project' ? null :
@@ -588,8 +582,8 @@ async function unwrapPhilip() {
           }
           {activeCollection === 'cryptophunks' ?
             <>
-              <h2 className="mt-16 mb-4 text-2xl">Flywheel</h2>
-              <div className="inline-block mb-0 w-1/2 mobile-100 align-top"> 
+              <h2 className="mt-16 mb-4 text-2xl">Instant Liquidity</h2>
+              {/*<div className="inline-block mb-0 w-1/2 mobile-100 align-top"> 
                 <h2 className="text-gray-400">Flywheel Payout Checker</h2>
                   {nftEstimate.length > 0 ?
                     nftEstimate.map((phunk) => (
@@ -651,8 +645,8 @@ async function unwrapPhilip() {
                   :
                   <p className="text-2xl g-txt my-4">Loading recent Flywheel buys...</p>
                 }
-              </div>
-              <p className="text-gray-400 mt-2">Any ineligible Phunks can still be sold to the 
+              </div>*/}
+              <p className="text-gray-400 mt-2">Sell to the 
                 <a 
                   href={`https://nftx.io/vault/0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91/sell/`} 
                   target="_blank"> NTFX Liquidity Pool

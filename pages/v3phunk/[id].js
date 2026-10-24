@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Header from  '../../components/Header'
 import Footer from '../../components/Footer'
 import History from '../../components/History_qBC'
-import getTxnHistory from '../../hooks/TxnHistory_OG'
+import useTokenHistory from '../../hooks/useTokenHistory'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import { Network, Alchemy } from 'alchemy-sdk'
 import { ethers } from 'ethers'
@@ -36,7 +36,7 @@ export default function V3Phunks() {
   const [ownerEns, setOwnerEns] = useState('');
   const [bidActive, setBidState] = useState(false);
   const [listActive, setListState] = useState(false);
-  const { transactionHistory } = getTxnHistory(id);
+  const { transactionHistory } = useTokenHistory('v3-phunks', id);
   const [listPrice, setListPrice] = useState('');
   const [bid, setBid] = useState('');
   const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
@@ -775,10 +775,15 @@ export default function V3Phunks() {
               }
             </div>
           </div>
-          <div className="row-wrapper mt-5">
+          <div className="row-wrapper mt-[5em]">
             <History 
               transactions={transactionHistory}
             />
+            <p>You can view this V3 Phunk&apos;s full transaction history 
+              <a 
+                href={`https://etherscan.io/nft/${v3PhunkAddy}/${id}`} 
+                target = "_blank"> here</a>
+            .</p>
           </div>
         </div>
       </div>

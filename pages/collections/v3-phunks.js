@@ -16,6 +16,7 @@ import v3MarketAbi from '../../utils/v3MarketAbi'
 import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
 import phunkAttMap from '../../utils/phunkAttMap'
+import useListings from '../../hooks/useListings'
 
 export default function V3Phunks() {
   const collectionContract = v3PhunkAddy
@@ -23,6 +24,7 @@ export default function V3Phunks() {
   const maps = "https://maps.org/"
   const target = "_blank"
   const desc = ["V3Phunks are a low entry-point evolution of the CryptoPhunks ecosystem. 10,000 Phunks minting for .005ETH each with absolutely 100% of proceeds going directly and trustlessly to ",<a key='maps' href={maps} target={target}>MAPS</a>, ", a mental health organization. A Philanthropic, Phree, and Phunky arm of the overall CryptoPhunk community."]
+  const { listings } = useListings('v3-phunks');
   const [listed, setListed] = useState([]);
   const [f, setF] = useState({})
   const [filtersActive, setFilterState] = useState(false)
@@ -39,16 +41,16 @@ export default function V3Phunks() {
 
     if (fP.length === 0) {
       const sortedListed = [...listed].sort((a, b) => {
-        const aa = ethers.utils.formatUnits(a.args.minValue._hex,18);
-        const bb = ethers.utils.formatUnits(b.args.minValue._hex,18);
+        const aa = Number(a.minValue);
+        const bb = Number(b.minValue);
         return sortOrder * (aa - bb);
       });
       setListed(sortedListed);
       setDisplayedData(sortedListed); // Update the displayed data as well
     } else {
       const sortedFP = [...fP].sort((a, b) => {
-        const aa = ethers.utils.formatUnits(a.args.minValue._hex,18);
-        const bb = ethers.utils.formatUnits(b.args.minValue._hex,18);
+        const aa = Number(a.minValue);
+        const bb = Number(b.minValue);
         return sortOrder * (aa - bb);
       });
       setFP(sortedFP);
@@ -70,7 +72,7 @@ export default function V3Phunks() {
     const filteredData = listed.filter((item) => {
       for (const [trait, value] of Object.entries(f)) {
         if (trait === 'tokenId') {
-          if (ethers.utils.formatUnits(item.args.phunkIndex._hex,0).indexOf(value) === -1) {
+          if (String(item.tokenId).indexOf(value) === -1) {
             return false;
           }
         } else if  (trait === 'Traits') {
@@ -88,72 +90,16 @@ export default function V3Phunks() {
     });
 
     const sortedFilteredData = filteredData.slice().sort((a, b) => {
-      const aa = ethers.utils.formatUnits(a.args.minValue._hex,18);
-      const bb = ethers.utils.formatUnits(b.args.minValue._hex,18);
-      return (aa - bb);
+      return Number(a.minValue) - Number(b.minValue);
     });
     setDisplayedData(sortedFilteredData);
   }, [f]);
 
-  //events approach
+  // active listings come from our indexer API (see lib/queries.js getListings)
   useEffect(() => {
-    const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
-    const contractAddress = v3MarketAddy;
-    const contractABI = v3MarketAbi;
-    const contract = new ethers.Contract(contractAddress, contractABI, provider);
-    const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider)
-
-    const initialActiveListings = [];
-    const phunkIds = [];
-    const currentListings = [];
-    const phunkData = phunkAttMap;
-    
-    const fetchInitialActiveListings = async () => {
-      const phunkOfferedFilter = contract.filters.PhunkOffered();
-      const phunkBoughtFilter = contract.filters.PhunkBought();
-      const phunkNoLongerForSaleFilter = contract.filters.PhunkNoLongerForSale();
-      const phunkXferFilter = v3Contract.filters.Transfer();
-
-      const initialPhunkOfferedEvents = await contract.queryFilter(phunkOfferedFilter);
-      const initialPhunkBoughtEvents = await contract.queryFilter(phunkBoughtFilter);
-      const initialphunkNoLongerForSaleEvents = await contract.queryFilter(phunkNoLongerForSaleFilter);
-      const initialPhunkXferEvents = await v3Contract.queryFilter(phunkXferFilter, 19085195);
-
-      const allEvents = [...initialPhunkOfferedEvents,
-                         ...initialPhunkBoughtEvents, 
-                         ...initialphunkNoLongerForSaleEvents,
-                         ...initialPhunkXferEvents]
-
-      // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
-      allEvents.sort((a, b) => {
-        return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
-      });
-
-      // Iterate through sorted events and select the first occurrence of each unique phunkIndex
-      allEvents.forEach(event => {
-        const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
-        if (phunkIds.indexOf(phunkIndex) === -1) {
-          phunkIds.push(phunkIndex);
-          initialActiveListings.push(event);
-        }
-
-        const updatedListings = initialActiveListings.filter((event) => event.event == 'PhunkOffered')
-
-        const attributesMap = {};
-        phunkData.forEach(item => {
-          attributesMap[item.tokenId] = item.attributes;
-        });
-
-        const updatedListingsFull = updatedListings.map(itemA => ({
-          ...itemA,
-          attributes: attributesMap[ethers.utils.formatUnits(itemA.args.phunkIndex._hex,0)], 
-        }));
-        setListed(updatedListingsFull);
-        setDisplayedData(updatedListingsFull);
-      });
-    };
-    fetchInitialActiveListings();
-  },[]);
+    setListed(listings);
+    setDisplayedData(listings);
+  }, [listings]);
 
   return (
     <>
@@ -650,10 +596,10 @@ export default function V3Phunks() {
             {displayedData.map((phunk) => (
               (displayedData.length > 0 ?
                 <Card
-                  key={phunk.args.phunkIndex._hex}
-                  price={ethers.utils.formatUnits(phunk.args.minValue._hex,18) + "Ξ"}
+                  key={phunk.tokenId}
+                  price={phunk.minValue + "Ξ"}
                   atts=""
-                  id={ethers.utils.formatUnits(phunk.args.phunkIndex._hex,0)}
+                  id={phunk.tokenId}
                   coll="phunk"
                 />
               : null )  
