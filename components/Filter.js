@@ -1,563 +1,130 @@
-import { React, useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
+import { FaAngleDown, FaAngleUp } from 'react-icons/fa6'
 import Card from '../components/Card.js'
+import phunks from '../utils/phunkData'
 
-const Filter = ({ phunks, coll }) => {
-	const [f, setF] = useState({})
-  const [beard, setBeard] = useState("")
-  const [cheeks, setCheeks] = useState("")
-  const [ears, setEars] = useState("")
-  const [emotion, setEmotion] = useState("")
-  const [eyes, setEyes] = useState("")
-  const [face, setFace] = useState("")             
-  const [hair, setHair] = useState("")
-  const [lips, setLips] = useState("")
-  const [mouth, setMouth] = useState("")
-  const [neck, setNeck] = useState("")
-  const [nose, setNose] = useState("")                
-  const [sex, setSex] = useState("")  
-  const [teeth, setTeeth] = useState("")             
-  const [atts, setAtts] = useState("")
+// Trait dropdowns: [key in phunkData, label, [value, label] options]. Edit here to add/rename options.
+const TRAITS = [
+  ['beard', 'Beard', [['NA', 'None'], ['Big-Beard', 'Big Beard'], ['Chinstrap', 'Chinstrap'], ['Front-Beard', 'Front Beard'], ['Front-Beard-Dark', 'Front Beard Dark'], ['Goat', 'Goat'], ['Handlebars', 'Handlebars'], ['Luxurious-Beard', 'Luxurious Beard'], ['Mustache', 'Mustache'], ['Muttonchops', 'Muttonchops'], ['Normal-Beard', 'Normal Beard'], ['Normal-Beard-Black', 'Normal Beard Black'], ['Shadow-Beard', 'Shadow Beard']]],
+  ['cheeks', 'Cheeks', [['NA', 'None'], ['Rosy-Cheeks', 'Rosy Cheeks']]],
+  ['ears', 'Ears', [['NA', 'None'], ['Earring', 'Earring']]],
+  ['emotion', 'Emotion', [['NA', 'None'], ['Frown', 'Frown'], ['Smile', 'Smile']]],
+  ['eyes', 'Eyes', [['NA', 'None'], ['3D-Glasses', '3D Glasses'], ['Big-Shades', 'Big Shades'], ['Blue-Eye-Shadow', 'Blue Eye Shadow'], ['Classic-Shades', 'Classic Shades'], ['Clown-Eyes-Blue', 'Clown Eyes Blue'], ['Clown-Eyes-Green', 'Clown Eyes Green'], ['Eye-Mask', 'Eye Mask'], ['Eye-Patch', 'Eye Patch'], ['Green-Eye-Shadow', 'Green Eye Shadow'], ['Horned-Rim-Glasses', 'Horned Rim Glasses'], ['Nerd-Glasses', 'Nerd Glasses'], ['Purple-Eye-Shadow', 'Purple Eye Shadow'], ['Regular-Shades', 'Regular Shades'], ['Small-Shades', 'Small Shades'], ['VR', 'VR'], ['Welding-Goggles', 'Welding Goggles']]],
+  ['face', 'Face', [['NA', 'None'], ['Mole', 'Mole'], ['Spots', 'Spots']]],
+  ['hair', 'Hair', [['NA', 'None'], ['Bandana', 'Bandana'], ['Beanie', 'Beanie'], ['Blonde-Bob', 'Blonde Bob'], ['Blonde-Short', 'Blonde Short'], ['Cap', 'Cap'], ['Cap-Forward', 'Cap Forward'], ['Clown-Hair-Green', 'Clown Hair Green'], ['Cowboy-Hat', 'Cowboy Hat'], ['Crazy-Hair', 'Crazy Hair'], ['Dark-Hair', 'Dark Hair'], ['Do-rag', 'Do-rag'], ['Fedora', 'Fedora'], ['Frumpy-Hair', 'Frumpy Hair'], ['Half-Shaved', 'Half Shaved'], ['Headband', 'Headband'], ['Hoodie', 'Hoodie'], ['Knitted-Cap', 'Knitted Cap'], ['Messy-Hair', 'Messy Hair'], ['Mohawk', 'Mohawk'], ['Mohawk-Dark', 'Mohawk Dark'], ['Mohawk-Thin', 'Mohawk Thin'], ['Orange-Side', 'Orange Side'], ['Peak-Spike', 'Peak Spike'], ['Pigtails', 'Pigtails'], ['Pilot-Helmet', 'Pilot Helmet'], ['Pink-With-Hat', 'Pink With Hat'], ['Police-Cap', 'Police Cap'], ['Purple-Hair', 'Purple Hair'], ['Red-Mohawk', 'Red Mohawk'], ['Shaved-Head', 'Shaved Head'], ['Straight-Hair', 'Straight Hair'], ['Straight-Hair-Blonde', 'Straight Hair Blonde'], ['Straight-Hair-Dark', 'Straight Hair Dark'], ['Stringy-Hair', 'Stringy Hair'], ['Tassle-Hat', 'Tassle Hat'], ['Tiara', 'Tiara'], ['Top-Hat', 'Top Hat'], ['Vampire-Hair', 'Vampire Hair'], ['Wild-Blonde', 'Wild Blonde'], ['Wild-Hair', 'Wild Hair'], ['Wild-White-Hair', 'Wild White Hair']]],
+  ['lips', 'Lips', [['NA', 'None'], ['Black-Lipstick', 'Black Lipstick'], ['Hot-Lipstick', 'Hot Lipstick'], ['Purple-Lipstick', 'Purple Lipstick']]],
+  ['mouth', 'Mouth', [['NA', 'None'], ['Cigarette', 'Cigarette'], ['Medical-Mask', 'Medical Mask'], ['Pipe', 'Pipe'], ['Vape', 'Vape']]],
+  ['neck', 'Neck', [['NA', 'None'], ['Choker', 'Choker'], ['Gold-Chain', 'Gold Chain'], ['Silver-Chain', 'Silver Chain']]],
+  ['nose', 'Nose', [['NA', 'None'], ['Clown-Nose', 'Clown Nose']]],
+  ['sex', 'Sex', [['Alien', 'Alien'], ['Ape', 'Ape'], ['Female', 'Female'], ['Male', 'Male'], ['Zombie', 'Zombie']]],
+  ['teeth', 'Teeth', [['NA', 'None'], ['Buck-Teeth', 'Buck Teeth']]],
+  ['atts', 'Trait Count', [['0', '0 Trait'], ['1', '1 Trait'], ['2', '2 Traits'], ['3', '3 Traits'], ['4', '4 Traits'], ['5', '5 Traits'], ['6', '6 Traits'], ['7', '7 Traits']]],
+]
+
+const phunksById = new Map(phunks.map((p) => [p.tokenId, p]))
+
+/**
+ * One set of filters applied to every collection section.
+ * sections: [{ key, title, coll, ids }] where coll is the <Card> collection code and ids are owned token IDs.
+ */
+const Filter = ({ sections }) => {
+  const [f, setF] = useState({})
   const [filtersActive, setFilterState] = useState(false)
-  const [appliedFilters, setAppliedFilters] = useState({})
-  const [fP, setFP] = useState(phunks)
+  const [collapsed, setCollapsed] = useState({})
 
-	useEffect(() => {
-	    function filterPhunks() {
-	      return phunks.filter(
-	        (i) =>
-	          Object.entries(f).every(([k, v]) => k === 'tokenId' ? i.tokenId.toString().indexOf(v) > -1 : i[k] === v)
-	      );
-	    }
-	    const filteredPhunks = filterPhunks();
-	    setFP(filteredPhunks);
-	    console.log(filteredPhunks);
-	}, [f]); // The useEffect hook will run whenever 'f' changes
-
-  //toggle class
-  const filterToggle = () => {
-    setFilterState((current) => !current)
+  const setFilter = (key, value) => {
+    setF((prevState) => {
+      const updatedState = { ...prevState };
+      if (value === '') delete updatedState[key];
+      else updatedState[key] = value;
+      return updatedState;
+    });
   }
+
+  const filteredSections = useMemo(() => {
+    const matches = (p) =>
+      Object.entries(f).every(([k, v]) => k === 'tokenId' ? p.tokenId.toString().indexOf(v) > -1 : p[k] === v);
+    return sections
+      .filter((s) => s.ids.length > 0)
+      .map((s) => ({ ...s, phunks: s.ids.map((id) => phunksById.get(id)).filter((p) => p && matches(p)) }));
+  }, [sections, f]);
+
+  const activeCount = Object.keys(f).filter((k) => f[k] !== '').length;
 
   return (
    <div className="filter-sort-wrapper mb-8">
     <div>
       <label className="mr-3 bg-black">ID</label>
-      <input 
-        type="text" 
-        id="id" 
-        className="bg-white black-txt " 
-        name="id" 
-        minLength="1" 
-        maxLength="4" 
-        placeholder="Phunk ID..." 
-        onChange={(e) => setF((prevState) => ({ ...prevState, tokenId: e.target.value }))}
+      <input
+        type="text"
+        id="id"
+        className="bg-white black-txt "
+        name="id"
+        minLength="1"
+        maxLength="4"
+        placeholder="Phunk ID..."
+        value={f.tokenId || ''}
+        onChange={(e) => setFilter('tokenId', e.target.value)}
       />
-      <button 
-        id="view" 
-        className={`g-bg black-txt brite  ${filtersActive ? 'hidden' : ''}`} 
-        onClick={filterToggle}>
-        View Filters
+      <button
+        className="g-bg black-txt brite"
+        onClick={() => setFilterState((current) => !current)}>
+        {filtersActive ? 'Hide Filters' : 'View Filters'}
       </button>
-      <button 
-        id="hide" 
-        className={`g-bg black-txt brite  ${filtersActive ? '' : 'hidden'}`} 
-        onClick={filterToggle}>
-        Hide Filters
-      </button>
+      {activeCount > 0 ?
+        <button className="g-bg black-txt brite" onClick={() => setF({})}>Clear All ({activeCount})</button>
+        : null}
     </div>
     <div id="filters" className={`${filtersActive ? '' : 'hidden'}`}>
-        <div className="p-0 filter-dropdown" data-type="beard ">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={beard}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, beard: e.target.value }));
-              setBeard(e.target.value)
-            }}
+      {TRAITS.map(([key, label, options]) => (
+        <div key={key} className="p-0 filter-dropdown" data-type={key}>
+          <select
+            className="select bg-white "
+            value={f[key] || ''}
+            onChange={(e) => setFilter(key, e.target.value)}
           >
-            <option value="" disabled hidden>Beard</option>
-            <option value="NA">None</option>
-            <option value="Big-Beard">Big Beard</option>
-            <option value="Chinstrap">Chinstrap</option>
-            <option value="Front-Beard">Front Beard</option>
-            <option value="Front-Beard-Dark">Front Beard Dark</option>
-            <option value="Goat">Goat</option>
-            <option value="Handlebars">Handlebars</option>
-            <option value="Luxurious-Beard">Luxurious Beard</option>
-            <option value="Mustache">Mustache</option>
-            <option value="Muttonchops">Muttonchops</option>
-            <option value="Normal-Beard">Normal Beard</option>
-            <option value="Normal-Beard-Black">Normal Beard Black</option>
-            <option value="Shadow-Beard">Shadow Beard</option>
+            <option value="" disabled hidden>{label}</option>
+            {options.map(([value, text]) => <option key={value} value={value}>{text}</option>)}
           </select>
           <div className="input-group-append">
-            <button 
+            <button
               className="btn-outline g-bg black-txt "
-              onClick={() => {
-                setF((prevState) => {
-                  // Create a copy of the state to avoid modifying it directly
-                  const updatedState = { ...prevState };
-                  // Remove the 'beard' property from the state
-                  delete updatedState.beard;
-                  // Return the updated state
-                  return updatedState;
-                });
-                setBeard("");
-              }} 
+              onClick={() => setFilter(key, '')}
               type="button">x</button>
           </div>
         </div>
-        <div className="p-0 filter-dropdown" data-type="cheeks">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={cheeks}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, cheeks: e.target.value }));
-              setCheeks(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Cheeks</option>
-            <option value="NA">None</option>
-            <option value="Rosy-Cheeks">Rosy Cheeks</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.cheeks;
-                  return updatedState;
-                });
-                setCheeks("");
-              }} 
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="ears">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={ears}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, ears: e.target.value }));
-              setEars(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Ears</option>
-            <option value="NA">None</option>
-            <option value="Earring">Earring</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.ears;
-                  return updatedState;
-                });
-                setEars("");
-              }}
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="emotion">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={emotion}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, emotion: e.target.value }));
-              setEmotion(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Emotion</option>
-            <option value="NA">None</option>
-            <option value="Frown">Frown</option>
-            <option value="Smile">Smile</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.emotion;
-                  return updatedState;
-                });
-                setEmotion("");
-              }}  
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="eyes">
-          <select 
-            className="select bg-white " 
-            type="text"
-            value={eyes}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, eyes: e.target.value }));
-              setEyes(e.target.value)
-            }}>
-            <option value="" disabled hidden>Eyes</option>
-            <option value="NA">None</option>
-            <option value="3D-Glasses">3D Glasses</option>
-            <option value="Big-Shades">Big Shades</option>
-            <option value="Blue-Eye-Shadow">Blue Eye Shadow</option>
-            <option value="Classic-Shades">Classic Shades</option>
-            <option value="Clown-Eyes-Blue">Clown Eyes Blue</option>
-            <option value="Clown-Eyes-Green">Clown Eyes Green</option>
-            <option value="Eye-Mask">Eye Mask</option>
-            <option value="Eye-Patch">Eye Patch</option>
-            <option value="Green-Eye-Shadow">Green Eye Shadow</option>
-            <option value="Horned-Rim-Glasses">Horned Rim Glasses</option>
-            <option value="Nerd-Glasses">Nerd Glasses</option>
-            <option value="Purple-Eye-Shadow">Purple Eye Shadow</option>
-            <option value="Regular-Shades">Regular Shades</option>
-            <option value="Small-Shades">Small Shades</option>
-            <option value="VR">VR</option>
-            <option value="Welding-Goggles">Welding Goggles</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.eyes;
-                  return updatedState;
-                });
-                setEyes("");
-              }} 
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="face">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={face}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, face: e.target.value }));
-              setFace(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Face</option>
-            <option value="NA">None</option>
-            <option value="Mole">Mole</option>
-            <option value="Spots">Spots</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.face;
-                  return updatedState;
-                });
-                setFace("");
-              }} 
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="hair">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={hair}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, hair: e.target.value }));
-              setHair(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Hair</option>
-            <option value="NA">None</option>
-            <option value="Bandana">Bandana</option>
-            <option value="Beanie">Beanie</option>
-            <option value="Blonde-Bob">Blonde Bob</option>
-            <option value="Blonde-Short">Blonde Short</option>
-            <option value="Cap">Cap</option>
-            <option value="Cap-Forward">Cap Forward</option>
-            <option value="Clown-Hair-Green">Clown Hair Green</option>
-            <option value="Cowboy-Hat">Cowboy Hat</option>
-            <option value="Crazy-Hair">Crazy Hair</option>
-            <option value="Dark-Hair">Dark Hair</option>
-            <option value="Do-rag">Do-rag</option>
-            <option value="Fedora">Fedora</option>
-            <option value="Frumpy-Hair">Frumpy Hair</option>
-            <option value="Half-Shaved">Half Shaved</option>
-            <option value="Headband">Headband</option>
-            <option value="Hoodie">Hoodie</option>
-            <option value="Knitted-Cap">Knitted Cap</option>
-            <option value="Messy-Hair">Messy Hair</option>
-            <option value="Mohawk">Mohawk</option>
-            <option value="Mohawk-Dark">Mohawk Dark</option>
-            <option value="Mohawk-Thin">Mohawk Thin</option>
-            <option value="Orange-Side">Orange Side</option>
-            <option value="Peak-Spike">Peak Spike</option>
-            <option value="Pigtails">Pigtails</option>
-            <option value="Pilot-Helmet">Pilot Helmet</option>
-            <option value="Pink-With-Hat">Pink With Hat</option>
-            <option value="Police-Cap">Police Cap</option>
-            <option value="Purple-Hair">Purple Hair</option>
-            <option value="Red-Mohawk">Red Mohawk</option>
-            <option value="Shaved-Head">Shaved Head</option>
-            <option value="Straight-Hair">Straight Hair</option>
-            <option value="Straight-Hair-Blonde">Straight Hair Blonde</option>
-            <option value="Straight-Hair-Dark">Straight Hair Dark</option>
-            <option value="Stringy-Hair">Stringy Hair</option>
-            <option value="Tassle-Hat">Tassle Hat</option>
-            <option value="Tiara">Tiara</option>
-            <option value="Top-Hat">Top Hat</option>
-            <option value="Vampire-Hair">Vampire Hair</option>
-            <option value="Wild-Blonde">Wild Blonde</option>
-            <option value="Wild-Hair">Wild Hair</option>
-            <option value="Wild-White-Hair">Wild White Hair</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.hair;
-                  return updatedState;
-                });
-                setHair("");
-              }}
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="lips">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={lips}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, lips: e.target.value }));
-              setLips(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Lips</option>
-            <option value="NA">None</option>
-            <option value="Black-Lipstick">Black Lipstick</option>
-            <option value="Hot-Lipstick">Hot Lipstick</option>
-            <option value="Purple-Lipstick">Purple Lipstick</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.lips;
-                  return updatedState;
-                });
-                setLips("");
-              }}
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="mouth">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={mouth}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, mouth: e.target.value }));
-              setMouth(e.target.value)
-            }}
-            >
-            <option value="" disabled hidden>Mouth</option>
-            <option value="NA">None</option>
-            <option value="Cigarette">Cigarette</option>
-            <option value="Medical-Mask">Medical Mask</option>
-            <option value="Pipe">Pipe</option>
-            <option value="Vape">Vape</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.mouth;
-                  return updatedState;
-                });
-                setMouth("");
-              }} 
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="neck">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={neck}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, neck: e.target.value }));
-              setNeck(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Neck</option>
-            <option value="NA">None</option>
-            <option value="Choker">Choker</option>
-            <option value="Gold-Chain">Gold Chain</option>
-            <option value="Silver-Chain">Silver Chain</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.neck;
-                  return updatedState;
-                });
-                setNeck("");
-              }}
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="nose">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={nose}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, nose: e.target.value }));
-              setNose(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Nose</option>
-            <option value="NA">None</option>
-            <option value="Clown-Nose">Clown Nose</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.nose;
-                  return updatedState;
-                });
-                setNose("");
-              }}
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="sex">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={sex}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, sex: e.target.value }));
-              setSex(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Sex</option>
-            <option value="Alien">Alien</option>
-            <option value="Ape">Ape</option>
-            <option value="Female">Female</option>
-            <option value="Male">Male</option>
-            <option value="Zombie">Zombie</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.sex;
-                  return updatedState;
-                });
-                setSex("");
-              }} 
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="teeth">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={teeth}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, teeth: e.target.value }));
-              setTeeth(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Teeth</option>
-            <option value="NA">None</option>
-            <option value="Buck-Teeth">Buck Teeth</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.teeth;
-                  return updatedState;
-                });
-                setTeeth("");
-              }}
-              type="button">x</button>
-          </div>
-        </div>
-        <div className="p-0 filter-dropdown" data-type="traits">
-          <select 
-            className="select bg-white " 
-            type="text" 
-            value={atts}
-            onChange={(e) => {
-              setF((prevState) => ({ ...prevState, atts: e.target.value }));
-              setAtts(e.target.value)
-            }}
-          >
-            <option value="" disabled hidden>Trait Count</option>
-            <option value="0">0 Trait</option>
-            <option value="1">1 Trait</option>
-            <option value="2">2 Traits</option>
-            <option value="3">3 Traits</option>
-            <option value="4">4 Traits</option>
-            <option value="5">5 Traits</option>
-            <option value="6">6 Traits</option>
-            <option value="7">7 Traits</option>
-          </select>
-          <div className="input-group-append">
-            <button 
-              className="btn-outline g-bg black-txt " 
-              onClick={() => {
-                setF((prevState) => {
-                  const updatedState = { ...prevState };
-                  delete updatedState.atts;
-                  return updatedState;
-                });
-                setAtts("");
-              }} 
-              type="button">x</button>
-          </div>
-        </div>
-    </div>
-    <div className="flex flex-wrap justify-start mt-4">
-      {fP.map((phunk) => (
-        (typeof(phunk) != 'undefined' ?
-          <Card
-            key={phunk.tokenId}
-            price=""
-            atts={phunk.atts}
-            id={phunk.tokenId}
-            coll={coll}
-          />
-        : null )  
       ))}
     </div>
+    {filteredSections.map((s) => (
+      <div key={s.key} className="mt-6">
+        <div className="block">
+          <h2
+            className="inline text-2xl cursor-pointer mb-2"
+            onClick={() => setCollapsed((prev) => ({ ...prev, [s.key]: !prev[s.key] }))}
+          >
+            {s.title} <span className="text-gray-400 text-lg">({activeCount > 0 ? `${s.phunks.length} of ${s.ids.length}` : s.ids.length})</span>
+          </h2>
+          {collapsed[s.key] ? <FaAngleUp className="inline m-1 pb-1"/> : <FaAngleDown className="inline m-1 pb-1"/>}
+        </div>
+        {collapsed[s.key] ? null :
+          (s.phunks.length > 0 ?
+            <div className="flex flex-wrap justify-start mt-4">
+              {s.phunks.map((phunk) => (
+                <Card
+                  key={phunk.tokenId}
+                  price=""
+                  atts={phunk.atts}
+                  id={phunk.tokenId}
+                  coll={s.coll}
+                />
+              ))}
+            </div>
+            :
+            <p className="text-gray-400 mt-2">No {s.title} match these filters.</p>
+          )
+        }
+      </div>
+    ))}
   </div>
   );
 };

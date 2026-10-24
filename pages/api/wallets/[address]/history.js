@@ -6,6 +6,7 @@ import { getWalletHistory } from '../../../../lib/queries'
 function label(row, wallet) {
   switch (row.event) {
     case 'PhunkOffered': return 'Listed'
+    case 'PhunkNoLongerForSale': return 'Delisted'
     case 'PhunkBidEntered': return 'Bid'
     case 'PhunkBidWithdrawn': return 'Bid Withdrawn'
     case 'PhunkBought': return row.from_address === wallet ? 'Sold' : 'Bought'

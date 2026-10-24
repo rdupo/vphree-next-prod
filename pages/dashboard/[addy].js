@@ -5,7 +5,6 @@ import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
 import { Network, Alchemy } from 'alchemy-sdk'
 import { ethers } from "ethers"
-import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 
 //components
 import Header from  '../../components/Header'
@@ -22,6 +21,7 @@ import phunkAtts from '../../utils/phunkAtts'
 import { useWallet } from '../../contexts/WalletContext' 
 import fetchNFTsForOwner from '../../hooks/alcFetchNfts'
 import useWalletHistory from '../../hooks/useWalletHistory'
+import useWalletOffers from '../../hooks/useWalletOffers'
 
 //contract info - collection
 import philipAddy from '../../utils/philipAddy'
@@ -31,6 +31,14 @@ import wrapperAbi from '../../utils/wrapperAbi'
 import phunkAddy from '../../utils/phunkAddy'
 import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
+
+// Indexer collection slug -> section title and <Card> collection code, in display order
+const OFFER_COLLECTIONS = [
+  { slug: 'philip-intern-project', title: 'Philips', coll: 'philip' },
+  { slug: 'wrapped-v1-phunks', title: 'Wrapped v1s', coll: 'v1' },
+  { slug: 'cryptophunks', title: 'CryptoPhunks', coll: 'v2' },
+  { slug: 'v3-phunks', title: 'v3 Phunks', coll: 'v3' },
+];
 
 export default function WalletView() {
   //utils
@@ -50,11 +58,7 @@ export default function WalletView() {
   const [wv1pWithdrawAmt, setWv1pWithdrawAmt] = useState('');
   const [signer, setSigner] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [v1v, setV1v] = useState(true);
-  const [wv1v, setWv1v] = useState(true);
-  const [v2v, setV2v] = useState(true);
-  const [v3v, setV3v] = useState(true);
-  
+
   //owned
   const [nfts, setNFTs] = useState([]);
   const [nftsData, setNFTsData] = useState([]);
@@ -63,19 +67,20 @@ export default function WalletView() {
   const [v2Nfts, setV2Nfts] = useState([]);
   const [v3Nfts, setV3Nfts] = useState([]);
 
-  //activity (only fetched once the Activity tab is opened)
-  const { transactionHistory } = useWalletHistory(active === 'activity' ? walletAddy : null);
+  //owned, grouped by collection for the shared filter (coll is the <Card> collection code)
+  const ownedSections = useMemo(() => [
+    { key: 'philip', title: 'Philips', coll: 'philip', ids: v1Nfts },
+    { key: 'wv1', title: 'Wrapped v1s', coll: 'v1', ids: wv1Nfts },
+    { key: 'v2', title: 'CryptoPhunks', coll: 'v2', ids: v2Nfts },
+    { key: 'v3', title: 'v3 Phunks', coll: 'v3', ids: v3Nfts },
+  ], [v1Nfts, wv1Nfts, v2Nfts, v3Nfts]);
 
-  /* --- START HANDLE COLLECTION STATE CHANGE --- */
-  const collUpdate = (x) => {
-    setActive((prevValue) => (x));
-    if (x === 'owned' && nfts.length > 0) {
-      setLoading(false)
-    } else {
-      setLoading(true);
-    }
-  }
-  /* --- END HANDLE COLLECTION STATE CHANGE --- */
+  //activity and offers (only fetched once their tab is opened)
+  const { transactionHistory } = useWalletHistory(active === 'activity' ? walletAddy : null);
+  const { offers, loading: offersLoading } = useWalletOffers(active === 'offers' ? walletAddy : null);
+  const offerSections = OFFER_COLLECTIONS
+    .map((c) => ({ ...c, offers: offers.filter((o) => o.collection === c.slug) }))
+    .filter((c) => c.offers.length > 0);
 
   //get wallet address from url
   useEffect(() => {
@@ -181,18 +186,18 @@ export default function WalletView() {
       <div className="page bg-opacity-60 bg-black">
         <div className="content px-8 z-10">
           <div className="picker-div divide-x-2 divide-white text-white pt-[2em]">
-            <p 
-              className={`picker pr-4 text-xl cursor-pointer ${active=== 'owned' ? 'drk-grey-txt' : ''}`}
-              onClick={() => collUpdate('owned')}>Owned Phunks
+            <p
+              className={`picker pr-4 text-xl cursor-pointer ${active === 'owned' ? 'drk-grey-txt' : ''}`}
+              onClick={() => setActive('owned')}>Owned Phunks
             </p>
-            {/*<p 
-              className={`picker mt-6 px-4 text-xl cursor-pointer ${active === 'offers' ? 'g-txt' : ''}`}
-              onClick={() => collUpdate('offers')}>Active Offers
+            <p
+              className={`picker px-4 text-xl cursor-pointer ${active === 'offers' ? 'drk-grey-txt' : ''}`}
+              onClick={() => setActive('offers')}>Active Offers
             </p>
-            <p 
-              className={`picker mt-6 px-4 text-xl cursor-pointer ${active === 'activity' ? 'g-txt' : ''}`}
-              onClick={() => collUpdate('activity')}>Activity
-            </p>*/}
+            <p
+              className={`picker px-4 text-xl cursor-pointer ${active === 'activity' ? 'drk-grey-txt' : ''}`}
+              onClick={() => setActive('activity')}>Activity
+            </p>
           </div>
           <h1 className="g-txt mr-auto text-5xl mb-8">
             {/*<span>
@@ -215,89 +220,16 @@ export default function WalletView() {
           </h1>           
           {
             active === "owned" ?
-            <>              
+            <>
               {
-                loading  ?
+                loading ?
                 <p className="text-2xl">Loading Phunks...</p>
-                :                
-                (
-                  v1Nfts.length > 0 ?
-                  <>
-                    <div className="block">
-                      <h2 className="text-2xl cursor-pointer mb-2 inline" onClick={() => setV1v(!v1v)}>Philips</h2>
-                      <FaAngleDown className={v1v ? `inline m-1 pb-1` : `hidden`}/>
-                      <FaAngleUp className={!v1v ? `inline m-1 pb-1` : `hidden`}/>
-                    </div>                    
-                    {v1v && <Filter
-                      phunks={phunks.filter(item => v1Nfts.includes(item.tokenId))}
-                      coll="philip"
-                    />}
-                  </>
-                  :
-                  null
-                )
-              }              
-              {
-                loading  ?
-                null
                 :
                 (
-                  wv1Nfts.length > 0 ?
-                  <>
-                    <div className="block">
-                      <h2 className="inline text-2xl cursor-pointer mb-2" onClick={() => setWv1v(!wv1v)}>Wrapped v1s</h2>
-                      <FaAngleDown className={wv1v ? `inline m-1 pb-1` : `hidden`}/>
-                      <FaAngleUp className={!wv1v ? `inline m-1 pb-1` : `hidden`}/>
-                    </div>
-                    {wv1v && <Filter
-                      phunks={phunks.filter(item => wv1Nfts.includes(item.tokenId))}
-                      coll="v1"
-                    />}
-                  </>
+                  nfts.length > 0 ?
+                  <Filter sections={ownedSections}/>
                   :
-                  null
-                )
-              }
-              {
-                loading  ?
-                null
-                :
-                (
-                  v2Nfts.length > 0 ?
-                  <>
-                    <div className="block">
-                      <h2 className="inline text-2xl cursor-pointer mb-2" onClick={() => setV2v(!v2v)}>CryptoPhunks</h2>
-                      <FaAngleDown className={v2v ? `inline m-1 pb-1` : `hidden`}/>
-                      <FaAngleUp className={!v2v ? `inline m-1 pb-1` : `hidden`}/>
-                    </div>
-                    {v2v && <Filter
-                      phunks={phunks.filter(item => v2Nfts.includes(item.tokenId))}
-                      coll="v2"
-                    />}
-                  </>
-                  :
-                  null
-                )
-              }
-              {
-                loading  ?
-                null
-                :
-                (
-                  v3Nfts.length > 0 ?
-                  <>
-                    <div className="block">
-                      <h2 className="inline text-2xl cursor-pointer mb-2" onClick={() => setV3v(!v3v)}>v3 Phunks</h2>
-                      <FaAngleDown className={v3v ? `inline m-1 pb-1` : `hidden`}/>
-                      <FaAngleUp className={!v3v ? `inline m-1 pb-1` : `hidden`}/>
-                    </div>
-                    {v3v && <Filter
-                      phunks={phunks.filter(item => v3Nfts.includes(item.tokenId))}
-                      coll="v3"
-                    />}
-                  </>
-                  :
-                  null
+                  <p className="text-2xl text-gray-400 my-4">This wallet doesn&apos;t own any Phunks.</p>
                 )
               }
             </>
@@ -307,8 +239,33 @@ export default function WalletView() {
           {
             active === "offers" ?
             <>
-              <h2 className="text-2xl"> Active Offers</h2>
-              <p className="text-2xl text-gray-400 my-4">Coming soon.</p>
+              <h2 className="text-2xl">Active Offers</h2>
+              {
+                offersLoading ?
+                <p className="text-2xl g-txt my-4">Loading offers...</p>
+                :
+                (
+                  offerSections.length > 0 ?
+                  offerSections.map((section) => (
+                    <div key={section.slug} className="mt-6">
+                      <h3 className="text-xl text-gray-300">{section.title}</h3>
+                      <div className="flex flex-wrap justify-start mt-2">
+                        {section.offers.map((offer) => (
+                          <Card
+                            key={offer.tokenId}
+                            price={`Bid: ${offer.value}Ξ`}
+                            atts=""
+                            id={offer.tokenId}
+                            coll={section.coll}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                  :
+                  <p className="text-2xl text-gray-400 my-4">This wallet has no active offers.</p>
+                )
+              }
             </>
             :
             null
@@ -317,7 +274,7 @@ export default function WalletView() {
             active === "activity" ?
             <>
               <h2 className="text-2xl">Trade History</h2>
-              <History transactions={transactionHistory} mp="marketplace"/>
+              <History transactions={transactionHistory} mp="marketplace" showCollection/>
             </>
             :
             null

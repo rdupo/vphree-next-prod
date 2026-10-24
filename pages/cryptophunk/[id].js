@@ -157,9 +157,8 @@ export default function V3Phunks() {
                 <div 
                   id="owner" 
                   className="collection-desc brite g-txt sans-underline"
-                  onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
-                                  Router.push({pathname: `/account/${owner}`}) :
-                                  Router.push({pathname: `/profile/${owner}`})}}>
+                  onClick={() => {Router.push({pathname: `/dashboard/${owner}`})}}
+                >
                   {
                     ownerEns ?
                     ownerEns :
@@ -240,9 +239,7 @@ export default function V3Phunks() {
                       <span 
                         id="top-bidder"
                         className="collection-desc brite g-txt sans-underline"
-                        onClick={() => {connectedAddress === offerer ?
-                                        Router.push({pathname: `/account/${offerer}`}) :
-                                        Router.push({pathname: `/profile/${offerer}`})}}
+                        onClick={() => {Router.push({pathname: `/dashboard/${offerer}`})}}
                       >
                         {
                           offererEns ?
