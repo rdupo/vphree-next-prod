@@ -34,7 +34,7 @@ export default function Home() {
     if(typeof(window) !== 'undefined') {
       return parseInt(((window.innerWidth) - 16) / 70) >= 20
         ? 20
-        : parseInt(((window.innerWidth) - 16) / 70);
+        : parseInt(((window.innerWidth) - 16) / 70) - 1;
     }
   }
 
@@ -104,22 +104,25 @@ export default function Home() {
           <p className={!showWarning ? "hidden" : "text-red-500 text-base"}>
               Please enter a valid wallet address or ENS domain
           </p>
-          <div>          
-            <Link href="/collections/v3-phunks">
-              <button className="w-60 mobile-100 cta v3-b v3-txt black-bg">v3 Phunks Marketplace</button>
-            </Link>
+          {/* layout (4 / 2 / 1 per row) lives in globals.css under "home CTAs" */}
+          <div className="home-ctas-wrap">
+           <div className="home-ctas">
             <Link href="/collections/philip-intern-project">
-              <button className="w-60 mobile-100 cta v2-b philip-txt black-bg">Philip Marketplace</button>
+              <button className="v2-b philip-txt black-bg">Philip<br/>Market</button>
             </Link>
             <Link href="/collections/wrapped-v1-phunks">
-              <button className="w-60 mobile-100 cta v1-b v1-txt black-bg">Wrapped v1 Marketplace</button>
+              <button className="v1-b v1-txt black-bg">Wrapped v1<br/>Market</button>
+            </Link>
+            <Link href="/collections/v3-phunks">
+              <button className="v3-b v3-txt black-bg">v3<br/>Market</button>
             </Link>
             <Link href="/hub/philip-intern-project">
-              <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Phunky Hub</button>
+              <button className="bg-[#ffb900] black-txt y-b">Phunky<br/>Hub</button>
             </Link>
-            <Link href="/dose-of-phunks">
-              <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Dose of Phunks</button>
-            </Link>
+           </div>
+            {/*<Link href="/dose-of-phunks">
+                          <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Dose of Phunks</button>
+                        </Link>*/}
           </div>
         </div>
       </div>

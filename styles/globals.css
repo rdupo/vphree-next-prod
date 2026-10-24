@@ -186,6 +186,41 @@ select, option, .black-txt {
   font-size: 60px;
 }
 
+/* home CTAs: always 4 per row, 2 per row, or 1 per row (never 3+1), equal widths spanning
+   the search bar. Breakpoints use the wrapper's width, so they follow the search bar. */
+.home-ctas-wrap {
+  container-type: inline-size;
+  margin-top: 25px;
+}
+
+.home-ctas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* thresholds keep each button comfortably wider than its longest label ("Wrapped v1") */
+@container (min-width: 320px) {
+  .home-ctas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container (min-width: 680px) {
+  .home-ctas {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.home-ctas > a {
+  display: block;
+}
+
+.home-ctas button {
+  width: 100%;
+  height: 100%;
+}
+
 /*buttons*/
 .cta {
   /*border-radius: 40px;*/
