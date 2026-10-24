@@ -384,18 +384,18 @@ async function unwrapPhilip() {
             <>
             <div className="mt-8 w-full">
               <Link href="/collections/philip-intern-project">
-                <button className="mobile-100 cta v1-b v1-bg black-txt w-[345px]">Philip Marketplace</button>
+                <button className="mobile-100 cta-alt v1-b v1-bg black-txt w-[345px]">Philip Marketplace</button>
               </Link>
               <Link href="/view-all/philip-intern-project">
-                <button className="mobile-100 cta v1-b black-bg v1-txt w-[315px]">Philip Phinder</button>
+                <button className="mobile-100 cta-alt v1-b black-bg v1-txt w-[315px]">Philip Phinder</button>
               </Link>
             </div>
             <div className="mt-2 w-full">
               <Link href="/collections/wrapped-v1-phunks">
-                <button className="mobile-100 cta v1-b v1-bg black-txt w-[345px]">Wrapped v1 Marketplace</button>
+                <button className="mobile-100 cta-alt v1-b v1-bg black-txt w-[345px]">Wrapped v1 Marketplace</button>
               </Link>
               <Link href="/view-all/wrapped-v1-phunks">
-                <button className="mobile-100 cta v1-b black-bg v1-txt w-[315px]">View All Wrapped v1s</button>
+                <button className="mobile-100 cta-alt v1-b black-bg v1-txt w-[315px]">View All Wrapped v1s</button>
               </Link>
             </div>
             </>
@@ -405,7 +405,7 @@ async function unwrapPhilip() {
           {activeCollection === 'cryptophunks' ?
             <div className="mt-8 w-full">
               <Link href="/view-all/cryptophunks">
-                <button className="mobile-100 cta v2-b v2-bg black-txt">View All CryptoPhunks</button>
+                <button className="mobile-100 cta-alt v2-b v2-bg black-txt">View All CryptoPhunks</button>
               </Link>
             </div>
             :
@@ -414,10 +414,10 @@ async function unwrapPhilip() {
           {activeCollection === 'v3phunks' ?
             <div className="mt-8 w-full">
             <Link href="/collections/v3-phunks">
-              <button className="mobile-100 cta v3-bg border-[#83dfb2] border-[3px] black-txt">v3 Marketplace</button>
+              <button className="mobile-100 cta-alt v3-bg border-[#83dfb2] border-[3px] black-txt">v3 Marketplace</button>
             </Link>
             <Link href="/view-all/v3-phunks">
-              <button className="mobile-100 cta border-[#83dfb2] border-[3px] black-bg text-[#83dfb2]">View All v3s</button>
+              <button className="mobile-100 cta-alt border-[#83dfb2] border-[3px] black-bg text-[#83dfb2]">View All v3s</button>
             </Link>
             </div>
             :
@@ -567,7 +567,7 @@ async function unwrapPhilip() {
             :
             null
           }
-          {activeCollection === 'v3phunks' ?
+          {/*activeCollection === 'v3phunks' ?
             <> 
               <h2 className="mt-16 mb-4 text-2xl">Instant Liquidity</h2>
               <p className="text-gray-400"> Sell to the 
@@ -579,7 +579,7 @@ async function unwrapPhilip() {
             </> 
             : 
             null
-          }
+          */}
           {activeCollection === 'cryptophunks' ?
             <>
               <h2 className="mt-16 mb-4 text-2xl">Instant Liquidity</h2>
@@ -648,7 +648,7 @@ async function unwrapPhilip() {
               </div>*/}
               <p className="text-gray-400 mt-2">Sell to the 
                 <a 
-                  href={`https://nftx.io/vault/0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91/sell/`} 
+                  href={`https://nftx.io/ethereum/collections/cryptophunks?tab=sell`} 
                   target="_blank"> NTFX Liquidity Pool
                 </a>
               </p>
