@@ -9,7 +9,7 @@ import useSales from '../hooks/useSales'
 
 export default function Home() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [iWidth, setIWidth] = useState(getInitialWidth());
   const { sales } = useSales('v3-phunks');

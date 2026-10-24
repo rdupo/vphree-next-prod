@@ -1,5 +1,10 @@
 # vphree-next
 
+Next.js 16 (Pages Router, Turbopack) · React 19 · ethers v6. Requires Node 20.9+ (22 LTS recommended).
+
+- `npm run dev` / `npm run build` / `npm start`
+- `npm run lint` runs ESLint directly (`next build` no longer lints)
+
 ## How marketplace data works
 
 The site no longer scans the blockchain from the browser. A small indexer stores just the

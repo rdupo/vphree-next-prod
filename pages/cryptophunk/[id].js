@@ -40,7 +40,7 @@ export default function V3Phunks() {
   const { transactionHistory } = useTokenHistory('cryptophunks', id);
   const [listPrice, setListPrice] = useState('');
   const [bid, setBid] = useState('');
-  const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
+  const provider = new ethers.AlchemyProvider('mainnet', alcKey);
   const [signer, setSigner] = useState([]);
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   let alt_id
@@ -225,7 +225,7 @@ export default function V3Phunks() {
                   :
                   <p id="price">Price:&nbsp;
                     <span className="collection-desc g-txt">
-                      {ethers.utils.formatUnits(listed.minValue._hex,18) + 'Ξ'}
+                      {ethers.formatUnits(listed.minValue,18) + 'Ξ'}
                     </span>
                   </p>
                 }
@@ -234,7 +234,7 @@ export default function V3Phunks() {
                   :
                   <>
                     <p id="bid" className="">Top Bid:&nbsp;
-                      <span className="collection-desc g-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
+                      <span className="collection-desc g-txt">{ethers.formatUnits(offers,18) + 'Ξ'}</span>
                     </p>
                     <p className="">Bidder:&nbsp; 
                       <span 

@@ -48,7 +48,7 @@ export default function PhunkyHub() {
   //const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
   const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider);
@@ -93,14 +93,14 @@ export default function PhunkyHub() {
   //start flywheel js ---------
   /*const getBalance = async () => {
     const bal = await provider.getBalance(flywheelAddy);
-    const ethBal = Number(ethers.utils.formatUnits(bal._hex,18)).toFixed(2);
+    const ethBal = Number(ethers.formatUnits(bal,18)).toFixed(2);
     setFlywheelBalance(ethBal);
   }
 
   const getValue = async (phunk) => {
     const temp = [];
     const percentOfValue = await flywheelContract.contractConfig();
-    const pct = Number(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
+    const pct = Number(ethers.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay,2));
 
     const res = await fetch(`/api/priceEstimate/${phunkAddy}/${phunk}`);
     const data = await res.json();
@@ -116,7 +116,7 @@ export default function PhunkyHub() {
     console.log("flywheel:", temp);
 
     const minValue = await flywheelContract.getCurrentMinimumValidPrice();
-    const minValidPrice = Number(ethers.utils.formatUnits(minValue[0]._hex,18));
+    const minValidPrice = Number(ethers.formatUnits(minValue[0],18));
     setMinFlywheelPrice(minValidPrice);
 
     setFlywheelLoading(false);
@@ -128,7 +128,7 @@ export default function PhunkyHub() {
     const aucDetails = await aucContract.auction();
     const name = await provider.lookupAddress(aucDetails.bidder);
     const aucMinBidPerc = await aucContract.minBidIncrementPercentage();
-    const aucPhunk = (ethers.utils.formatUnits(aucDetails.phunkId._hex,0));
+    const aucPhunk = aucDetails.phunkId.toString();
     setAucData(aucDetails);
     setBidInc(1+(Number(aucMinBidPerc)/100));
     setAucBidder(name ? name : aucDetails.bidder.substr(0,4)+'...'+aucDetails.bidder.substr(aucDetails.bidder.length-4, aucDetails.bidder.length))
@@ -224,12 +224,12 @@ export default function PhunkyHub() {
 
   /* ---- START WRAPPER FUNC ---- */
   async function loadV1() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
 
     try {
-        const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+        const w = await wc.canBeWrappedByUser(signer.address, wrapId);
 
         if (w) {
             setWrapBtnText("Wrap Philip");
@@ -241,7 +241,7 @@ export default function PhunkyHub() {
     }
 
     try {
-        const u = await wc.canBeUnwrappedByUser(signer._address, wrapId);
+        const u = await wc.canBeUnwrappedByUser(signer.address, wrapId);
 
         if (u) {
             setWrapBtnText("Unwrap v1");
@@ -256,16 +256,16 @@ export default function PhunkyHub() {
   }
 
   async function wrapPhilip() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const pc = new ethers.Contract(philipAddy, xferAbi, signer);
     const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
     
     try{
-      const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+      const w = await wc.canBeWrappedByUser(signer.address, wrapId);
 
       if(w) {
-      const xferPromise = pc.safeTransferFrom(signer._address, wrapperAddy, wrapId);
+      const xferPromise = pc.safeTransferFrom(signer.address, wrapperAddy, wrapId);
       txnToast(xferPromise, `Wrapping Philip #${wrapId}`); 
       await xferPromise
         .then(async (result) => {
@@ -305,12 +305,12 @@ export default function PhunkyHub() {
   }
   
 async function unwrapPhilip() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
     
     try{
-      const u = await wc.canBeUnwrappedByUser(signer._address, wrapId);
+      const u = await wc.canBeUnwrappedByUser(signer.address, wrapId);
       if (u) {
         const xferPromise = wc.unwrap(wrapId);
         txnToast(xferPromise, `Unwrapping Philip #${wrapId}`); 
@@ -556,10 +556,10 @@ async function unwrapPhilip() {
           {activeCollection === 'cryptophunks' ? 
             aucData.length > 0 ? 
               <AuctionTimer
-                targetDate={Number(ethers.utils.formatUnits(aucData.endTime._hex,0))*1000}
-                id={ethers.utils.formatUnits(aucData.phunkId._hex,0)}
+                targetDate={Number(aucData.endTime)*1000}
+                id={aucData.phunkId.toString()}
                 bidder={aucBidder}
-                highBid={ethers.utils.formatUnits(aucData.amount._hex,18)}
+                highBid={ethers.formatUnits(aucData.amount,18)}
                 bidPercent={bidInc}
               />
               :

@@ -38,7 +38,7 @@ export default function WalletView() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const nftbKey = process.env.NFTBANK_API_KEY
   const [walletAddy, setWalletAddy] = useState(null);
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const { connectedAddress, walletChanged } = useWallet();
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
 

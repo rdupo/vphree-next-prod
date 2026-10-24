@@ -50,8 +50,8 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
   //start bid functions ---------------------------------------------------
   //settle current & start new function
   async function settleNStart() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const aucHouse = new ethers.Contract(auctionAddy, auctionAbi, signer);
     const snsPromise = aucHouse.settleCurrentAndCreateNewAuction();
     txnToast(snsPromise, `Starting new auction`);
@@ -92,12 +92,12 @@ const AuctionTimer = ({ targetDate, id, bidder, highBid, bidPercent }) => {
 
   //bid() function
   async function placeBid() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const aucHouse = new ethers.Contract(auctionAddy, auctionAbi, signer);
-    const ethBid = ethers.utils.parseUnits(bid, 'ether');
-    const bidPromise = aucHouse.createBid(id, {value: ethBid._hex});
-    txnToast(bidPromise, `Placing bid for ${ethers.utils.formatUnits(ethBid,18)}Ξ`);
+    const ethBid = ethers.parseUnits(bid, 'ether');
+    const bidPromise = aucHouse.createBid(id, {value: ethBid});
+    txnToast(bidPromise, `Placing bid for ${ethers.formatUnits(ethBid,18)}Ξ`);
     await bidPromise
     .then(async (result) => {
       const rh = result.hash

@@ -39,7 +39,7 @@ export default function Philips() {
   const { transactionHistory } = useTokenHistory('philip-intern-project', id);
   const [listPrice, setListPrice] = useState('');
   const [bid, setBid] = useState('');
-  const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
+  const provider = new ethers.AlchemyProvider('mainnet', alcKey);
   const [signer, setSigner] = useState([]);
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   const [isHovered, setIsHovered] = useState(false);
@@ -191,15 +191,15 @@ export default function Philips() {
   };
 
   async function listPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const cc = new ethers.Contract(collectionContract, v3Abi, signer);
     const ap = await cc.isApprovedForAll(connectedAddress, marketContract);
     if (ap) {
-      const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
+      const lPrice = ethers.parseUnits(listPrice, 'ether');
       const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-      txnToast(listPromise, `Listing Philip for ${ethers.utils.formatEther(lPrice)}Ξ`);      
+      txnToast(listPromise, `Listing Philip for ${ethers.formatEther(lPrice)}Ξ`);      
       await listPromise
         .then(async (result) => {
         const rh = result.hash
@@ -244,9 +244,9 @@ export default function Philips() {
               },
             });
 
-            const lPrice = ethers.utils.parseUnits(listPrice, 'ether');
+            const lPrice = ethers.parseUnits(listPrice, 'ether');
             const listPromise = cpmp.offerPhunkForSale(id, lPrice);
-            txnToast(listPromise, `Listing Philip for ${ethers.utils.formatEther(lPrice)}Ξ`);
+            txnToast(listPromise, `Listing Philip for ${ethers.formatEther(lPrice)}Ξ`);
 
             await listPromise.then(async (result) => {
               const rh = result.hash;
@@ -291,8 +291,8 @@ export default function Philips() {
   }
 
   async function delistPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const delistPromise = cpmp.phunkNoLongerForSale(id);
     txnToast(delistPromise, `Delisting Philip`); 
@@ -325,16 +325,16 @@ export default function Philips() {
   }
 
   async function acceptPhunkBid() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const cc = new ethers.Contract(collectionContract, v3Abi, signer);
     const ap = await cc.isApprovedForAll(connectedAddress, marketContract);
     const c = await cpmp.phunkBids(id).then(new Response);
-    const bidPrice = c.value._hex;
+    const bidPrice = c.value;
     if(ap) {
       const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
-      txnToast(acceptBidPromise, `Accepting bid of ${ethers.utils.formatUnits(bidPrice,18)}Ξ`);
+      txnToast(acceptBidPromise, `Accepting bid of ${ethers.formatUnits(bidPrice,18)}Ξ`);
       await acceptBidPromise
         .then(async (result) => {
         const rh = result.hash
@@ -379,7 +379,7 @@ export default function Philips() {
             });
 
             const acceptBidPromise = cpmp.acceptBidForPhunk(id, bidPrice);
-            txnToast(acceptBidPromise, `Accepting bid of ${ethers.utils.formatUnits(bidPrice, 18)}Ξ`);
+            txnToast(acceptBidPromise, `Accepting bid of ${ethers.formatUnits(bidPrice, 18)}Ξ`);
             
             await acceptBidPromise.then(async (result) => {
               const rh = result.hash;
@@ -423,11 +423,11 @@ export default function Philips() {
   }
 
   async function buyPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
-    const buyPhunkPromise = cpmp.connect(signer).buyPhunk(id, {value: listed.minValue._hex});
-    txnToast(buyPhunkPromise, `Buying Philip for ${ethers.utils.formatUnits(listed.minValue._hex,18)}Ξ`);
+    const buyPhunkPromise = cpmp.connect(signer).buyPhunk(id, {value: listed.minValue});
+    txnToast(buyPhunkPromise, `Buying Philip for ${ethers.formatUnits(listed.minValue,18)}Ξ`);
     await buyPhunkPromise
       .then(async (result) => {
         const rh = result.hash
@@ -457,13 +457,13 @@ export default function Philips() {
   }
 
   async function bidOnPhunk() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     console.log(cpmp);
-    const ethBid = ethers.utils.parseUnits(bid, 'ether');
+    const ethBid = ethers.parseUnits(bid, 'ether');
     const enterBidPromise = cpmp.enterBidForPhunk(id, {value: ethBid});
-    txnToast(enterBidPromise, `Entering bid of ${ethers.utils.formatEther(ethBid)}Ξ`);
+    txnToast(enterBidPromise, `Entering bid of ${ethers.formatEther(ethBid)}Ξ`);
     await enterBidPromise
       .then(async (result) => {
         const rh = result.hash
@@ -494,8 +494,8 @@ export default function Philips() {
   }
 
   async function cancelPhunkBid() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const withdrawBidPromise = cpmp.withdrawBidForPhunk(id);
     txnToast(withdrawBidPromise, `Canceling bid for Philip`);  
@@ -670,7 +670,7 @@ export default function Philips() {
                   :
                   <p id="price">Price:&nbsp;
                     <span className="collection-desc g-txt">
-                      {ethers.utils.formatUnits(listed.minValue._hex,18) + 'Ξ'}
+                      {ethers.formatUnits(listed.minValue,18) + 'Ξ'}
                     </span>
                   </p>
                 }
@@ -679,7 +679,7 @@ export default function Philips() {
                   :
                   <>
                     <p id="bid" className="">Top Bid:&nbsp;
-                      <span className="collection-desc g-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
+                      <span className="collection-desc g-txt">{ethers.formatUnits(offers,18) + 'Ξ'}</span>
                     </p>
                     <p className="">Bidder:&nbsp; 
                       <span 

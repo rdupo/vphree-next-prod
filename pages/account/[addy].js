@@ -25,7 +25,7 @@ export default function V3Phunks() {
   const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
   const { connectedAddress, walletChanged } = useWallet();
@@ -109,7 +109,7 @@ export default function V3Phunks() {
     const thisAddy = x;
     const nftIds = await getNFTs(thisAddy);
     const pWith = await contract.pendingWithdrawals(thisAddy);
-    const withEth = Number(Number(pWith._hex)/1000000000000000000).toFixed(3);
+    const withEth = Number(Number(pWith)/1000000000000000000).toFixed(3);
     setPendingWithdrawAmt(withEth);
     setNFTs(nftIds);
 
@@ -139,8 +139,8 @@ export default function V3Phunks() {
 
   //withdraw() function
   async function withdrawMyEth() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const cpmp = new ethers.Contract(marketContract, marketAbi, signer);
     const withdrawPromise = cpmp.withdraw();
     txnToast(withdrawPromise, `Withdrawing ${pendingWithdrawAmt}Ξ`);
