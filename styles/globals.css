@@ -402,6 +402,23 @@ select, option, .black-txt {
     font-size: 50px;
   }
 
+  .text-5xl {
+    font-size: 2.75rem;
+  }
+
+  /* history/activity tables scroll inside a box instead of stretching the page */
+  .history-table-wrap {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .history-table-wrap thead th {
+    position: sticky;
+    top: 0;
+    background: inherit;
+  }
+
   /*listing*/
   #mobile-c-links {
     display: block;

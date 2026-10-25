@@ -5,7 +5,8 @@ const History = ({ transactions }) => {
     <div>
       <p className="metadata">History</p>
       {transactions.length > 0 ?
-        (<table className="collection-desc w-full text-left mb-20 bg-black">
+        (<div className="history-table-wrap mb-20">
+        <table className="collection-desc w-full text-left bg-black">
           <thead>
             <tr className="g-txt black-bg">
               <th>Event</th>
@@ -85,7 +86,8 @@ const History = ({ transactions }) => {
               </tr>
             ))}
           </tbody>
-        </table>)
+        </table>
+        </div>)
         :
         (<p className="g-txt">Loading transaction history...</p>)
       }

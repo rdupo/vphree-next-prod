@@ -173,7 +173,7 @@ export default function V3Phunks() {
                 <p><a 
                   className="collection-desc"
                   target="_blank" 
-                  href={`https://pro.opensea.io/nft/ethereum/0xf07468ead8cf26c752c676e43c814fee9c8cf402/${id}`}
+                  href={`https://cryptophunks.com/details/${id}`}
                 >
                   CryptoPhunk {id}
                 </a></p>
@@ -198,7 +198,7 @@ export default function V3Phunks() {
                 <p><a 
                   className="collection-desc"
                   target="_blank" 
-                  href={`https://pro.opensea.io/nft/ethereum/0xf07468ead8cf26c752c676e43c814fee9c8cf402/${id}`}
+                  href={`https://cryptophunks.com/details/${id}`}
                 >
                   CryptoPhunk #{id}
                 </a></p>
@@ -250,7 +250,7 @@ export default function V3Phunks() {
                     </p>
                   </>
                 }
-                <a target="_blank" href={`https://notlarvalabs.com/cryptophunks/details/${id}`}>View on NLL</a>
+                <a target="_blank" href={`https://cryptophunks.com/details/${id}`}>View on CryptoPhunks.com</a>
               </div>
             </div>
           </div>

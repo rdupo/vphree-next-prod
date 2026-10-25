@@ -273,7 +273,7 @@ export default function WalletView() {
           {
             active === "activity" ?
             <>
-              <h2 className="text-2xl">Trade History</h2>
+              <h2 className="text-2xl mb-2">Trade History</h2>
               <History transactions={transactionHistory} mp="marketplace" showCollection/>
             </>
             :

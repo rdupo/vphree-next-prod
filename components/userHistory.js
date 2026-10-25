@@ -15,7 +15,8 @@ const History = ({ transactions, mp, showCollection = false }) => {
   return (
     <div>
       {transactions && transactions.length > 0 && transactions[0].eventType !== 'none' ?
-        (<table className="collection-desc w-full text-left mb-20 bg-black">
+        (<div className="history-table-wrap mb-20">
+        <table className="collection-desc w-full text-left bg-black">
           <thead>
             <tr className="g-txt black-bg">
               <th>Event</th>
@@ -119,7 +120,8 @@ const History = ({ transactions, mp, showCollection = false }) => {
               </tr>
             ))}
           </tbody>
-        </table>)
+        </table>
+        </div>)
         :
         transactions && transactions[0] && transactions[0].eventType === 'none' 
         ?
