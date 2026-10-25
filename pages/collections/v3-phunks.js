@@ -2,6 +2,7 @@ import { React, useState, useEffect } from 'react'
 import Image from 'next/image'
 import Header from  '../../components/Header'
 import CollectionInfo from '../../components/CollectionInfo'
+import { CollectionStatsCard } from '../../components/CollectionStats'
 import Card from '../../components/Card'
 import Footer from '../../components/Footer'
 import Banner from '../../assets/v3banner.png'
@@ -115,6 +116,7 @@ export default function V3Phunks() {
             twitter="https://twitter.com/v3phunks"
             contract={collectionContract}
           />
+          <CollectionStatsCard collection="v3-phunks"/>
           <div className="filter-sort-wrapper mb-8">
             <div>
               <label className="mr-3">ID</label>

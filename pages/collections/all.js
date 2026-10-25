@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
+import CollectionStats from '../../components/CollectionStats'
 import useApi from '../../hooks/useApi'
 
 const phunkImage = (id) => `/phunks/phunk${String(id).padStart(4, '0')}.svg`
@@ -41,11 +42,6 @@ const COLLECTIONS = {
   },
 }
 
-function eth(value) {
-  if (value === null || value === undefined) return '---'
-  return Number(value).toLocaleString('en-US', { maximumFractionDigits: 3 }) + 'Ξ'
-}
-
 function PreviewThumb({ c, id }) {
   const [isHovered, setIsHovered] = useState(false)
   const look = isHovered && c.hover ? c.hover : c
@@ -63,15 +59,6 @@ function PreviewThumb({ c, id }) {
   )
 }
 
-function Stat({ label, children }) {
-  return (
-    <div className="mr-8 mb-2">
-      <p className="text-gray-400 text-sm">{label}</p>
-      <p className="text-lg">{children}</p>
-    </div>
-  )
-}
-
 function CollectionSection({ summary }) {
   const c = COLLECTIONS[summary.collection]
 
@@ -83,12 +70,7 @@ function CollectionSection({ summary }) {
         </Link>
         <Link href={c.market} className={`${c.txt} collection-desc brite`}>View Market &rarr;</Link>
       </div>
-      <div className="collection-desc flex flex-wrap">
-        <Stat label="Listed">{summary.listedCount}</Stat>
-        <Stat label="Floor">{eth(summary.floor)}</Stat>
-        <Stat label="Last Sale">{eth(summary.lastSale?.price)}</Stat>
-        <Stat label="Total Volume">{eth(summary.volume)}</Stat>
-      </div>
+      <CollectionStats summary={summary}/>
       {summary.preview.length > 0 ?
         <div className="collection-preview mt-2">
           {summary.preview.map((id) => (
@@ -112,7 +94,7 @@ export default function AllCollections() {
         <div className="content px-8 z-10">
           <h1 className="g-txt text-5xl pt-8 mb-4">View All Collections</h1>
           <p className="collection-desc w-9/12 mb-8">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            View all collections currently supported by vPhree. You can compare floors and recent activity at a glance, or jump into a collection to browse everything that&apos;s listed.
           </p>
           {loading ? <p className="text-2xl g-txt">Loading collections...</p> : null}
           {error ? <p className="text-2xl text-red-500">Couldn&apos;t load collections. Please try again.</p> : null}

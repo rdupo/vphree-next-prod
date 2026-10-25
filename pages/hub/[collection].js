@@ -33,6 +33,7 @@ import philipAbi from '../../utils/philipAbi'
 import xferAbi from '../../utils/xferAbi'
 import philipAddy from '../../utils/philipAddy'
 import SaleCard from '../../components/SaleCard'
+import HubNav from '../../components/HubNav'
 
 export default function PhunkyHub() {
   const router = useRouter()
@@ -368,18 +369,7 @@ async function unwrapPhilip() {
       <Toaster/>
       <div className="page bg-opacity-60 bg-black">
         <div className="content px-8 z-10">
-          <div className="hub-picker-div divide-x-2 divide-gray-500 text-gray-500">
-            <p 
-              className={`hub-picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'philip-intern-project' ? 'text-[#a79aff]' : ''}`}
-              onClick={() => Router.push({ pathname: `/hub/philip-intern-project` })}
-              >Philips</p>
-            <p 
-              className={`hub-picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'cryptophunks' ? 'text-[#75a8c2]' : ''}`}
-              onClick={() => Router.push({ pathname: `/hub/cryptophunks` })}>CryptoPhunks</p>
-            <p 
-              className={`hub-picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v3phunks' ? 'text-[#83dfb2]' : ''}`}
-              onClick={() => Router.push({ pathname: `/hub/v3phunks` })}>v3Phunks</p>
-          </div>
+          <HubNav active={activeCollection}/>
           {activeCollection === 'philip-intern-project' ?
             <>
             <div className="mt-8 w-full">

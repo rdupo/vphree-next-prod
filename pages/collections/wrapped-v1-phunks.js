@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from  '../../components/Header'
 import CollectionInfo from '../../components/CollectionInfo'
+import { CollectionStatsCard } from '../../components/CollectionStats'
 import Card from '../../components/Card'
 import Footer from '../../components/Footer'
 import Twitter from '../../assets/twitter.png'
@@ -116,6 +117,7 @@ export default function PhilipMarket() {
             twitter="https://twitter.com/CryptoPhunksV1"
             contract={collectionContract}
           />
+          <CollectionStatsCard collection="wrapped-v1-phunks"/>
           <div className="filter-sort-wrapper mb-8">
             <div>
               <label className="mr-3">ID</label>

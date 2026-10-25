@@ -431,6 +431,21 @@ select, option, .black-txt {
     font-size: 2.75rem;
   }
 
+  /* collection stats: drop vPhree Volume and tighten spacing so Listed / Floor / Last Sale
+     fit on one line, even inside the padded /collections/all boxes on small phones */
+  .stat-desktop-only {
+    display: none;
+  }
+
+  .collection-stats {
+    flex-wrap: nowrap;
+    column-gap: 1.25rem;
+  }
+
+  .collection-stats > div {
+    margin-right: 0;
+  }
+
   /* history/activity tables scroll inside a box instead of stretching the page */
   .history-table-wrap {
     max-height: 60vh;
