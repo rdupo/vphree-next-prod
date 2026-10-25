@@ -185,21 +185,7 @@ export default function WalletView() {
       <Toaster/>
       <div className="page bg-opacity-60 bg-black">
         <div className="content px-8 z-10">
-          <div className="picker-div divide-x-2 divide-white text-white pt-[2em]">
-            <p
-              className={`picker pr-4 text-xl cursor-pointer ${active === 'owned' ? 'drk-grey-txt' : ''}`}
-              onClick={() => setActive('owned')}>Owned Phunks
-            </p>
-            <p
-              className={`picker px-4 text-xl cursor-pointer ${active === 'offers' ? 'drk-grey-txt' : ''}`}
-              onClick={() => setActive('offers')}>Active Offers
-            </p>
-            <p
-              className={`picker px-4 text-xl cursor-pointer ${active === 'activity' ? 'drk-grey-txt' : ''}`}
-              onClick={() => setActive('activity')}>Activity
-            </p>
-          </div>
-          <h1 className="g-txt mr-auto text-5xl mb-8">
+          <h1 className="g-txt mr-auto text-5xl pt-4">
             {/*<span>
             Wallet:
             </span>*/}
@@ -217,7 +203,21 @@ export default function WalletView() {
                 )
               }
             </a>
-          </h1>           
+          </h1>
+          <div className="picker-div divide-x-2 divide-white text-white pt-2 pb-12">
+            <p
+              className={`picker pr-4 text-xl cursor-pointer ${active === 'owned' ? 'drk-grey-txt' : ''}`}
+              onClick={() => setActive('owned')}>Owned Phunks
+            </p>
+            <p
+              className={`picker px-4 text-xl cursor-pointer ${active === 'offers' ? 'drk-grey-txt' : ''}`}
+              onClick={() => setActive('offers')}>Active Offers
+            </p>
+            <p
+              className={`picker px-4 text-xl cursor-pointer ${active === 'activity' ? 'drk-grey-txt' : ''}`}
+              onClick={() => setActive('activity')}>Activity
+            </p>
+          </div>           
           {
             active === "owned" ?
             <>
