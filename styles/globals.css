@@ -1,7 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap');
 
 html,
 body {
@@ -129,6 +129,10 @@ select, option, .black-txt {
   border: 3px solid #648596;
 }
 
+.philip-b {
+  border: 3px solid #648596;
+}
+
 .y-b {
   border: 3px solid #ffb900;
 }
@@ -186,11 +190,73 @@ select, option, .black-txt {
   font-size: 60px;
 }
 
+/* home CTAs: always 4 per row, 2 per row, or 1 per row (never 3+1), equal widths spanning
+   the search bar. Breakpoints use the wrapper's width, so they follow the search bar. */
+.home-ctas-wrap {
+  container-type: inline-size;
+  margin-top: 25px;
+}
+
+.home-ctas {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* thresholds keep each button comfortably wider than its longest label ("Wrapped v1") */
+@container (min-width: 320px) {
+  .home-ctas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container (min-width: 680px) {
+  .home-ctas {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.home-ctas > a {
+  display: block;
+}
+
+.home-ctas button {
+  width: 100%;
+  height: 100%;
+}
+
+/* collections/all: one row of listing thumbnails. Extra items wrap to rows that are zero
+   height and clipped, so only whole images show at any width. */
+.collection-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  grid-template-rows: auto;
+  grid-auto-rows: 0;
+  column-gap: 8px;
+  overflow: hidden;
+}
+
+.collection-preview > a {
+  display: block;
+  aspect-ratio: 1;
+}
+
+.collection-preview img {
+  width: 100%;
+  height: 100%;
+}
+
 /*buttons*/
 .cta {
   /*border-radius: 40px;*/
   padding: 10px 20px;
   font-size: 20px;
+  margin: 20px 20px 0 0;
+}
+
+.cta-alt {
+  /*border-radius: 40px;*/
+  padding: 10px 20px;
   margin: 20px 20px 0 0;
 }
 
@@ -359,6 +425,42 @@ select, option, .black-txt {
 
   .home-title {
     font-size: 50px;
+  }
+
+  .text-5xl {
+    font-size: 2.75rem;
+  }
+
+  /* collection stats: drop vPhree Volume and tighten spacing so Listed / Floor / Last Sale
+     fit on one line, even inside the padded /collections/all boxes on small phones */
+  .stat-desktop-only {
+    display: none;
+  }
+
+  .collection-stats {
+    flex-wrap: nowrap;
+    column-gap: 1.25rem;
+  }
+
+  .collection-stats > div {
+    margin-right: 0;
+  }
+
+  /* history/activity tables scroll inside a box instead of stretching the page */
+  .history-table-wrap {
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+  .history-table-wrap thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: inherit;
+    /* On fractional pixel-ratio screens the sticky header can sit a sub-pixel below the box's
+       top edge, letting scrolled rows peek through. Extend its background up to cover that seam. */
+    box-shadow: 0 -2px 0 0 #000;
   }
 
   /*listing*/

@@ -19,7 +19,7 @@ import Link from 'next/link'
 export default function V3Phunks() {
   const collectionContract = philipAddy
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const contract = new ethers.Contract(philipAddy, philipAbi, provider);
 
   const [f, setF] = useState({})
@@ -46,7 +46,7 @@ export default function V3Phunks() {
   useEffect(() => {
     async function fetchWrapped() {
       const w = await contract.getPhunksBelongingToOwner(wrapperAddy)
-      const wIds = w.map(item => parseInt(item._hex, 16));
+      const wIds = w.map(item => Number(item));
       const wPhilips = philips.filter(phil => wIds.includes(phil.tokenId));
       setPhunks(wPhilips);
     };

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Header from  '../../components/Header'
 import Footer from '../../components/Footer'
 import History from '../../components/History_qBC'
-import getTxnHistory from '../../hooks/nllTxnHistory'
+import useTokenHistory from '../../hooks/useTokenHistory'
 import { Silkscreen, Montserrat } from 'next/font/google'
 import { Network, Alchemy } from 'alchemy-sdk'
 import { ethers } from 'ethers'
@@ -37,10 +37,10 @@ export default function V3Phunks() {
   const [ownerEns, setOwnerEns] = useState('');
   const [bidActive, setBidState] = useState(false);
   const [listActive, setListState] = useState(false);
-  const { transactionHistory } = getTxnHistory(id);
+  const { transactionHistory } = useTokenHistory('cryptophunks', id);
   const [listPrice, setListPrice] = useState('');
   const [bid, setBid] = useState('');
-  const provider = new ethers.providers.AlchemyProvider('homestead', alcKey);
+  const provider = new ethers.AlchemyProvider('mainnet', alcKey);
   const [signer, setSigner] = useState([]);
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   let alt_id
@@ -109,6 +109,11 @@ export default function V3Phunks() {
             setOffererEns(bidderEns);
             //console.log("bid from: ", offerer, "; connected: ", connectedAddress);
             //console.log('offerer ENS', offererEns);
+          } else {
+            // Bid was accepted or withdrawn; clear the stale one
+            setOffers('');
+            setOfferer('');
+            setOffererEns('');
           }
         } catch (error) {  }
 
@@ -157,9 +162,8 @@ export default function V3Phunks() {
                 <div 
                   id="owner" 
                   className="collection-desc brite g-txt sans-underline"
-                  onClick={() => {connectedAddress.toLowerCase() === owner.toLowerCase() ?
-                                  Router.push({pathname: `/account/${owner}`}) :
-                                  Router.push({pathname: `/profile/${owner}`})}}>
+                  onClick={() => {Router.push({pathname: `/dashboard/${owner}`})}}
+                >
                   {
                     ownerEns ?
                     ownerEns :
@@ -174,7 +178,7 @@ export default function V3Phunks() {
                 <p><a 
                   className="collection-desc"
                   target="_blank" 
-                  href={`https://pro.opensea.io/nft/ethereum/0xf07468ead8cf26c752c676e43c814fee9c8cf402/${id}`}
+                  href={`https://cryptophunks.com/details/${id}`}
                 >
                   CryptoPhunk {id}
                 </a></p>
@@ -199,7 +203,7 @@ export default function V3Phunks() {
                 <p><a 
                   className="collection-desc"
                   target="_blank" 
-                  href={`https://pro.opensea.io/nft/ethereum/0xf07468ead8cf26c752c676e43c814fee9c8cf402/${id}`}
+                  href={`https://cryptophunks.com/details/${id}`}
                 >
                   CryptoPhunk #{id}
                 </a></p>
@@ -225,7 +229,7 @@ export default function V3Phunks() {
                   :
                   <p id="price">Price:&nbsp;
                     <span className="collection-desc g-txt">
-                      {ethers.utils.formatUnits(listed.minValue._hex,18) + 'Ξ'}
+                      {ethers.formatUnits(listed.minValue,18) + 'Ξ'}
                     </span>
                   </p>
                 }
@@ -234,15 +238,13 @@ export default function V3Phunks() {
                   :
                   <>
                     <p id="bid" className="">Top Bid:&nbsp;
-                      <span className="collection-desc g-txt">{ethers.utils.formatUnits(offers._hex,18) + 'Ξ'}</span>
+                      <span className="collection-desc g-txt">{ethers.formatUnits(offers,18) + 'Ξ'}</span>
                     </p>
                     <p className="">Bidder:&nbsp; 
                       <span 
                         id="top-bidder"
                         className="collection-desc brite g-txt sans-underline"
-                        onClick={() => {connectedAddress === offerer ?
-                                        Router.push({pathname: `/account/${offerer}`}) :
-                                        Router.push({pathname: `/profile/${offerer}`})}}
+                        onClick={() => {Router.push({pathname: `/dashboard/${offerer}`})}}
                       >
                         {
                           offererEns ?
@@ -253,7 +255,7 @@ export default function V3Phunks() {
                     </p>
                   </>
                 }
-                <a target="_blank" href={`https://notlarvalabs.com/cryptophunks/details/${id}`}>View on NLL</a>
+                <a target="_blank" href={`https://cryptophunks.com/details/${id}`}>View on CryptoPhunks.com</a>
               </div>
             </div>
           </div>
@@ -261,6 +263,11 @@ export default function V3Phunks() {
             <History 
               transactions={transactionHistory}
             />
+            <p>You can view this CryptoPhunk&apos;s full transaction history 
+              <a 
+                href={`https://etherscan.io/nft/${phunkAddy}/${id}`} 
+                target = "_blank"> here</a>
+            .</p>
           </div>
         </div>
       </div>

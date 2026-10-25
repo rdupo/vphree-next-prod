@@ -2,28 +2,39 @@
   "name": "vphree-next",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint .",
+    "db:setup": "tsx scripts/db-setup.js",
+    "backfill": "tsx scripts/backfill.js",
+    "sync": "tsx scripts/sync.js",
+    "webhook:query": "tsx scripts/webhook-query.js",
+    "verify:listings": "tsx scripts/verify-listings.js"
   },
   "dependencies": {
-    "@thirdweb-dev/sdk": "^4.0.14",
-    "@thirdweb-dev/wallets": "^0.2.8",
-    "alchemy-sdk": "^2.9.2",
+    "@neondatabase/serverless": "^1.2.0",
+    "@vercel/functions": "^3.10.3",
+    "alchemy-sdk": "^3.6.3",
     "autoprefixer": "10.4.14",
-    "eslint": "8.45.0",
-    "eslint-config-next": "13.4.12",
-    "ethers": "^5.7.2",
-    "next": "^14.1.0",
+    "ethers": "^6.17.0",
+    "firebase": "^12.2.1",
+    "next": "^16.4.3",
     "node-fetch": "^2.7.0",
     "postcss": "^8.4.31",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
     "react-hot-toast": "^2.4.1",
-    "react-select": "^5.7.4",
-    "sharp": "^0.32.5",
-    "tailwindcss": "3.3.3"
+    "react-icons": "^5.5.0",
+    "tailwindcss": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
+    "tsx": "^4.23.15"
   }
 }

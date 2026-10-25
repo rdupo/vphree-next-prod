@@ -1,15 +1,26 @@
 import React from 'react';
 import Image  from 'next/image';
+import Link from 'next/link';
 
-const History = ({ transactions, mp }) => {
+// Indexer collection slug -> display name and token detail route
+const COLLECTIONS = {
+  'philip-intern-project': { name: 'Philips', route: 'philip' },
+  'cryptophunks': { name: 'CryptoPhunks', route: 'cryptophunk' },
+  'wrapped-v1-phunks': { name: 'Wrapped v1s', route: 'wrapped-v1-phunk' },
+  'v3-phunks': { name: 'v3 Phunks', route: 'v3phunk' },
+};
+
+const History = ({ transactions, mp, showCollection = false }) => {
   //{console.log(transactions)}
   return (
     <div>
       {transactions && transactions.length > 0 && transactions[0].eventType !== 'none' ?
-        (<table className="collection-desc w-full text-left mb-20 bg-black">
+        (<div className="history-table-wrap mb-20">
+        <table className="collection-desc w-full text-left bg-black">
           <thead>
             <tr className="g-txt black-bg">
               <th>Event</th>
+              {showCollection ? <th>Collection</th> : null}
               <th>Phunk</th>
               <th>Amount</th>
               <th className="t-from">From</th>
@@ -29,9 +40,13 @@ const History = ({ transactions, mp }) => {
                     ---
                   </td>
                 }
-                {typeof(transaction.tokenId && transaction.imgRef) !== 'undefined' ?                
+                {showCollection ?
+                  <td>{COLLECTIONS[transaction.collection]?.name || '---'}</td>
+                  : null
+                }
+                {typeof(transaction.tokenId && transaction.imgRef) !== 'undefined' ?
                   <td>
-                    <div>
+                    <Link href={COLLECTIONS[transaction.collection] ? `/${COLLECTIONS[transaction.collection].route}/${transaction.tokenId}` : '#'}>
                       <Image
                         src={`/phunks/phunk${transaction.imgRef}.svg`}
                         alt={`Image of phunk #${transaction.tokenId}`}
@@ -40,7 +55,7 @@ const History = ({ transactions, mp }) => {
                         className="inline-flex align-bottom mr-1"
                       />
                       {`#${transaction.tokenId}`}
-                    </div>
+                    </Link>
                   </td>
                   :
                   <td>
@@ -105,7 +120,8 @@ const History = ({ transactions, mp }) => {
               </tr>
             ))}
           </tbody>
-        </table>)
+        </table>
+        </div>)
         :
         transactions && transactions[0] && transactions[0].eventType === 'none' 
         ?

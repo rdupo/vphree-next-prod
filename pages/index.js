@@ -3,49 +3,18 @@ import Link from 'next/link'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import SaleCard from '../components/SaleCard'
-import FlywheelCard from '../components/flywheelCard'
 import Router from 'next/router'
-import { Silkscreen, Montserrat } from 'next/font/google'
 import { ethers } from 'ethers'
-import { useWallet } from '../contexts/WalletContext'
-import getV3Sales from '../hooks/v3Sales'
-import getNllSales from '../hooks/nllSales'
-import { Network, Alchemy } from 'alchemy-sdk'
-import phunkAddy from '../utils/phunkAddy'
-import { useSearchParams } from "next/navigation";
-
+import useSales from '../hooks/useSales'
 
 export default function Home() {
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [connectedAddress, setConnectedAddress] = useState(null);
   const [iWidth, setIWidth] = useState(getInitialWidth());
-  const { sales } = getV3Sales();
-  const { nllSales } = getNllSales();
+  const { sales } = useSales('v3-phunks');
   const [searchAddy, setSearchAddy] = useState("");
   const [showWarning, setShowWarning] = useState(false);
-  const searchParams = useSearchParams();
-  let c = searchParams.get("c") || "vphree"
-  console.log(c)
-  const [mp, setMp] = useState(c);
-  console.log(mp)
-  let salesBand, vphreeText, nllText;
-  //console.log("nll", nllSales);
-  //console.log("sales", sales)
-
-  useEffect(() => {
-    setMp(c)
-  },[c]);
-
-  if(mp === "vphree") {
-    salesBand = "v3-bg"
-    vphreeText = "cursor-pointer text-black"
-    nllText = "cursor-pointer text-green-600"
-  } else {
-    salesBand = "v2-bg"
-    vphreeText = "cursor-pointer text-green-600"
-    nllText = "cursor-pointer text-black"
-  }
 
   useEffect(() => {
     // Update iWidth on window resize
@@ -65,7 +34,7 @@ export default function Home() {
     if(typeof(window) !== 'undefined') {
       return parseInt(((window.innerWidth) - 16) / 70) >= 20
         ? 20
-        : parseInt(((window.innerWidth) - 16) / 70);
+        : parseInt(((window.innerWidth) - 16) / 70) - 1;
     }
   }
 
@@ -92,54 +61,32 @@ export default function Home() {
 
   return (
     <>
-      {/*<Header onUpdateConnectedWallet={updateConnectedWallet} />
-      <div className="content bg-opacity-60 bg-black txt-new-fallback">*/}
-      <div className="content txt-new-fallback">
-        <div className="home-wrapper">
-          <h2 className="home-title g-txt leading-none mt-[33%] mb-4">We&apos;ll be right back...</h2>
-        </div>
-        {/*<div className="g-bg black-txt">
-          <div className="pl-8 text-green-500">
-            <p>
-              <span className="black-txt">Recent Sales: &nbsp;</span>
-              <span 
-                className={vphreeText}
-                onClick={() => {setMp("vphree")}}
-              >
-              vPhree</span> |&nbsp;
-              <span 
-                className={nllText}
-                onClick={() => {setMp("nll")}}
-              >NLL</span></p>
-          </div>
-          <div className={`${salesBand} flex flex-wrap justify-center border-b-4 g-b-c`}>
-            {mp === "vphree" ?
-              (sales.slice(0, iWidth).map((sale) => (
-              sales.length > 0 ? (
+      <Header onUpdateConnectedWallet={updateConnectedWallet} />
+      <div className="content bg-opacity-60 bg-black txt-new-fallback">
+        {sales.length > 0 ?
+          <div className="g-bg black-txt">
+            <div className="pl-8 text-green-500">
+              <p>
+                <span className="black-txt">Recent V3 Sales: &nbsp;</span>
+              </p>
+            </div>
+            <div className={`v3-bg flex flex-wrap justify-center border-b-4 g-b-c`}>
+              {sales.slice(0, iWidth).map((sale) => (
                 <SaleCard
-                  key={sale.id + sale.price + Math.random()}
+                  key={sale.hash + sale.id}
                   price={sale.price + "Ξ"}
                   atts=""
                   id={sale.id}
                   coll="v3"
                 />
-              ) : null)))
-              :
-              (nllSales.slice(0, iWidth).map((sale) => (
-              nllSales.length > 0 ? (
-                <SaleCard
-                  key={sale.id + sale.price + Math.random()}
-                  price={sale.price + "Ξ"}
-                  atts=""
-                  id={sale.id}
-                  coll="v2"
-                />
-              ) : null)))}
+              ))}
+            </div>
           </div>
-        </div>
+          : null
+        }
         <div className="home-wrapper">
           <h2 className="home-title g-txt leading-none mb-4">Welcome to vPhree</h2>
-          <p className="text-xl w-75">vPhree is the front door to all things Phunky. View your Phunks across all 3 collections, check out the latest Treasury Proposal, place a bid on the current auction, get Flywheel estimates, and more--all in one place.</p>
+          <p className="text-xl w-75">vPhree is the front door to all things Phunky. View your Phunks across all 3 collections, check out the latest Treasury Proposal, place a bid on the current auction, and more--all in one place.</p>
           <div id="search-wallet" className="inline-flex w-full my-4">
             <input
               className="bg-green-100 w-5/6 p-1 my-2 black-txt" 
@@ -157,29 +104,32 @@ export default function Home() {
           <p className={!showWarning ? "hidden" : "text-red-500 text-base"}>
               Please enter a valid wallet address or ENS domain
           </p>
-          <div>          
-            <Link href="/collections/v3-phunks">
-              <button className="w-60 mobile-100 cta v3-b v3-txt black-bg">v3 Phunks Marketplace</button>
-            </Link>
+          {/* layout (4 / 2 / 1 per row) lives in globals.css under "home CTAs" */}
+          <div className="home-ctas-wrap">
+           <div className="home-ctas">
             <Link href="/collections/philip-intern-project">
-              <button className="w-60 mobile-100 cta v2-b philip-txt black-bg">Philip Marketplace</button>
+              <button className="v2-b philip-txt black-bg">Philip<br/>Market</button>
             </Link>
             <Link href="/collections/wrapped-v1-phunks">
-              <button className="w-60 mobile-100 cta v1-b v1-txt black-bg">Wrapped v1 Marketplace</button>
+              <button className="v1-b v1-txt black-bg">Wrapped v1<br/>Market</button>
+            </Link>
+            <Link href="/collections/v3-phunks">
+              <button className="v3-b v3-txt black-bg">v3<br/>Market</button>
             </Link>
             <Link href="/hub/philip-intern-project">
-              <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Phunky Hub</button>
+              <button className="bg-[#ffb900] black-txt y-b">Phunky<br/>Hub</button>
             </Link>
-            <Link href="/dose-of-phunks">
-              <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Dose of Phunks</button>
-            </Link>
+           </div>
+            {/*<Link href="/dose-of-phunks">
+                          <button className="w-60 mobile-100 cta bg-[#ffb900] black-txt y-b">Dose of Phunks</button>
+                        </Link>*/}
           </div>
-        </div>*/}
+        </div>
       </div>
       <div className="home-bg fixed top-0 left-0 right-0 -z-10"></div>
-      {/*<Footer
+      <Footer
         bg='black'
-      />*/}
+      />
     </>
   )
 }

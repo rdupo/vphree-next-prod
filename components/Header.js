@@ -6,8 +6,8 @@ import Logo from '../assets/vphree24.png'
 import Wallet from '../assets/wallet.png'
 import Profile from '../assets/profile-icon.png'
 import Discord from '../assets/discord.png'
-import Info from '../assets/info.png'
 import PH from '../assets/ph.png'
+import Market from '../assets/market.svg'
 import { ethers } from 'ethers'
 import { useWallet } from '../contexts/WalletContext'
 
@@ -30,8 +30,8 @@ const Header = () => {
     if (window.ethereum) {
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const mmp = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = mmp.getSigner(accounts[0]);       
+        const mmp = new ethers.BrowserProvider(window.ethereum);
+        const signer = await mmp.getSigner(accounts[0]);
         const address = await signer.getAddress();
         setConnectedAddress(address); // Update the state with the connected address
       } catch (error) {
@@ -54,12 +54,12 @@ const Header = () => {
 				</Link>
 			</div>
 			<div className="justify-content-end">
-				<Link href="/about" className="sans-underline">
-					<Image 
+				<Link href="/collections/all" className="sans-underline">
+					<Image
 						height={30}
-						className="inline-flex align-middle my-3 mr-5 h-img-w" 
-						src={Info}
-						alt="site info icon"
+						className="inline-flex align-middle my-3 mr-5 h-img-w"
+						src={Market}
+						alt="all collections icon"
 					/>
 				</Link>
 				<Link href="/hub/philip-intern-project" className="sans-underline">
@@ -67,7 +67,7 @@ const Header = () => {
 						height={30}
 						className="inline-flex align-middle my-3 mr-5 h-img-w" 
 						src={PH}
-						alt="site info icon"
+						alt="phunky hub icon"
 					/>
 				</Link>
 				{/*<a href="https://discord.gg/hMC6cxBg3u" target="_blank" className="sans-underline">
@@ -78,15 +78,15 @@ const Header = () => {
 						alt="discord link icon"
 					/>
 				</a>*/}
-				<Image 
-					height={30}
-					className="inline-flex align-middle my-3 mr-5 h-img-w brite" 
-					src={Wallet}
-					alt="connect wallet icon"
-					onClick={connectWallet}
-				/>
 				{ connectedAddress.length === 0 ?
-					null : 
+					<Image 
+						height={30}
+						className="inline-flex align-middle my-3 mr-5 h-img-w brite" 
+						src={Wallet}
+						alt="connect wallet icon"
+						onClick={connectWallet}
+					/>
+					 : 
 					<Image
 						height={40}
 						className="inline-flex align-middle my-3 mr-8 h-img brite" 

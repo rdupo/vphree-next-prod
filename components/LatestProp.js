@@ -39,8 +39,8 @@ function LatestProp() {
                   {poll.results ? 
                     <p className="collection-desc text-gray-300 inline">
                       <span className="text-white">Results:</span>
-                      {poll.results[0] ? <p className="inline">{poll.results[0].vote_value} {poll.results[0].count}</p> : null}
-                      {poll.results[1] ? <p className="inline"> | {poll.results[1].vote_value} {poll.results[1].count}</p> : null}
+                      {poll.results[0] ? <span className="inline">{poll.results[0].vote_value} {poll.results[0].count}</span> : null}
+                      {poll.results[1] ? <span className="inline"> | {poll.results[1].vote_value} {poll.results[1].count}</span> : null}
                     </p>
                     :
                     <p className="collection-desc text-gray-300">Results loading...</p>

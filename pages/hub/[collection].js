@@ -6,7 +6,6 @@ import Header from  '../../components/Header'
 import DashCard from '../../components/dashCard'
 import Card from '../../components/Card'
 import StaticCard from '../../components/StaticCard'
-import FlywheelCard from '../../components/flywheelCard'
 import LatestProp from '../../components/LatestProp'
 import History from '../../components/userHistory'
 import Footer from '../../components/Footer'
@@ -21,47 +20,43 @@ import auctionAddy from '../../utils/auctionAddy'
 import auctionAbi from '../../utils/auctionAbi'
 import v3PhunkAddy from '../../utils/v3PhunkAddy'
 import v3PhunkAbi from '../../utils/v3PhunkAbi'
-import flywheelAddy from '../../utils/flywheelAddy'
-import flywheelAbi from '../../utils/flywheelAbi'
 import phunkAddy from '../../utils/phunkAddy'
 import toast, {Toaster} from 'react-hot-toast'
 import { useWallet } from '../../contexts/WalletContext'
 import phunks from '../../utils/phunkData'
 import phunkAtts from '../../utils/phunkAtts' 
 import AuctionTimer from '../../components/auctionTimer'
-import getV3Sales from '../../hooks/v3Sales'
-import getNllSales from '../../hooks/nllSales'
+import useSales from '../../hooks/useSales'
 import wrapperAddy from '../../utils/wrapperAddy'
 import wrapperAbi from '../../utils/wrapperAbi'
 import philipAbi from '../../utils/philipAbi'
 import xferAbi from '../../utils/xferAbi'
 import philipAddy from '../../utils/philipAddy'
-import getFlywheelBuys from '../../hooks/FlywheelBuys'
 import SaleCard from '../../components/SaleCard'
+import HubNav from '../../components/HubNav'
 
 export default function PhunkyHub() {
   const router = useRouter()
   const alcKey = process.env.NEXT_PUBLIC_API_KEY
   const nftbKey = process.env.NFTBANK_API_KEY
-  const { sales } = getV3Sales();
-  const { nllSales } = getNllSales();
-  const { flywheelSales } = getFlywheelBuys();
+  const { sales } = useSales('v3-phunks');
+  const { sales: nllSales } = useSales('cryptophunks');
   const [iWidth, setIWidth] = useState(getInitialWidth());
   const coll = router.query.collection
   const [ensAddy, setEnsAddy] = useState('')
-  const [nfts, setNFTs] = useState([]);
-  const [nftsData, setNFTsData] = useState([]);
-  const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
+  //const [nfts, setNFTs] = useState([]);
+  //const [nftsData, setNFTsData] = useState([]);
+  //const [pendingWithdrawAmt, setPendingWithdrawAmt] = useState('')
   const marketContract = v3MarketAddy
   const marketAbi = v3MarketAbi
-  const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
   const [signer, setSigner] = useState([]);
   const contract = new ethers.Contract(marketContract, marketAbi, provider);
   const v3Contract = new ethers.Contract(v3PhunkAddy, v3PhunkAbi, provider);
   const { connectedAddress, walletChanged } = useWallet();
   const hourglass = <img className='w-6' src='/hourglass-time.gif' alt='hourglass'/>
   const [loading, setLoading] = useState(true);
-  const [bidLoading, setBidLoading] = useState(true);
+  //const [bidLoading, setBidLoading] = useState(true);
    
   //collection displayed
   const [activeCollection, setActiveCollection] = useState(coll);
@@ -74,12 +69,12 @@ export default function PhunkyHub() {
   const [aucEvent, setAucEvent] = useState([]);
   
   //flywheel
-  const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
+  /*const flywheelContract = new ethers.Contract(flywheelAddy, flywheelAbi, provider);
   const [nftEstimate, setNftEstimate] = useState([]);
   const [minFlywheelPrice, setMinFlywheelPrice] = useState();
   const [flywheelLoading, setFlywheelLoading] = useState(true);
   const [flywheelId, setFlywheelId] = useState("0");
-  const [flywheelBalance, setFlywheelBalance] = useState("---")
+  const [flywheelBalance, setFlywheelBalance] = useState("---")*/
 
   //philip wrapper
   const [wrapId, setWrapId] = useState(-1);
@@ -97,16 +92,16 @@ export default function PhunkyHub() {
   }
 
   //start flywheel js ---------
-  const getBalance = async () => {
+  /*const getBalance = async () => {
     const bal = await provider.getBalance(flywheelAddy);
-    const ethBal = Number(ethers.utils.formatUnits(bal._hex,18)).toFixed(2);
+    const ethBal = Number(ethers.formatUnits(bal,18)).toFixed(2);
     setFlywheelBalance(ethBal);
   }
 
   const getValue = async (phunk) => {
     const temp = [];
     const percentOfValue = await flywheelContract.contractConfig();
-    const pct = Number(ethers.utils.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay._hex,2));
+    const pct = Number(ethers.formatUnits(percentOfValue.pctOfOraclePriceEstimateToPay,2));
 
     const res = await fetch(`/api/priceEstimate/${phunkAddy}/${phunk}`);
     const data = await res.json();
@@ -122,11 +117,11 @@ export default function PhunkyHub() {
     console.log("flywheel:", temp);
 
     const minValue = await flywheelContract.getCurrentMinimumValidPrice();
-    const minValidPrice = Number(ethers.utils.formatUnits(minValue[0]._hex,18));
+    const minValidPrice = Number(ethers.formatUnits(minValue[0],18));
     setMinFlywheelPrice(minValidPrice);
 
     setFlywheelLoading(false);
-  }
+  }*/
   //end flywheel js -----------
 
   //start auction js ----------
@@ -134,7 +129,7 @@ export default function PhunkyHub() {
     const aucDetails = await aucContract.auction();
     const name = await provider.lookupAddress(aucDetails.bidder);
     const aucMinBidPerc = await aucContract.minBidIncrementPercentage();
-    const aucPhunk = (ethers.utils.formatUnits(aucDetails.phunkId._hex,0));
+    const aucPhunk = aucDetails.phunkId.toString();
     setAucData(aucDetails);
     setBidInc(1+(Number(aucMinBidPerc)/100));
     setAucBidder(name ? name : aucDetails.bidder.substr(0,4)+'...'+aucDetails.bidder.substr(aucDetails.bidder.length-4, aucDetails.bidder.length))
@@ -230,12 +225,12 @@ export default function PhunkyHub() {
 
   /* ---- START WRAPPER FUNC ---- */
   async function loadV1() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
 
     try {
-        const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+        const w = await wc.canBeWrappedByUser(signer.address, wrapId);
 
         if (w) {
             setWrapBtnText("Wrap Philip");
@@ -247,7 +242,7 @@ export default function PhunkyHub() {
     }
 
     try {
-        const u = await wc.canBeUnwrappedByUser(signer._address, wrapId);
+        const u = await wc.canBeUnwrappedByUser(signer.address, wrapId);
 
         if (u) {
             setWrapBtnText("Unwrap v1");
@@ -262,16 +257,16 @@ export default function PhunkyHub() {
   }
 
   async function wrapPhilip() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const pc = new ethers.Contract(philipAddy, xferAbi, signer);
     const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
     
     try{
-      const w = await wc.canBeWrappedByUser(signer._address, wrapId);
+      const w = await wc.canBeWrappedByUser(signer.address, wrapId);
 
       if(w) {
-      const xferPromise = pc.safeTransferFrom(signer._address, wrapperAddy, wrapId);
+      const xferPromise = pc.safeTransferFrom(signer.address, wrapperAddy, wrapId);
       txnToast(xferPromise, `Wrapping Philip #${wrapId}`); 
       await xferPromise
         .then(async (result) => {
@@ -311,12 +306,12 @@ export default function PhunkyHub() {
   }
   
 async function unwrapPhilip() {
-    const mmp = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = mmp.getSigner(connectedAddress);
+    const mmp = new ethers.BrowserProvider(window.ethereum);
+    const signer = await mmp.getSigner(connectedAddress);
     const wc = new ethers.Contract(wrapperAddy, wrapperAbi, signer);
     
     try{
-      const u = await wc.canBeUnwrappedByUser(signer._address, wrapId);
+      const u = await wc.canBeUnwrappedByUser(signer.address, wrapId);
       if (u) {
         const xferPromise = wc.unwrap(wrapId);
         txnToast(xferPromise, `Unwrapping Philip #${wrapId}`); 
@@ -361,7 +356,7 @@ async function unwrapPhilip() {
 
   useEffect(() => {
     curAuc();
-    getBalance();
+    //getBalance();
   },[aucEvent])
 
   useEffect(() => {
@@ -374,34 +369,23 @@ async function unwrapPhilip() {
       <Toaster/>
       <div className="page bg-opacity-60 bg-black">
         <div className="content px-8 z-10">
-          <div className="hub-picker-div divide-x-2 divide-gray-500 text-gray-500">
-            <p 
-              className={`hub-picker mt-6 pr-4 text-3xl cursor-pointer ${activeCollection === 'philip-intern-project' ? 'text-[#a79aff]' : ''}`}
-              onClick={() => Router.push({ pathname: `/hub/philip-intern-project` })}
-              >Philips</p>
-            <p 
-              className={`hub-picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'cryptophunks' ? 'text-[#75a8c2]' : ''}`}
-              onClick={() => Router.push({ pathname: `/hub/cryptophunks` })}>CryptoPhunks</p>
-            <p 
-              className={`hub-picker mt-6 px-4 text-3xl cursor-pointer ${activeCollection === 'v3phunks' ? 'text-[#83dfb2]' : ''}`}
-              onClick={() => Router.push({ pathname: `/hub/v3phunks` })}>v3Phunks</p>
-          </div>
+          <HubNav active={activeCollection}/>
           {activeCollection === 'philip-intern-project' ?
             <>
             <div className="mt-8 w-full">
               <Link href="/collections/philip-intern-project">
-                <button className="mobile-100 cta v1-b v1-bg black-txt w-[345px]">Philip Marketplace</button>
+                <button className="mobile-100 cta-alt v1-b v1-bg black-txt w-[345px]">Philip Marketplace</button>
               </Link>
               <Link href="/view-all/philip-intern-project">
-                <button className="mobile-100 cta v1-b black-bg v1-txt w-[315px]">Philip Phinder</button>
+                <button className="mobile-100 cta-alt v1-b black-bg v1-txt w-[315px]">Philip Phinder</button>
               </Link>
             </div>
             <div className="mt-2 w-full">
               <Link href="/collections/wrapped-v1-phunks">
-                <button className="mobile-100 cta v1-b v1-bg black-txt w-[345px]">Wrapped v1 Marketplace</button>
+                <button className="mobile-100 cta-alt v1-b v1-bg black-txt w-[345px]">Wrapped v1 Marketplace</button>
               </Link>
               <Link href="/view-all/wrapped-v1-phunks">
-                <button className="mobile-100 cta v1-b black-bg v1-txt w-[315px]">View All Wrapped v1s</button>
+                <button className="mobile-100 cta-alt v1-b black-bg v1-txt w-[315px]">View All Wrapped v1s</button>
               </Link>
             </div>
             </>
@@ -411,7 +395,7 @@ async function unwrapPhilip() {
           {activeCollection === 'cryptophunks' ?
             <div className="mt-8 w-full">
               <Link href="/view-all/cryptophunks">
-                <button className="mobile-100 cta v2-b v2-bg black-txt">View All CryptoPhunks</button>
+                <button className="mobile-100 cta-alt v2-b v2-bg black-txt">View All CryptoPhunks</button>
               </Link>
             </div>
             :
@@ -420,10 +404,10 @@ async function unwrapPhilip() {
           {activeCollection === 'v3phunks' ?
             <div className="mt-8 w-full">
             <Link href="/collections/v3-phunks">
-              <button className="mobile-100 cta v3-bg border-[#83dfb2] border-[3px] black-txt">v3 Marketplace</button>
+              <button className="mobile-100 cta-alt v3-bg border-[#83dfb2] border-[3px] black-txt">v3 Marketplace</button>
             </Link>
             <Link href="/view-all/v3-phunks">
-              <button className="mobile-100 cta border-[#83dfb2] border-[3px] black-bg text-[#83dfb2]">View All v3s</button>
+              <button className="mobile-100 cta-alt border-[#83dfb2] border-[3px] black-bg text-[#83dfb2]">View All v3s</button>
             </Link>
             </div>
             :
@@ -493,7 +477,7 @@ async function unwrapPhilip() {
               )))
               :
             null}
-          </div> 
+          </div>
 
 {/* --- START WRAPPER ---- */}  
           {activeCollection !== 'philip-intern-project' ? null :
@@ -562,10 +546,10 @@ async function unwrapPhilip() {
           {activeCollection === 'cryptophunks' ? 
             aucData.length > 0 ? 
               <AuctionTimer
-                targetDate={Number(ethers.utils.formatUnits(aucData.endTime._hex,0))*1000}
-                id={ethers.utils.formatUnits(aucData.phunkId._hex,0)}
+                targetDate={Number(aucData.endTime)*1000}
+                id={aucData.phunkId.toString()}
                 bidder={aucBidder}
-                highBid={ethers.utils.formatUnits(aucData.amount._hex,18)}
+                highBid={ethers.formatUnits(aucData.amount,18)}
                 bidPercent={bidInc}
               />
               :
@@ -573,7 +557,7 @@ async function unwrapPhilip() {
             :
             null
           }
-          {activeCollection === 'v3phunks' ?
+          {/*activeCollection === 'v3phunks' ?
             <> 
               <h2 className="mt-16 mb-4 text-2xl">Instant Liquidity</h2>
               <p className="text-gray-400"> Sell to the 
@@ -585,11 +569,11 @@ async function unwrapPhilip() {
             </> 
             : 
             null
-          }
+          */}
           {activeCollection === 'cryptophunks' ?
             <>
-              <h2 className="mt-16 mb-4 text-2xl">Flywheel</h2>
-              <div className="inline-block mb-0 w-1/2 mobile-100 align-top"> 
+              <h2 className="mt-16 mb-4 text-2xl">Instant Liquidity</h2>
+              {/*<div className="inline-block mb-0 w-1/2 mobile-100 align-top"> 
                 <h2 className="text-gray-400">Flywheel Payout Checker</h2>
                   {nftEstimate.length > 0 ?
                     nftEstimate.map((phunk) => (
@@ -651,10 +635,10 @@ async function unwrapPhilip() {
                   :
                   <p className="text-2xl g-txt my-4">Loading recent Flywheel buys...</p>
                 }
-              </div>
-              <p className="text-gray-400 mt-2">Any ineligible Phunks can still be sold to the 
+              </div>*/}
+              <p className="text-gray-400 mt-2">Sell to the 
                 <a 
-                  href={`https://nftx.io/vault/0xb39185e33e8c28e0bb3dbbce24da5dea6379ae91/sell/`} 
+                  href={`https://nftx.io/ethereum/collections/cryptophunks?tab=sell`} 
                   target="_blank"> NTFX Liquidity Pool
                 </a>
               </p>
@@ -696,6 +680,7 @@ async function unwrapPhilip() {
               <p><a target="_blank" href="https://phunk.cc/">Treasury Prop Voting</a></p>
 
               <h3 className="mt-4">Marketplace</h3>
+              <p><a target="_blank" href="https://cryptophunks.com/">CryptoPhunks.com</a></p>
               <p><a target="_blank" href="https://notlarvalabs.com/cryptophunks/forsale">Not Larva Labs</a></p>
               <p><a target="_blank" href="https://pro.opensea.io/collection/crypto-phunks">OpenSea Pro</a></p>
 

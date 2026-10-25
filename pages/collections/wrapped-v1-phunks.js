@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from  '../../components/Header'
 import CollectionInfo from '../../components/CollectionInfo'
+import { CollectionStatsCard } from '../../components/CollectionStats'
 import Card from '../../components/Card'
 import Footer from '../../components/Footer'
 import Twitter from '../../assets/twitter.png'
@@ -17,6 +18,7 @@ import wrapperAbi from '../../utils/wrapperAbi'
 import wv1pAddy from '../../utils/wv1pAddy'
 import wv1pAbi from '../../utils/wv1pAbi'
 import Banner from '../../assets/wv1p-banner.png'
+import useListings from '../../hooks/useListings'
 
 export default function PhilipMarket() {
   const collectionContract = wrapperAddy
@@ -24,6 +26,7 @@ export default function PhilipMarket() {
   const maps = "https://www.cryptophunks.com/"
   const target = "_blank"
   const desc = ["V1 Phunks are not a derivative, but are in fact the original set of Phunks released in 2021 (and actually predate the release of CryptoPhunks NFTs). This is verified on the Ethereum blockchain and is immutable. Wrapped v1 Phunks restore the image and metadata lost when the origional 1,004 CryptoPhunks were converted to Philips. You can unwrap your Wrapped v1 Phunk using the ", <Link key="phlink" href="/hub/philip-intern-project">Phunky Hub</Link>,"."]
+  const { listings } = useListings('wrapped-v1-phunks');
   const [listed, setListed] = useState([]);
   const [f, setF] = useState({})
   const [filtersActive, setFilterState] = useState(false)
@@ -40,16 +43,16 @@ export default function PhilipMarket() {
 
     if (fP.length === 0) {
       const sortedListed = [...listed].sort((a, b) => {
-        const aa = ethers.utils.formatUnits(a.args.minValue._hex,18);
-        const bb = ethers.utils.formatUnits(b.args.minValue._hex,18);
+        const aa = Number(a.minValue);
+        const bb = Number(b.minValue);
         return sortOrder * (aa - bb);
       });
       setListed(sortedListed);
       setDisplayedData(sortedListed); // Update the displayed data as well
     } else {
       const sortedFP = [...fP].sort((a, b) => {
-        const aa = ethers.utils.formatUnits(a.args.minValue._hex,18);
-        const bb = ethers.utils.formatUnits(b.args.minValue._hex,18);
+        const aa = Number(a.minValue);
+        const bb = Number(b.minValue);
         return sortOrder * (aa - bb);
       });
       setFP(sortedFP);
@@ -71,7 +74,7 @@ export default function PhilipMarket() {
     const filteredData = listed.filter((item) => {
       for (const [trait, value] of Object.entries(f)) {
         if (trait === 'tokenId') {
-          if (ethers.utils.formatUnits(item.args.phunkIndex._hex,0).indexOf(value) === -1) {
+          if (String(item.tokenId).indexOf(value) === -1) {
             return false;
           }
         } else if  (trait === 'Traits') {
@@ -89,70 +92,16 @@ export default function PhilipMarket() {
     });
 
     const sortedFilteredData = filteredData.slice().sort((a, b) => {
-      const aa = ethers.utils.formatUnits(a.args.minValue._hex,18);
-      const bb = ethers.utils.formatUnits(b.args.minValue._hex,18);
-      return (aa - bb);
+      return Number(a.minValue) - Number(b.minValue);
     });
     setDisplayedData(sortedFilteredData);
   }, [f]);
 
-  //events approach
+  // active listings come from our indexer API (see lib/queries.js getListings)
   useEffect(() => {
-    const provider = new ethers.providers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${alcKey}`, 1);
-    const contract = new ethers.Contract(wv1pAddy, wv1pAbi, provider);
-    const v3Contract = new ethers.Contract(wrapperAddy, wrapperAbi, provider)
-
-    const initialActiveListings = [];
-    const phunkIds = [];
-    const currentListings = [];
-    const phunkData = phunkAttMap;
-    
-    const fetchInitialActiveListings = async () => {
-      const phunkOfferedFilter = contract.filters.PhunkOffered();
-      const phunkBoughtFilter = contract.filters.PhunkBought();
-      const phunkNoLongerForSaleFilter = contract.filters.PhunkNoLongerForSale();
-      const phunkXferFilter = v3Contract.filters.Transfer();
-
-      const initialPhunkOfferedEvents = await contract.queryFilter(phunkOfferedFilter);
-      const initialPhunkBoughtEvents = await contract.queryFilter(phunkBoughtFilter);
-      const initialphunkNoLongerForSaleEvents = await contract.queryFilter(phunkNoLongerForSaleFilter);
-      const initialPhunkXferEvents = await v3Contract.queryFilter(phunkXferFilter, 19085195);
-
-      const allEvents = [...initialPhunkOfferedEvents,
-                         ...initialPhunkBoughtEvents, 
-                         ...initialphunkNoLongerForSaleEvents,
-                         ...initialPhunkXferEvents]
-
-      // Sort the initialPhunkOfferedEvents by phunkIndex and blockNumber (newest to oldest)
-      allEvents.sort((a, b) => {
-        return b.blockNumber - a.blockNumber; // Sort by blockNumber if phunkIndexes are equal
-      });
-
-      // Iterate through sorted events and select the first occurrence of each unique phunkIndex
-      allEvents.forEach(event => {
-        const phunkIndex = typeof(event.args.phunkIndex) !== 'undefined' ? event.args.phunkIndex._hex : event.args.tokenId._hex;
-        if (phunkIds.indexOf(phunkIndex) === -1) {
-          phunkIds.push(phunkIndex);
-          initialActiveListings.push(event);
-        }
-
-        const updatedListings = initialActiveListings.filter((event) => event.event == 'PhunkOffered')
-
-        const attributesMap = {};
-        phunkData.forEach(item => {
-          attributesMap[item.tokenId] = item.attributes;
-        });
-
-        const updatedListingsFull = updatedListings.map(itemA => ({
-          ...itemA,
-          attributes: attributesMap[ethers.utils.formatUnits(itemA.args.phunkIndex._hex,0)], 
-        }));
-        setListed(updatedListingsFull);
-        setDisplayedData(updatedListingsFull);
-      });
-    };
-    fetchInitialActiveListings();
-  },[]);
+    setListed(listings);
+    setDisplayedData(listings);
+  }, [listings]);
 
   return (
     <>
@@ -168,6 +117,7 @@ export default function PhilipMarket() {
             twitter="https://twitter.com/CryptoPhunksV1"
             contract={collectionContract}
           />
+          <CollectionStatsCard collection="wrapped-v1-phunks"/>
           <div className="filter-sort-wrapper mb-8">
             <div>
               <label className="mr-3">ID</label>
@@ -645,14 +595,14 @@ export default function PhilipMarket() {
                 </div>
             </div>
           </div>
-         <div className="flex flex-wrap justify-center">
+          <div className="flex flex-wrap justify-center">
             {displayedData.map((phunk) => (
               (displayedData.length > 0 ?
                 <Card
-                  key={phunk.args.phunkIndex._hex}
-                  price={ethers.utils.formatUnits(phunk.args.minValue._hex,18) + "Ξ"}
+                  key={phunk.tokenId}
+                  price={phunk.minValue + "Ξ"}
                   atts=""
-                  id={ethers.utils.formatUnits(phunk.args.phunkIndex._hex,0)}
+                  id={phunk.tokenId}
                   coll="v1"
                 />
               : null )  
