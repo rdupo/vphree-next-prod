@@ -12,7 +12,13 @@ export default function HubVphree() {
           <HubNav active="vphree"/>
           <h2 className="mt-8 mb-4 text-2xl">About vPhree</h2>
           <div className="text-gray-300 w-11/12 filter-sort-wrapper">
-            <p>vPhree started as a phee-less marketplace currently supporting v3 Phunk NFTs, which builds off the foundation created by the <a href="https://notlarvalabs.com/" target="_blank">NotLarvaLabs</a> team. Since its launch, vPhree has evolved into a Phunky Hub showcasing community-built solutions including: Treasury Propositions, Flywheel, Auction House, and Not Larva Labs. In addition, our updated Dashboard allows users to view the Philips, CryptoPhunks, and v3Phunks owned along with Not Larva Labs and vPhree activity.</p>
+            <p>vPhree started as a phee-less marketplace supporting v3 Phunk NFTs, building off the foundation created by the <a href="https://notlarvalabs.com/" target="_blank">NotLarvaLabs</a> team. Since its launch, vPhree has evolved into a Phunky Hub with:
+            </p>
+              <ul className="list-disc pl-5">
+                <li>Philip Intern Project and Wrapped v1 Phunks marketplaces</li>
+                <li>Community-built solution integration</li>
+                <li>Dashboard for viewing NFTs across all Phunk collections</li>
+              </ul>
             <br/>
             <p>In the spirit of Phunkism, the project is entirely open source. Below we&apos;ve linked to the GitHub repos for both the vPhree marketplace frontend and CryptoPhunks Marketplace solidity contract, as well as provided the Etherscan link for the contract currently used for vPhree.</p>
             <br/>
