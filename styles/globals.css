@@ -129,6 +129,10 @@ select, option, .black-txt {
   border: 3px solid #648596;
 }
 
+.philip-b {
+  border: 3px solid #648596;
+}
+
 .y-b {
   border: 3px solid #ffb900;
 }
@@ -217,6 +221,27 @@ select, option, .black-txt {
 }
 
 .home-ctas button {
+  width: 100%;
+  height: 100%;
+}
+
+/* collections/all: one row of listing thumbnails. Extra items wrap to rows that are zero
+   height and clipped, so only whole images show at any width. */
+.collection-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+  grid-template-rows: auto;
+  grid-auto-rows: 0;
+  column-gap: 8px;
+  overflow: hidden;
+}
+
+.collection-preview > a {
+  display: block;
+  aspect-ratio: 1;
+}
+
+.collection-preview img {
   width: 100%;
   height: 100%;
 }
