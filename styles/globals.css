@@ -416,7 +416,11 @@ select, option, .black-txt {
   .history-table-wrap thead th {
     position: sticky;
     top: 0;
+    z-index: 1;
     background: inherit;
+    /* On fractional pixel-ratio screens the sticky header can sit a sub-pixel below the box's
+       top edge, letting scrolled rows peek through. Extend its background up to cover that seam. */
+    box-shadow: 0 -2px 0 0 #000;
   }
 
   /*listing*/
