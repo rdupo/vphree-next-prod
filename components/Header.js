@@ -78,15 +78,15 @@ const Header = () => {
 						alt="discord link icon"
 					/>
 				</a>*/}
-				<Image 
-					height={30}
-					className="inline-flex align-middle my-3 mr-5 h-img-w brite" 
-					src={Wallet}
-					alt="connect wallet icon"
-					onClick={connectWallet}
-				/>
 				{ connectedAddress.length === 0 ?
-					null : 
+					<Image 
+						height={30}
+						className="inline-flex align-middle my-3 mr-5 h-img-w brite" 
+						src={Wallet}
+						alt="connect wallet icon"
+						onClick={connectWallet}
+					/>
+					 : 
 					<Image
 						height={40}
 						className="inline-flex align-middle my-3 mr-8 h-img brite" 
