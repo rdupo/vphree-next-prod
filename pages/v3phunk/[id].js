@@ -116,6 +116,11 @@ export default function V3Phunks() {
             setOffererEns(bidderEns);
             //console.log("bid from: ", offerer, "; connected: ", connectedAddress);
             //console.log('offerer ENS', offererEns);
+          } else {
+            // Bid was accepted or withdrawn; clear the stale one
+            setOffers('');
+            setOfferer('');
+            setOffererEns('');
           }
         } catch (error) {  }
 
