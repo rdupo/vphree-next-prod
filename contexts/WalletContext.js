@@ -28,9 +28,25 @@ export function WalletProvider({ children }) {
     };
   }, []);
 
+  // Forget the wallet in the app, and ask the wallet to drop this site's access so the
+  // next connect prompts again. Not every wallet supports revoking, so failures are ignored.
+  const disconnectWallet = async () => {
+    setConnectedAddress('');
+    sessionStorage.removeItem('connectedAddress');
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_revokePermissions',
+          params: [{ eth_accounts: {} }],
+        });
+      } catch (error) {  }
+    }
+  };
+
   const value = {
     connectedAddress,
     setConnectedAddress,
+    disconnectWallet,
   };
 
   return (

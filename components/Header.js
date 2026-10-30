@@ -1,4 +1,4 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useRef } from 'react'
 import Router, { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,7 +13,19 @@ import { useWallet } from '../contexts/WalletContext'
 
 const Header = () => {
 	const router = useRouter();
-  const { connectedAddress, setConnectedAddress, walletChanged, setWalletChanged } = useWallet();
+  const { connectedAddress, setConnectedAddress, disconnectWallet, walletChanged, setWalletChanged } = useWallet();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // Close the wallet menu on any click outside it
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleClick = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [menuOpen]);
 
   useEffect(() => {
 	  //console.log('connectedAddress:', connectedAddress);
@@ -34,6 +46,7 @@ const Header = () => {
         const signer = await mmp.getSigner(accounts[0]);
         const address = await signer.getAddress();
         setConnectedAddress(address); // Update the state with the connected address
+        sessionStorage.setItem('connectedAddress', address);
       } catch (error) {
         console.log('MetaMask not found or error:', error);
       }
@@ -87,13 +100,31 @@ const Header = () => {
 						onClick={connectWallet}
 					/>
 					 : 
-					<Image
-						height={40}
-						className="inline-flex align-middle my-3 mr-8 h-img brite" 
-						src={Profile}
-						alt="profile icon"
-						onClick={() => {Router.push({pathname: `/dashboard/${connectedAddress}`})}}
-					/>
+					<div className="relative inline-flex align-middle mr-8" ref={menuRef}>
+						<Image
+							height={40}
+							className="inline-flex align-middle my-3 h-img brite"
+							src={Profile}
+							alt="profile icon"
+							onClick={() => setMenuOpen((open) => !open)}
+						/>
+						{menuOpen &&
+							<div className="wallet-menu">
+								<p
+									className="g-txt cursor-pointer"
+									onClick={() => {setMenuOpen(false); Router.push({pathname: `/dashboard/${connectedAddress}`})}}
+								>
+									Dashboard
+								</p>
+								<p
+									className="g-txt cursor-pointer"
+									onClick={() => {setMenuOpen(false); disconnectWallet()}}
+								>
+									Disconnect
+								</p>
+							</div>
+						}
+					</div>
 				}
 			</div>
 		</div>
